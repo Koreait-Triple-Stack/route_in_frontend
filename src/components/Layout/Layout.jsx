@@ -1,14 +1,23 @@
 import React from "react";
 /** @jsxImportSource @emotion/react */
-import * as s from "./styles";
-import MainBottom from "../MainBottom/MainBottom";
+import { Box, Container } from "@mui/system";
+import BasicBottomNav from "../BasicBottomNav/BasicBottomNav";
 
 function Layout({ children }) {
     return (
-        <div css={s.container}>
-            <div>{children}</div>
-            <MainBottom />
-        </div>
+        <Container
+            sx={{
+                maxWidth: "sm",
+                minHeight: "100vh",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+            }}>
+            <Box sx={{ flex: 1, overflowY: "auto" }}>{children}</Box>
+
+            <BasicBottomNav />
+        </Container>
     );
 }
 
