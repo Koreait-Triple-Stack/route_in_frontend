@@ -14,20 +14,20 @@ const MainPage = () => {
 
       {/* 이번 주 스케줄 섹션 */}
       <Box sx={{ mb: 4 }}>
-        <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 2, color: 'primary.main' }}>
+        <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 2, color: 'primary.main', width: 557 }}>
           <CalendarMonthIcon />
           <Typography variant="subtitle1">이번 주 스케줄</Typography>
         </Stack>
         
         {/* 요일별 리스트 (데이터 맵핑으로 처리 권장) */}
         <Stack spacing={1.5}>
-          <ScheduleItem day="월요일" activity="러닝 5km" tags={['벤치프레스', '스쿼트']} active />
-          <ScheduleItem day="화요일" activity="휴식일" />
-          <ScheduleItem day="수요일" activity="휴식일" />
-          <ScheduleItem day="목요일" activity="휴식일" />
-          <ScheduleItem day="금요일" activity="휴식일" />
-          <ScheduleItem day="토요일" activity="휴식일" />
-          <ScheduleItem day="일요일" activity="휴식일" />
+          <ScheduleItem day="월요일" tags={['벤치프레스', '스쿼트']} active />
+          <ScheduleItem day="화요일" />
+          <ScheduleItem day="수요일" />
+          <ScheduleItem day="목요일" />
+          <ScheduleItem day="금요일" />
+          <ScheduleItem day="토요일" />
+          <ScheduleItem day="일요일" />
         </Stack>
       </Box>
 

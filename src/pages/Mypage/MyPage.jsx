@@ -8,20 +8,23 @@ import SendIcon from "@mui/icons-material/Send";
 import React, { useState } from "react";
 import DraftsIcon from "@mui/icons-material/Drafts";
 import InboxIcon from "@mui/icons-material/Inbox";
+import LogoutIcon from '@mui/icons-material/Logout';
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import Collapse from "@mui/material/Collapse";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import Typography from "@mui/material/Typography";
+import { usePrincipalState } from "../../store/usePrincipalState";
 
 function MyPage() {
     const [open, setOpen] = useState(false);
-
+    const { isLoggedIn, logout } = usePrincipalState();
     const handleClick = () => {
         setOpen(!open);
     };
 
     return (
+        isLoggedIn ? 
         <>
             <Container
                 sx={{
@@ -120,9 +123,15 @@ function MyPage() {
                             </ListItemButton>
                         </List>
                     </Collapse>
+                    <ListItemButton onClick={logout}>
+                        <ListItemIcon>
+                            <LogoutIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="로그아웃" />
+                    </ListItemButton>
                 </List>
             </Container>
-        </>
+        </> :  window.location.href = "/oauth2/signin"
     );
 }
 
