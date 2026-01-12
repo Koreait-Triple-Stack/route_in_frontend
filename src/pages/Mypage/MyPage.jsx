@@ -12,9 +12,10 @@ import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import Collapse from "@mui/material/Collapse";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
+import Typography from "@mui/material/Typography";
 
 function MyPage() {
-    const [open, setOpen] = useState(true);
+    const [open, setOpen] = useState(false);
 
     const handleClick = () => {
         setOpen(!open);
@@ -30,6 +31,7 @@ function MyPage() {
                     sx={{
                         width: "100%",
                         maxWidth: 360,
+                        minWidth: 300,
                         bgcolor: "background.paper",
                         overflow: "hidden",
                         border: "1px solid #dbdbdb",
@@ -43,7 +45,15 @@ function MyPage() {
                             마이 프로필
                         </ListSubheader>
                     }>
-                    <Box sx={{padding: "0 16px"}}>
+                    <Box
+                        sx={{
+                            padding: "0 0 10px 16px",
+                            display: "flex",
+                            justifyContent: "start",
+                            alignItems: "center",
+                            gap: "10px",
+                            boxSizing: "border-box",
+                        }}>
                         <Box
                             component="img"
                             src="https://firebasestorage.googleapis.com/v0/b/board-study-26e00.firebasestorage.app/o/profile-img%2F40aaf171-5eae-4e81-96af-a89730616960_jpeg?alt=media&token=86b09376-18b3-49a9-881d-2b5ae5a728eb"
@@ -54,7 +64,13 @@ function MyPage() {
                                 borderRadius: "50%",
                             }}
                         />
-                        <Box></Box>
+                        <Box sx={{ display: "flex", flexDirection: "column" }}>
+                            <Typography variant="h6">홍길동</Typography>
+                            <Typography variant="span">
+                                남성 • 서울시 강남구
+                            </Typography>
+                            <Typography variant="span">177cm / 80kg</Typography>
+                        </Box>
                     </Box>
 
                     <ListItemButton>
