@@ -1,7 +1,7 @@
 import React from 'react';
 import { Container, Typography, Box, Paper, Stack, Button } from '@mui/material';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import ScheduleItem from '../../components/ScheduleItem/ScheduleItem';
+import ScheduleItem from '../components/ScheduleItem';
 
 const MainPage = () => {
   return (

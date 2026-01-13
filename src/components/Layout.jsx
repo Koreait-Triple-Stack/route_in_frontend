@@ -1,7 +1,8 @@
 import React from "react";
 /** @jsxImportSource @emotion/react */
 import { Box, Container } from "@mui/system";
-import BasicBottomNav from "../BasicBottomNav/BasicBottomNav";
+import BasicBottomNav from "./BasicBottomNav";
+
 
 function Layout({ children }) {
     return (
