@@ -5,7 +5,7 @@ import ListItemText from "@mui/material/ListItemText";
 import ListSubheader from "@mui/material/ListSubheader";
 import { Box, Container } from "@mui/system";
 import SendIcon from "@mui/icons-material/Send";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import DraftsIcon from "@mui/icons-material/Drafts";
 import InboxIcon from "@mui/icons-material/Inbox";
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -15,16 +15,28 @@ import Collapse from "@mui/material/Collapse";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import Typography from "@mui/material/Typography";
 import { usePrincipalState } from "../store/usePrincipalState";
+import { useNavigate } from "react-router-dom";
 
 function MyPage() {
+    const navigate = useNavigate();
     const [open, setOpen] = useState(false);
-    const { isLoggedIn, logout } = usePrincipalState();
+    const { isLoggedIn, logout, principal, loading } = usePrincipalState();
+
     const handleClick = () => {
         setOpen(!open);
     };
 
+    useEffect(() => {
+        if (!isLoggedIn) {
+            window.location.href = "/oauth2/signin";
+        }
+    }, [isLoggedIn, navigate]);
+
+    if (!isLoggedIn || loading) {
+        return <></>; 
+    }
+
     return (
-        isLoggedIn ? 
         <>
             <Container
                 sx={{
@@ -68,11 +80,11 @@ function MyPage() {
                             }}
                         />
                         <Box sx={{ display: "flex", flexDirection: "column" }}>
-                            <Typography variant="h6">홍길동</Typography>
-                            <Typography variant="span">
-                                남성 • 서울시 강남구
+                            <Typography variant="h6">{principal?.username}</Typography>
+                            <Typography variant="h8">
+                                {principal?.gender} • {principal?.address?.baseAddress}
                             </Typography>
-                            <Typography variant="span">177cm / 80kg</Typography>
+                            <Typography variant="h8">{principal?.height} / {principal?.weight}</Typography>
                         </Box>
                     </Box>
 
@@ -131,7 +143,7 @@ function MyPage() {
                     </ListItemButton>
                 </List>
             </Container>
-        </> :  window.location.href = "/oauth2/signin"
+        </>
     );
 }
 

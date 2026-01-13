@@ -8,7 +8,8 @@ import LandingPage from "../pages/LandingPage";
 import { usePrincipalState } from "../store/usePrincipalState";
 import BoardListPage from "../pages/BoardListPage";
 import NotificationPage from "../pages/NotificationPage";
-import BoardRouter from "./BoardRouter";
+import { getPrincipal } from "../apis/account/accountApi";
+import { useQuery } from "@tanstack/react-query";
 
 const RootRoute = () => {
   const { isLoggedIn } = usePrincipalState();
@@ -16,16 +17,23 @@ const RootRoute = () => {
 };
 
 function MainRouter() {
-    const { login } = usePrincipalState();
-
-  // ★ [중요] 새로고침 해도 로그인 유지되게 하는 코드
-  // 앱이 처음 켜질 때 localStorage를 확인해서 토큰이 있으면 로그인 상태로 바꿈
-  useEffect(() => {
-    const token = localStorage.getItem("AccessToken");
-    if (token) {
-      login({ token: token }); // Zustand 상태를 true로 변경
+    const accessToken = localStorage.getItem("AccessToken");
+    const { principal, loading, login, logout, setLoading } = usePrincipalState();
+    const { data, isLoading, refetch } = useQuery({
+        queryKey: ["getPrincipal"],
+        queryFn: getPrincipal,
+        refetch: 1,
+        enabled: !!accessToken,
+    });
+    useEffect(() => {
+        if (data?.data.status === "success") {
+            login(data?.data.data);
         }
-    }, [login]);
+    }, [data, login]);
+    useEffect(() => {
+        setLoading(isLoading);
+    }, [isLoading]);
+
     return (
         <>
             <Layout>
