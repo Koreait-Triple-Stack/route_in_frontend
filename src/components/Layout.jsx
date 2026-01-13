@@ -14,6 +14,7 @@ function Layout({ children }) {
                 flexDirection: "column",
                 alignItems: "center",
                 justifyContent: "center",
+                pt: 3,
                 pb: 8
             }}>
             <Box sx={{ flex: 1, overflowY: "auto" }}>{children}</Box>
