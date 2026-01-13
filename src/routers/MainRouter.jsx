@@ -8,6 +8,7 @@ import LandingPage from "../pages/LandingPage";
 import { usePrincipalState } from "../store/usePrincipalState";
 import BoardListPage from "../pages/BoardListPage";
 import NotificationPage from "../pages/NotificationPage";
+import BoardRouter from "./BoardRouter";
 
 const RootRoute = () => {
   const { isLoggedIn } = usePrincipalState();
@@ -31,6 +32,7 @@ function MainRouter() {
                 <Routes>
                     <Route path="/" element={<RootRoute />} />
                     <Route path="/board" element={<BoardListPage />} />
+                    <Route path="/board/*" element={<BoardRouter />} />
                     <Route path="/notification" element={<NotificationPage />} />
                     <Route path="/mypage" element={<MyPage />} />
                     <Route path="/oauth2/*" element={<OAuth2Router />} />
