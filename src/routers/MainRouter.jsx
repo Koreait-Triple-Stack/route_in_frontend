@@ -1,15 +1,16 @@
 import React, { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import Layout from "../components/Layout";
-import MainPage from "../pages/MainPage";
-import MyPage from "../pages/MyPage";
+import MainPage from "../pages/MainPage/MainPage";
+import MyPage from "../pages/MyPage/MyPage";
 import OAuth2Router from "./OAuth2Router";
-import LandingPage from "../pages/LandingPage";
+import LandingPage from "../pages/LandingPage/LandingPage";
 import { usePrincipalState } from "../store/usePrincipalState";
-import BoardListPage from "../pages/BoardListPage";
-import NotificationPage from "../pages/NotificationPage";
+import BoardListPage from "../pages/BoardListPage/BoardListPage";
+import NotificationPage from "../pages/NotificationPage/NotificationPage";
 import { getPrincipal } from "../apis/account/accountApi";
 import { useQuery } from "@tanstack/react-query";
+import BoardRouter from "./BoardRouter";
 
 const RootRoute = () => {
   const { isLoggedIn } = usePrincipalState();
@@ -39,7 +40,6 @@ function MainRouter() {
             <Layout>
                 <Routes>
                     <Route path="/" element={<RootRoute />} />
-                    <Route path="/board" element={<BoardListPage />} />
                     <Route path="/board/*" element={<BoardRouter />} />
                     <Route path="/notification" element={<NotificationPage />} />
                     <Route path="/mypage" element={<MyPage />} />
