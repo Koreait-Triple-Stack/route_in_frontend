@@ -15,20 +15,18 @@ const OAuth2SignupPage = () => {
   const open = useDaumPostcodePopup();
 
   const [formData, setFormData] = useState({
-    nickname: '',
+    username: '',
     birthDate: '',
     gender: '',
-    // 주소 관련 상태 3개로 분리
-    zipCode: '',       // 우편번호
-    addressBasic: '',  // 기본주소 (자동입력)
-    addressDetail: '', // 상세주소 (직접입력)
+    zipCode: '',       
+    addressBasic: '',  
+    addressDetail: '', 
     height: '',
     weight: ''
   });
 
   const [errors, setErrors] = useState({});
 
-  // 2. 주소 검색 완료 핸들러
   const handleAddressComplete = (data) => {
     let fullAddress = data.address;
     let extraAddress = '';
@@ -43,21 +41,18 @@ const OAuth2SignupPage = () => {
       fullAddress += (extraAddress !== '' ? ` (${extraAddress})` : '');
     }
 
-    // 상태 업데이트 (우편번호, 기본주소)
     setFormData(prev => ({
       ...prev,
       zipCode: data.zonecode,
       addressBasic: fullAddress,
-      addressDetail: '' // 주소가 바뀌면 상세주소 초기화 (선택사항)
+      addressDetail: '' 
     }));
     
-    // 주소 에러 초기화
     if(errors.address) {
       setErrors(prev => ({ ...prev, address: '' }));
     }
   };
 
-  // 주소 검색 버튼 클릭 시 실행
   const handleAddressSearch = () => {
     open({ onComplete: handleAddressComplete });
   };
