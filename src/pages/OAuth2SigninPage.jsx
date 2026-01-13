@@ -9,8 +9,8 @@ import MenuIcon from '@mui/icons-material/Menu';
 // [변경] Zustand 스토어 import (파일 경로를 실제 위치로 맞춰주세요)
 // 예: src/stores/PrincipalStore.js
 
-import { oAuth2SigninRequest } from '../../apis/oAuth2/oAuth2Api'; 
-import { usePrincipalState } from '../../store/usePrincipalState';
+import { oAuth2SigninRequest } from '../apis/oAuth2/oAuth2Api'; 
+import { usePrincipalState } from '../store/usePrincipalState';
 
 const OAuth2SigninPage = () => {
   const navigate = useNavigate();
