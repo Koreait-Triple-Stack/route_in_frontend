@@ -5,7 +5,7 @@ import {
   MenuItem, Select, FormControl, FormHelperText, InputAdornment, Stack 
 } from '@mui/material';
 import { useDaumPostcodePopup } from 'react-daum-postcode'; // 라이브러리 import
-import { oAuth2SignupRequest } from '../apis/oAuth2/oAuth2Api';
+import { oAuth2SignupRequest } from '../../apis/oAuth2/oAuth2Api';
 
 const OAuth2SignupPage = () => {
   const navigate = useNavigate();

@@ -14,7 +14,7 @@ import ExpandMore from "@mui/icons-material/ExpandMore";
 import Collapse from "@mui/material/Collapse";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import Typography from "@mui/material/Typography";
-import { usePrincipalState } from "../store/usePrincipalState";
+import { usePrincipalState } from "../../store/usePrincipalState";
 import { useNavigate } from "react-router-dom";
 
 function MyPage() {

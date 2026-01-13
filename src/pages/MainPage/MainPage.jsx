@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Container, Typography, Box, Paper, Stack, Button } from '@mui/material';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import ScheduleItem from '../components/ScheduleItem';
-import { usePrincipalState } from '../store/usePrincipalState';
+import ScheduleItem from '../../components/ScheduleItem';
+import { usePrincipalState } from '../../store/usePrincipalState';
 
 const MainPage = () => {
   const { principal } = usePrincipalState()
