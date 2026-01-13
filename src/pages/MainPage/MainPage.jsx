@@ -1,11 +1,19 @@
 import React, { useState } from 'react';
 import { Container, Typography, Box, Paper, Stack, Button } from '@mui/material';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import ScheduleItem from '../../components/ScheduleItem';
 import { usePrincipalState } from '../../store/usePrincipalState';
+import { getRoutineByUserIdRequest } from '../../apis/routine/routineApi';
 
 const MainPage = () => {
   const { principal } = usePrincipalState()
+  const { data, isLoading } = useQuery({
+      queryKey: ["getRoutineByUserId"],
+      queryFn: () => getRoutineByUserIdRequest(principal?.userId),
+      enabled: !!principal,
+      refetch: 1,
+  });
 
   return (
     <Container maxWidth="sm" sx={{ py: 3 }}>
@@ -21,13 +29,13 @@ const MainPage = () => {
         </Stack>
         
         <Stack spacing={1.5}>
-          <ScheduleItem day="월요일" activity={principal?.currentRun} />
-          <ScheduleItem day="화요일" />
-          <ScheduleItem day="수요일" />
-          <ScheduleItem day="목요일" />
-          <ScheduleItem day="금요일" />
-          <ScheduleItem day="토요일" />
-          <ScheduleItem day="일요일" />
+          <ScheduleItem day="월요일" activity={data?.data?.data?.monday} />
+          <ScheduleItem day="화요일" activity={data?.data?.data?.tuesday}/>
+          <ScheduleItem day="수요일" activity={data?.data?.data?.wednesday}/>
+          <ScheduleItem day="목요일" activity={data?.data?.data?.thursday}/>
+          <ScheduleItem day="금요일" activity={data?.data?.data?.friday}/>
+          <ScheduleItem day="토요일" activity={data?.data?.data?.saturday}/>
+          <ScheduleItem day="일요일" activity={data?.data?.data?.sunday}/>
         </Stack>
       </Box>
 
