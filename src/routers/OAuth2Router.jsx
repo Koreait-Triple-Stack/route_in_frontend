@@ -1,7 +1,7 @@
 import React from 'react'
 import { Route, Routes } from 'react-router-dom'
-import OAuth2SignupPage from "../pages/OAuth2SignupPage/OAuth2SignupPage"
-import OAuth2SigninPage from "../pages/OAuth2SigninPage/OAuth2SigninPage"
+import OAuth2SignupPage from "../pages/OAuth2SignupPage"
+import OAuth2SigninPage from "../pages/OAuth2SigninPage"
 
 function OAuth2Router() {
   return (

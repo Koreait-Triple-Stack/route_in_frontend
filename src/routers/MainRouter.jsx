@@ -1,13 +1,13 @@
 import React, { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
-import Layout from "../components/Layout/Layout";
-import MainPage from "../pages/MainPage/MainPage";
-import MyPage from "../pages/Mypage/MyPage";
+import Layout from "../components/Layout";
+import MainPage from "../pages/MainPage";
+import MyPage from "../pages/MyPage";
 import OAuth2Router from "./OAuth2Router";
-import LandingPage from "../pages/LandingPage/LandingPage";
+import LandingPage from "../pages/LandingPage";
 import { usePrincipalState } from "../store/usePrincipalState";
-import BoardListPage from "../pages/BoardListPage/BoardListPage";
-import NotificationPage from "../pages/NotificationPage/NotificationPage";
+import BoardListPage from "../pages/BoardListPage";
+import NotificationPage from "../pages/NotificationPage";
 
 const RootRoute = () => {
   const { isLoggedIn } = usePrincipalState();
