@@ -17,10 +17,10 @@ export const getPrincipal = async () => {
 };
 
 export const getUserByUserIdRequest = async (userId) => {
-    instance.interceptors.request.use(
+             instance.interceptors.request.use(
     (config) => {
         const accessToken = localStorage.getItem("AccessToken");
-        if (accessToken) {
+        if (accessToken) {           
             config.headers.Authorization = `Bearer ${accessToken}`;
         }
         return config;
