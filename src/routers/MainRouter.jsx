@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import Layout from "../components/Layout";
 import MainPage from "../pages/MainPage/MainPage";
-import MyPage from "../pages/MyPage/MyPage";
 import OAuth2Router from "./OAuth2Router";
 import LandingPage from "../pages/LandingPage/LandingPage";
 import { usePrincipalState } from "../store/usePrincipalState";
@@ -30,8 +29,8 @@ function MainRouter() {
         enabled: !!accessToken,
     });
     useEffect(() => {
-        if (data?.data.status === "success") {
-            login(data?.data.data);
+        if (data?.status === "success") {
+            login(data?.data);
         }
     }, [data, login]);
     useEffect(() => {

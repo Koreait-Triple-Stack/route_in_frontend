@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Container, Typography, Box, Paper, Stack, Button } from '@mui/material';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -29,13 +29,13 @@ const MainPage = () => {
         </Stack>
         
         <Stack spacing={1.5}>
-          <ScheduleItem day="월요일" activity={data?.data?.data?.monday} />
-          <ScheduleItem day="화요일" activity={data?.data?.data?.tuesday}/>
-          <ScheduleItem day="수요일" activity={data?.data?.data?.wednesday}/>
-          <ScheduleItem day="목요일" activity={data?.data?.data?.thursday}/>
-          <ScheduleItem day="금요일" activity={data?.data?.data?.friday}/>
-          <ScheduleItem day="토요일" activity={data?.data?.data?.saturday}/>
-          <ScheduleItem day="일요일" activity={data?.data?.data?.sunday}/>
+          <ScheduleItem day="월요일" activities={['러닝 5km', '저녁 산책 30분']} />
+          <ScheduleItem day="화요일" activity="휴식" />
+          <ScheduleItem day="수요일" activity="가슴" />
+          <ScheduleItem day="목요일" activity="휴식" />
+          <ScheduleItem day="금요일" activity="하체" />
+          <ScheduleItem day="토요일" activity="팔" />
+          <ScheduleItem day="일요일" activity="휴식" />
         </Stack>
       </Box>
 

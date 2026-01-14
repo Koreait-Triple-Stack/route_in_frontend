@@ -54,11 +54,11 @@ const AddressForm = ({ userId, onClose }) => {
             ...addressInputValue
         })
         .then((response) => {
-            if (response.data.status === "success") {
-                alert(response.data.message);
+            if (response.status === "success") {
+                alert(response.message);
                 onClose(); 
             } else {
-                alert(response.data.message);
+                alert(response.message);
             }
         })
         .catch(() => alert("오류가 발생했습니다."));
