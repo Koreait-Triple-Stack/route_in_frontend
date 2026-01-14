@@ -12,6 +12,7 @@ import { getPrincipal } from "../apis/account/accountApi";
 import { useQuery } from "@tanstack/react-query";
 import BoardRouter from "./BoardRouter";
 import MapView from "../pages/MapView";
+import MyPageRouter from "./MyPageRouter";
 
 const RootRoute = () => {
     const { isLoggedIn } = usePrincipalState();
@@ -43,11 +44,8 @@ function MainRouter() {
                 <Routes>
                     <Route path="/" element={<RootRoute />} />
                     <Route path="/board/*" element={<BoardRouter />} />
-                    <Route
-                        path="/notification"
-                        element={<NotificationPage />}
-                    />
-                    <Route path="/mypage" element={<MyPage />} />
+                    <Route path="/notification" element={<NotificationPage />} />
+                    <Route path="/mypage/*" element={<MyPageRouter />} />
                     <Route path="/oauth2/*" element={<OAuth2Router />} />
                     <Route path="/aaa" element={<MainPage />} />
                     <Route path="/map" element={<MapView />} />
