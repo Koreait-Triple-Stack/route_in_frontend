@@ -60,10 +60,10 @@ export default function InbodyChartWithActions() {
     if (!principal?.userId) return;
 
     getInBodyListByUserIdRequest(principal.userId).then((response) => {
-      if (response.data.status === "success") {
-        setInBodyList(response.data.data); 
+      if (response.status === "success") {
+        setInBodyList(response.data); 
       } else {
-        alert(response.data.message);
+        alert(response.message);
       }
     });
   };
@@ -106,12 +106,12 @@ export default function InbodyChartWithActions() {
       monthDt: inputValues.monthDt
     })
     .then((response) => {
-      if (response.data.status === "success") {
+      if (response.status === "success") {
           alert("추가되었습니다.");
           handleAddClose(); 
           fetchInBodyData(); 
       } else {
-          alert(response.data.message);
+          alert(response.message);
       }
     })
     .catch(() => alert("오류가 발생했습니다."));
@@ -120,22 +120,29 @@ export default function InbodyChartWithActions() {
   const handleDeleteData = (inBodyId) => {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
     
-    deleteInBodyRequest(inBodyId)
+    deleteInBodyRequest({
+      inBodyId: inBodyId,
+      userId: principal?.userId
+    })
     .then((response) => {
-      if (response.data.status === "success") {
+      if (response.status === "success") {
           alert("삭제되었습니다.");
           handleAddClose();
           handleDeleteClose();
           fetchInBodyData(); 
       } else {
-          alert(response.data.message);
+          alert(response.message);
       }
     })
     .catch(() => alert("오류가 발생했습니다."));
   };
 
+  const recentData = [...inBodyList]
+    .sort((a, b) => new Date(a.monthDt) - new Date(b.monthDt))
+    .slice(-4);
+
   return (
-    <Box sx={{ width: '100%', p: 2, bgcolor: '#fff', borderRadius: 2, boxShadow: 1 }}>
+    <Box sx={{ width: 500, p: 2, bgcolor: '#fff', borderRadius: 2, boxShadow: 1 }}>
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
         <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
           인바디 변화 기록
@@ -160,15 +167,15 @@ export default function InbodyChartWithActions() {
           </Button>
         </Stack>
       </Stack>
-
+    
       <Box sx={{ width: 500, height: 350 }}>
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={inBodyList} margin={{ top: 20, right: 30, left: 10 }}>
+        <ResponsiveContainer width="100%" height="100%" >
+          <LineChart data={recentData} margin={{ top: 20, right: 30, left: 10, bottom: 20 }}>
             <CartesianGrid strokeDasharray="3 3" vertical={false} />
-            <XAxis dataKey="monthDt" padding={{ left: 30, right: 30 }} />
+            <XAxis dataKey="monthDt" padding={{ left: 30, right: 30 }} interval={0} dy={20} />
             <YAxis hide domain={['auto', 'auto']} />
             <Tooltip />
-            <Legend verticalAlign="top" height={36}/>
+            <Legend verticalAlign="top" height={36} />
             <Line type="linear" dataKey="bodyWeight" name="체중" stroke="#2196f3" strokeWidth={2} activeDot={{ r: 6 }} label={<CustomizedLabel />} />
             <Line type="linear" dataKey="skeletalMuscleMass" name="골격근량" stroke="#00c853" strokeWidth={2} activeDot={{ r: 6 }} label={<CustomizedLabel />} />
             <Line type="linear" dataKey="bodyFatMass" name="체지방량" stroke="#f44336" strokeWidth={2} activeDot={{ r: 6 }} label={<CustomizedLabel />} />
@@ -176,7 +183,7 @@ export default function InbodyChartWithActions() {
         </ResponsiveContainer>
       </Box>
       <Dialog open={deleteOpen} onClose={handleDeleteClose} fullWidth maxWidth="xs">
-        <DialogTitle>기록 삭제</DialogTitle>
+        <DialogTitle>인바디 정보 삭제</DialogTitle>
         <DialogContent dividers>
           {inBodyList.length === 0 ? (
             <Typography align="center" color="text.secondary">기록된 데이터가 없습니다.</Typography>
