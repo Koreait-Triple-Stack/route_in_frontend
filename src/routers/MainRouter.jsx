@@ -15,13 +15,14 @@ import MapView from "../pages/MapView";
 import MyPageRouter from "./MyPageRouter";
 
 const RootRoute = () => {
-  const { isLoggedIn } = usePrincipalState();
-  return isLoggedIn ? <MainPage /> : <LandingPage />;
+    const { isLoggedIn } = usePrincipalState();
+    return isLoggedIn ? <MainPage /> : <LandingPage />;
 };
 
 function MainRouter() {
     const accessToken = localStorage.getItem("AccessToken");
-    const { principal, loading, login, logout, setLoading } = usePrincipalState();
+    const { principal, loading, login, logout, setLoading } =
+        usePrincipalState();
     const { data, isLoading, refetch } = useQuery({
         queryKey: ["getPrincipal"],
         queryFn: getPrincipal,

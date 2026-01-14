@@ -5,9 +5,7 @@ import {
     ToggleButtonGroup,
 } from "@mui/material";
 import { Box, Grid } from "@mui/system";
-import React from "react";
 import { EXERCISE_TAGS } from "../../constants/exerciseTags";
-import CheckIcon from "@mui/icons-material/Check";
 
 function FilterBox({
     type,
