@@ -56,13 +56,6 @@ export default function CourseMiniBar({
                     </IconButton>
                 </Stack>
             </Stack>
-
-            <Typography
-                variant="caption"
-                color="text.secondary"
-                sx={{ display: "block", mt: 0.5 }}>
-                지도 클릭 → 경유지 추가 (START/END만 표시)
-            </Typography>
         </Box>
     );
 }

@@ -1,20 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { loadKakaoMap } from "../apis/utils/useKaKaoMap";
 
-/**
- * @param {{
- *  containerRef: React.RefObject<HTMLElement>,
- *  initialCenter?: {lat:number, lng:number},
- *  level?: number,
- *  polylineColor?: string,
- *  startMarkerColor?: string,
- *  endMarkerColor?: string,
- *  endLabelBgRgba?: string,
- *  startLabelBgRgba?: string,
- * }} params
- */
-
-export function useKakaoCourseEditor({
+export function useCourseMap({
     containerRef,
     initialCenter = { lat: 37.5665, lng: 126.978 },
     level = 4,
