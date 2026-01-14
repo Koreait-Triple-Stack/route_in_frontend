@@ -1,14 +1,16 @@
 import { useRef, useState } from "react";
 import { Box, Paper, Stack, Divider } from "@mui/material";
 
-import { useKakaoCourseEditor } from "../hooks/useKakaoCourseEditor";
 import { useKakaoPlaceSearch } from "../hooks/useKakaoPlaceSearch";
+import { useCourseMap } from "../hooks/useCourseMap";
 
 import CourseMiniBar from "../components/Course/CourseMiniBar";
 import CoursePanel from "../components/Course/CoursePanel";
 import PlaceSearchPanel from "../components/Course/PlaceSearchPanel";
 import CourseSavePanel from "../components/Course/CourseSavePanel";
 import { addCourseRequest } from "../apis/course/courseApi";
+import { addCourse } from "../apis/course/courseService";
+import { buildPayload } from "../apis/course/courseMapper";
 
 export default function MapView() {
     const mapDomRef = useRef(null);
@@ -17,13 +19,8 @@ export default function MapView() {
 
     // 지도/경로 편집 훅
     const { kakaoObj, map, points, setPoints, distanceM, undo, clear } =
-        useKakaoCourseEditor({
+        useCourseMap({
             containerRef: mapDomRef,
-            // polylineColor: "#FF3D00",
-            // startMarkerColor: "#2e7d32",
-            // endMarkerColor: "#3F51B5",
-            // startLabelBgRgba: "rgba(46,125,50,0.95)",
-            // endLabelBgRgba: "rgba(63,81,181,0.95)",
         });
 
     // 검색 훅 (지도만 이동)
@@ -33,48 +30,24 @@ export default function MapView() {
     const [courseName, setCourseName] = useState("");
     const [saving, setSaving] = useState(false);
 
-    const saveCourse = async () => {
-        if (points.length < 2) {
-            alert("경로는 최소 2개 이상의 점이 필요해요.");
+    const saveCourseHandler = async () => {
+        setSaving(true);
+
+        const result = await addCourse(buildPayload({
+            courseName, distanceM, points
+        }))
+
+        setSaving(false);
+        setCourseName("");
+
+        if (!result.ok) {
+            alert("저장에 실패했습니다.")
             return;
         }
 
-        const name = courseName.trim();
-        if (!name) {
-            alert("코스명을 입력해줘.");
-            return;
-        }
-
-        try {
-            setSaving(true);
-
-            const payload = {
-                name,
-                distanceM,
-                points,
-                pointsCount: points.length,
-                centerLat: points[Math.floor(points.length / 2)].lat,
-                centerLng: points[Math.floor(points.length / 2)].lng,
-                isPublic: false,
-            };
-
-            addCourseRequest(payload).then((response) => {
-                if (response.status === "success") {
-                    alert(response.message)
-                } else if (response.status === "failed") {
-                    alert(response.message)
-                }
-            })
-
-            setCourseName("");
-            setPoints([]);
-        } catch (e) {
-            console.error(e);
-            alert("저장 실패: " + (e?.message ?? "unknown"));
-        } finally {
-            setSaving(false);
-        }
-    };
+        alert("저장 성공")
+        console.log(result.data)
+    }
 
     return (
         <Box sx={{ width: "100vw", height: "100vh", position: "relative" }}>
@@ -123,7 +96,7 @@ export default function MapView() {
                         <CourseSavePanel
                             courseName={courseName}
                             setCourseName={setCourseName}
-                            onSave={saveCourse}
+                            onSave={saveCourseHandler}
                             saving={saving}
                             disabled={points.length < 2}
                         />

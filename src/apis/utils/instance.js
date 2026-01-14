@@ -5,7 +5,7 @@ export const instance = axios.create({
     timeout: 15000,
 });
 
-instance.interceptors.request.request.use((config) => {
+instance.interceptors.request.use((config) => {
     const accessToken = localStorage.getItem("AccessToken");
     if (accessToken) config.headers.Authorization = `Bearer ${accessToken}`;
     return config;

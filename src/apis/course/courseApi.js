@@ -1,10 +1,9 @@
 import { instance } from "../utils/instance";
 
 export const addCourseRequest = async (data) => {
-    try {
-        const response = await instance.post("/course/add", data);
-        return response.data;
-    } catch (error) {
-        return error.response;
-    }
+    return instance.post("/course/add", data);
+};
+
+export const getCourseListByUserRequest = async () => {
+    return await instance.get("/course/get/user");
 };
