@@ -11,28 +11,30 @@ function WriteTypePage() {
       sx={{
         display: "flex",
         flexDirection: "column",
-        alignItems:"center",
-        justifyContent:"center",
+        alignItems: "center",
+        justifyContent: "center",
         height: "100vh",
+        overflow: "hidden",
+        width: "100vw",
         bgcolor: "",
-        color: "#111", 
-        boxSizing:"border-box",
-        border: "1px solid #e5e7eb",
+        color: "#111",
+      
       }}
     >
-      <Stack spacing={2} sx={{ width: "100%", maxWidth: "320px" }}>
+      <Stack spacing={2} sx={{ width: "100%", maxWidth: "500px", px: 2 }}>
         <Button
           fullWidth
           variant="contained"
           size="large"
           sx={{
-            py: 1.8,
+            minheight:72,
+            py: 20,
             borderRadius: "12px",
             fontSize: "1.1rem",
             fontWeight: "bold",
             bgcolor: "blue",
           }}
-          onClick={() => navigate("/board/running")}
+          onClick={() => navigate("/board/write/type/running")}
         >
           러닝 코스
         </Button>
@@ -42,15 +44,15 @@ function WriteTypePage() {
           variant="contained"
           size="large"
           sx={{
-            py: 1.8,
+            py: 20,
             borderRadius: "12px",
             fontSize: "1.1rem",
             fontWeight: "bold",
             bgcolor: "blue",
           }}
-          onClick={() => navigate("/board/routine")}
+          onClick={() => navigate("/board/write/type/routine")}
         >
-          운동 루틴 
+          운동 루틴
         </Button>
       </Stack>
     </Box>

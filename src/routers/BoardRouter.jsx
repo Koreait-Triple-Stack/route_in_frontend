@@ -10,8 +10,8 @@ function BoardRouter() {
             <Routes>
                 <Route path="/" element={<BoardListPage />} />
                 <Route path="/write/type" element={<WriteTypePage />} />
-                <Route path="/write/running" element={<RunningWritePage />} />
-                <Route path="/write/routine" element={<RoutineWritePage />} />
+                <Route path="/write/type/running" element={<RunningWritePage />} />
+                <Route path="/write/type/routine" element={<RoutineWritePage />} />
             </Routes>
         </>
     );
