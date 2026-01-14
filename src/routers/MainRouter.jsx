@@ -14,13 +14,14 @@ import BoardRouter from "./BoardRouter";
 import MapView from "../pages/MapView";
 
 const RootRoute = () => {
-  const { isLoggedIn } = usePrincipalState();
-  return isLoggedIn ? <MainPage /> : <LandingPage />;
+    const { isLoggedIn } = usePrincipalState();
+    return isLoggedIn ? <MainPage /> : <LandingPage />;
 };
 
 function MainRouter() {
     const accessToken = localStorage.getItem("AccessToken");
-    const { principal, loading, login, logout, setLoading } = usePrincipalState();
+    const { principal, loading, login, logout, setLoading } =
+        usePrincipalState();
     const { data, isLoading, refetch } = useQuery({
         queryKey: ["getPrincipal"],
         queryFn: getPrincipal,
@@ -42,7 +43,10 @@ function MainRouter() {
                 <Routes>
                     <Route path="/" element={<RootRoute />} />
                     <Route path="/board/*" element={<BoardRouter />} />
-                    <Route path="/notification" element={<NotificationPage />} />
+                    <Route
+                        path="/notification"
+                        element={<NotificationPage />}
+                    />
                     <Route path="/mypage" element={<MyPage />} />
                     <Route path="/oauth2/*" element={<OAuth2Router />} />
                     <Route path="/aaa" element={<MainPage />} />
