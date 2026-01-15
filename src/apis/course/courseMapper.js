@@ -11,11 +11,9 @@ export const buildPayload = ({
         boardId,
         courseName,
         distanceM,
-        centerLat: points[Math.floor(points.length / 2)]?.lat ?? null,
-        centerLng: points[Math.floor(points.length / 2)]?.lng ?? null,
-        si: region.si,
-        gu: region.gu,
-        dong: region.dong,
+        centerLat: (points[0].lat + points[points.length - 1].lat) / 2,
+        centerLng: (points[0].lng + points[points.length - 1].lng) / 2,
+        region,
         points: (points ?? []).map((p, idx) => ({
             seq: idx + 1,
             lat: Number(p.lat),
@@ -35,10 +33,7 @@ export const coordToRegionWithGeocoder = (kakao, lat, lng) =>
             if (!addr) return resolve(null);
 
             resolve({
-                si: addr.region_1depth_name,
-                gu: addr.region_2depth_name,
-                dong: addr.region_3depth_name,
-                fullAddress: addr.address_name, // 필요하면 같이 저장
+                region: addr.address_name, // 필요하면 같이 저장
             });
         });
     });
@@ -57,11 +52,9 @@ export const buildUpdatePayload = ({
     boardId,
     courseName,
     distanceM,
-    centerLat: points[Math.floor(points.length / 2)]?.lat ?? null,
-    centerLng: points[Math.floor(points.length / 2)]?.lng ?? null,
-    si: region.si,
-    gu: region.gu,
-    dong: region.dong,
+    centerLat: (points[0].lat + points[points.length - 1].lat) / 2,
+    centerLng: (points[0].lng + points[points.length - 1].lng) / 2,
+    region,
     points: (points ?? []).map((p, idx) => ({
         seq: idx + 1,
         lat: Number(p.lat),

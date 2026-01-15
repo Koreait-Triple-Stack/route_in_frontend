@@ -5,7 +5,6 @@ import MainPage from "../pages/MainPage/MainPage";
 import OAuth2Router from "./OAuth2Router";
 import LandingPage from "../pages/LandingPage/LandingPage";
 import { usePrincipalState } from "../store/usePrincipalState";
-import BoardListPage from "../pages/BoardListPage/BoardListPage";
 import NotificationPage from "../pages/NotificationPage/NotificationPage";
 import { getPrincipal } from "../apis/account/accountApi";
 import { useQuery } from "@tanstack/react-query";

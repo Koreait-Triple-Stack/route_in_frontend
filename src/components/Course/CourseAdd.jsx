@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import { useKakaoPlaceSearch } from "../../hooks/useKakaoPlaceSearch";
 import { addCourse } from "../../apis/course/courseService";
 import { Box, Stack } from "@mui/system";
@@ -27,7 +27,9 @@ function CourseAdd({ userId, boardId }) {
         mutationKey: ["addCourse"],
         mutationFn: (data) => addCourse(data),
         onSuccess: (response) => {
-            console.log(response);
+            // queryClient.invalidateQueries(["", ""])
+            setCourseName("");
+            clear();
             alert(response.message);
         },
         onError: (error) => {
@@ -48,16 +50,16 @@ function CourseAdd({ userId, boardId }) {
             courseName,
             distanceM,
             points,
-            region: regionInfo,
+            region: regionInfo.region,
         });
 
         mutation.mutate(payload);
     };
 
     return (
-        <Box sx={{ width: "100vw", height: "100vh", position: "relative" }}>
+        <Box sx={{ width: "100vw", height: "calc(100vh - 100px)", position: "relative" }}>
             {/* 지도 */}
-            <Box ref={mapRef} sx={{ width: "100%", height: "100%" }} />
+            <Box ref={mapRef} sx={{ width: "100%", height: "100%", zIndex: 10, overflow: "hidden" }} />
 
             {/* 미니바 + 확장 패널 */}
             <Paper
