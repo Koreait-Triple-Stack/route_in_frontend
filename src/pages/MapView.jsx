@@ -1,30 +1,22 @@
-import { use, useEffect, useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { getCourseFavoriteByUserId } from "../apis/course/courseService";
 import CourseDetail from "../components/Course/CourseDetail";
+import { Box } from "@mui/system";
 
 export default function MapView() {
-    const [course, setCourse] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null)
+    const userId = 20;
+    const {
+        data: course,
+        isLoading,
+        error,
+    } = useQuery({
+        queryKey: ["getCourseFavoriteByUserId", userId],
+        queryFn: () => getCourseFavoriteByUserId(userId),
+        staleTime: 30000,
+    });
 
-    useEffect(() => {
-        (async () => {
-            setLoading(true)
-            setError(null)
+    if (isLoading) return <Box>로딩중...</Box>;
+    if (error) return <Box>{error.message}</Box>;
 
-            const result = await getCourseFavoriteByUserId(20);
-
-            setLoading(false)
-
-            if (!result.ok) {
-                alert("조회 실패");
-                return;
-            }
-
-            setCourse(result?.data?.data ?? null);
-        })();
-    }, []);
-
-    return !!course && <CourseDetail course={course} />;
+    return <CourseDetail course={course.data} />;
 }

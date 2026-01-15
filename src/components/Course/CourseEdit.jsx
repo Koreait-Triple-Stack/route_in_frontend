@@ -13,39 +13,42 @@ import CourseMiniBar from "./CourseMiniBar";
 import CoursePanel from "./CoursePanel";
 import PlaceSearchPanel from "./PlaceSearchPanel";
 import CourseSavePanel from "./CourseSavePanel";
+import { useMutation } from "@tanstack/react-query";
 
 function CourseEdit({ course }) {
     const navigate = useNavigate();
 
-    const {
-        mapRef,
-        kakaoObj,
-        points,
-        setPoints,
-        distanceM,
-        map,
-        undo,
-        clear,
-    } = useCourseMap();
+    const { mapRef, kakaoObj, points, setPoints, distanceM, map, undo, clear } =
+        useCourseMap();
 
     const [panelOpen, setPanelOpen] = useState(false);
     const [region, setRegion] = useState(null);
     const [courseName, setCourseName] = useState("");
 
-    const [saving, setSaving] = useState(false);
-    const [error, setError] = useState(null);
-
     const search = useKakaoPlaceSearch(kakaoObj, map);
 
+    const mutation = useMutation({
+        mutationKey: [""],
+        mutationFn: (data) => updateCourse(data),
+        onSuccess: (response) => {
+            alert(response.message);
+        },
+        onError: (error) => {
+            alert(error.message);
+        },
+    });
+
+    // points 저장
     useEffect(() => {
         setPoints(
-            result.data.points.map((point) => ({
+            course.points.map((point) => ({
                 lat: Number(point.lat),
                 lng: Number(point.lng),
             }))
         );
     }, [course]);
 
+    // center로 이동
     useEffect(() => {
         if (!kakaoObj || !map || !course) return;
 
@@ -62,46 +65,30 @@ function CourseEdit({ course }) {
             setError("포인트를 2개 이상 찍어주세요");
             return;
         }
+        let regionInfo = region;
 
-        setSaving(true);
-        setError(null);
-
-        try {
-            let regionInfo = region;
-
-            if (!regionInfo && points[0]) {
-                regionInfo = await coordToRegionWithGeocoder(
-                    kakaoObj,
-                    points[0].lat,
-                    points[0].lng
-                );
-                setRegion(regionInfo);
-            }
-
-            const result = await updateCourse(
-                buildUpdatePayload({
-                    courseId: course.courseId,
-                    userId: course.userId,
-                    boardId: course.boardId,
-                    courseName,
-                    points,
-                    distanceM,
-                    region: regionInfo,
-                })
+        if (!regionInfo && points[0]) {
+            regionInfo = await coordToRegionWithGeocoder(
+                kakaoObj,
+                points[0].lat,
+                points[0].lng
             );
-
-            if (!result.ok) {
-                setError(result.message);
-                return;
-            }
-
-            alert("수정 완료");
-            navigate(-1);
-        } catch (e) {
-            setError(e?.message ?? "수정 중 오류가 발생했습니다");
-        } finally {
-            setSaving(false);
+            setRegion(regionInfo);
+            alert("지역 정보 저장에 실패했습니다.")
+            return;
         }
+
+        const payload = buildUpdatePayload({
+            courseId: course.courseId,
+            userId: course.userId,
+            boardId: course.boardId,
+            courseName,
+            points,
+            distanceM,
+            region: regionInfo,
+        });
+
+        mutation.mutate(payload)
     };
 
     return (
@@ -150,8 +137,7 @@ function CourseEdit({ course }) {
                         <CourseSavePanel
                             courseName={courseName}
                             setCourseName={setCourseName}
-                            onSave={handleUpdate} // ✅ 수정 저장 연결
-                            saving={saving}
+                            onSave={handleUpdate}
                             disabled={points.length < 2}
                         />
 

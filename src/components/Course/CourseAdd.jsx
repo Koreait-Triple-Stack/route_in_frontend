@@ -12,6 +12,7 @@ import {
     buildPayload,
     coordToRegionWithGeocoder,
 } from "../../apis/course/courseMapper";
+import { useMutation } from "@tanstack/react-query";
 
 function CourseAdd({ userId, boardId }) {
     const { mapRef, kakaoObj, points, distanceM, map, undo, clear } =
@@ -20,17 +21,21 @@ function CourseAdd({ userId, boardId }) {
     const [panelOpen, setPanelOpen] = useState(false);
     const [courseName, setCourseName] = useState("");
 
-    const [saving, setSaving] = useState(false);
-
     const search = useKakaoPlaceSearch(kakaoObj, map);
 
-    useEffect(() => {
-        console.log(courseName)
-    }, [courseName])
+    const mutation = useMutation({
+        mutationKey: ["addCourse"],
+        mutationFn: (data) => addCourse(data),
+        onSuccess: (response) => {
+            console.log(response);
+            alert(response.message);
+        },
+        onError: (error) => {
+            alert(error.message);
+        },
+    });
 
     const saveCourseHandler = async () => {
-        setSaving(true);
-
         const regionInfo = await coordToRegionWithGeocoder(
             kakaoObj,
             points[0].lat,
@@ -45,20 +50,8 @@ function CourseAdd({ userId, boardId }) {
             points,
             region: regionInfo,
         });
-        console.log(payload)
-        const result = await addCourse(payload);
 
-
-        setSaving(false);
-        setCourseName("");
-
-        if (!result.ok) {
-            alert("저장에 실패했습니다.");
-            return;
-        }
-
-        alert("저장 성공");
-        console.log(result.data);
+        mutation.mutate(payload);
     };
 
     return (
@@ -109,7 +102,6 @@ function CourseAdd({ userId, boardId }) {
                             courseName={courseName}
                             setCourseName={setCourseName}
                             onSave={saveCourseHandler}
-                            saving={saving}
                             disabled={points.length < 2}
                         />
                     </Stack>

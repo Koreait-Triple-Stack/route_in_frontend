@@ -57,7 +57,6 @@ function CourseDetail({ course }) {
                     width: { xs: "calc(100% - 24px)", sm: 360 },
                     borderRadius: 3,
                     overflow: "hidden",
-                    zIndex: 10
                 }}>
                 <Typography variant="h6" fontWeight={700} gutterBottom>
                     코스 조회
