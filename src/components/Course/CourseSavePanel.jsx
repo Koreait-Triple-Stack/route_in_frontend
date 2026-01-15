@@ -5,7 +5,6 @@ export default function CourseSavePanel({
     courseName,
     setCourseName,
     onSave,
-    saving,
     disabled,
 }) {
     return (
@@ -27,10 +26,9 @@ export default function CourseSavePanel({
                 variant="contained"
                 color="warning"
                 onClick={onSave}
-                disabled={disabled || saving}
+                disabled={disabled}
                 startIcon={<SaveIcon />}
                 fullWidth>
-                {saving ? "저장중..." : "저장"}
             </Button>
         </Stack>
     );
