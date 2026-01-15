@@ -1,10 +1,32 @@
 import { useCourseMap } from "../../hooks/useCourseMap";
 import { useEffect } from "react";
-import { Alert, Button, Paper, Typography } from "@mui/material";
+import { Divider, Paper, Typography } from "@mui/material";
 import { Box, Stack } from "@mui/system";
 
+function DetailRow({ courseName, value, valueColor }) {
+    return (
+        <Box
+            sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                py: 0.8,
+            }}>
+            <Typography variant="body1" sx={{ color: "text.secondary" }}>
+                {courseName}
+            </Typography>
+
+            <Typography
+                variant="body1"
+                sx={{ fontWeight: 600, color: valueColor ?? "text.primary" }}>
+                {valueColor ? value/1000 + "km" : value}
+            </Typography>
+        </Box>
+    );
+}
+
 function CourseDetail({ course }) {
-    const { kakaoObj, mapRef, map, setPoints, points, distanceM } = useCourseMap({
+    const { kakaoObj, mapRef, map, setPoints } = useCourseMap({
         enableClickAdd: false,
     });
 
@@ -43,47 +65,60 @@ function CourseDetail({ course }) {
     }
 
     return (
-        <Box sx={{ width: "100vw", height: "100vh", position: "relative" }}>
-            {/* Map */}
-            <Box ref={mapRef} sx={{ width: "100%", height: "100%", zIndex: 0 }} />
-
-            {/* Overlay Panel */}
-            <Paper
-                elevation={6}
+        <Paper
+            elevation={0}
+            sx={{
+                borderRadius: 2,
+                overflow: "hidden", // 카드 안에서 지도/영역 깔끔하게 자르기
+                bgcolor: "#F3F8FF",
+                border: "1px solid",
+                borderColor: "divider",
+                width: "100%",
+                maxWidth: 520,
+                mx: "auto",
+            }}>
+            {/* 지도 영역 */}
+            <Box
                 sx={{
-                    position: "absolute",
-                    left: 12,
-                    top: 12,
-                    width: { xs: "calc(100% - 24px)", sm: 360 },
-                    borderRadius: 3,
-                    overflow: "hidden",
+                    position: "relative",
+                    width: "100%",
+                    height: { xs: 220, sm: 280 }, // 높이 필수
+                    bgcolor: "grey.200",
                 }}>
-                <Typography variant="h6" fontWeight={700} gutterBottom>
-                    코스 조회
-                </Typography>
+                {/* 여기 ref에 카카오맵이 렌더됨 */}
+                <Box
+                    ref={mapRef}
+                    sx={{
+                        position: "absolute",
+                        inset: 0,
+                    }}
+                />
+            </Box>
 
-                <Stack spacing={1}>
-                    <Typography variant="body2">
-                        코스명: <b>{course.courseName}</b>
-                    </Typography>
-                    <Typography variant="body2">
-                        포인트: <b>{points.length}</b>개
+            {/* 코스 정보 영역 */}
+            <Box sx={{ p: { xs: 2, sm: 2.5 } }}>
+                <Stack spacing={1.2}>
+                    <Typography
+                        variant="h6"
+                        sx={{
+                            fontWeight: 800,
+                            lineHeight: 1.2,
+                            wordBreak: "keep-all",
+                        }}>
+                        {course.courseName ? course.courseName : "-"}
                     </Typography>
 
-                    <Stack
-                        direction="row"
-                        spacing={1}
-                        sx={{ mt: 1, flexWrap: "wrap" }}>
-                        <Button
-                            // component={RouterLink}
-                            to={`/course/edit/${course.courseId}`}
-                            variant="contained">
-                            수정하러 가기
-                        </Button>
-                    </Stack>
+                    <Divider />
+
+                    <DetailRow
+                        label="거리"
+                        value={course.distanceM}
+                        valueColor="primary.main"
+                    />
+                    <DetailRow label="지역" value={course.region} />
                 </Stack>
-            </Paper>
-        </Box>
+            </Box>
+        </Paper>
     );
 }
 

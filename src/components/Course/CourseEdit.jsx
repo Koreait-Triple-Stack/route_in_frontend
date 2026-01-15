@@ -6,14 +6,14 @@ import {
     coordToRegionWithGeocoder,
 } from "../../apis/course/courseMapper";
 import { updateCourse } from "../../apis/course/courseService";
-import { Box, padding, Stack } from "@mui/system";
+import { Box, Stack } from "@mui/system";
 import { useKakaoPlaceSearch } from "../../hooks/useKakaoPlaceSearch";
-import { Alert, Divider, Paper } from "@mui/material";
+import { Divider, Paper } from "@mui/material";
 import CourseMiniBar from "./CourseMiniBar";
 import CoursePanel from "./CoursePanel";
 import PlaceSearchPanel from "./PlaceSearchPanel";
 import CourseSavePanel from "./CourseSavePanel";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 function CourseEdit({ course }) {
     const navigate = useNavigate();
@@ -25,12 +25,17 @@ function CourseEdit({ course }) {
     const [region, setRegion] = useState(null);
     const [courseName, setCourseName] = useState("");
 
+    const queryClient = useQueryClient();
+
     const search = useKakaoPlaceSearch(kakaoObj, map);
 
     const mutation = useMutation({
-        mutationKey: [""],
+        mutationKey: ["updateCourse"],
         mutationFn: (data) => updateCourse(data),
         onSuccess: (response) => {
+            // queryClient.invalidateQueries(["", ""])
+            setCourseName("");
+            clear();
             alert(response.message);
         },
         onError: (error) => {
@@ -40,6 +45,7 @@ function CourseEdit({ course }) {
 
     // points 저장
     useEffect(() => {
+        setCourseName(course.courseName)
         setPoints(
             course.points.map((point) => ({
                 lat: Number(point.lat),
@@ -74,8 +80,6 @@ function CourseEdit({ course }) {
                 points[0].lng
             );
             setRegion(regionInfo);
-            alert("지역 정보 저장에 실패했습니다.")
-            return;
         }
 
         const payload = buildUpdatePayload({
@@ -85,16 +89,30 @@ function CourseEdit({ course }) {
             courseName,
             points,
             distanceM,
-            region: regionInfo,
+            region: regionInfo.region,
         });
 
         mutation.mutate(payload)
     };
 
+    if (!course) {
+        return (
+            <Box
+                sx={{
+                    width: "100vw",
+                    height: "100vh",
+                    display: "grid",
+                    placeItems: "center",
+                }}>
+                로딩중...
+            </Box>
+        );
+    }
+
     return (
         <Box sx={{ width: "100vw", height: "100vh", position: "relative" }}>
             {/* 지도 */}
-            <Box ref={mapRef} sx={{ width: "100%", height: "100%" }} />
+            <Box ref={mapRef} sx={{ width: "100%", height: "100%", zIndex: 10, overflow: "hidden" }} />
 
             {/* 미니바 + 확장 패널 */}
             <Paper
@@ -140,8 +158,6 @@ function CourseEdit({ course }) {
                             onSave={handleUpdate}
                             disabled={points.length < 2}
                         />
-
-                        {error && <Alert severity="error">{error}</Alert>}
                     </Stack>
                 </CoursePanel>
             </Paper>

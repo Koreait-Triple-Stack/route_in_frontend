@@ -1,9 +1,5 @@
 import { useState } from "react";
 
-/**
- * @param {any} kakaoObj
- * @param {any} map
- */
 export function useKakaoPlaceSearch(kakaoObj, map) {
     const [query, setQuery] = useState("");
     const [results, setResults] = useState([]);
