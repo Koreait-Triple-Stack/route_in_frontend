@@ -1,27 +1,30 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { loadKakaoMap } from "../apis/utils/useKaKaoMap";
 
 export function useCourseMap({
-    containerRef,
     initialCenter = { lat: 37.5665, lng: 126.978 },
-    level = 4,
+    level = 3,
     polylineColor = "#FF3D00",
     startMarkerColor = "#2e7d32",
     endMarkerColor = "#3F51B5",
     startLabelBgRgba = "rgba(46,125,50,0.95)",
     endLabelBgRgba = "rgba(63,81,181,0.95)",
-}) {
+    fitPadding = 72,
+} = {}) {
     const [kakaoObj, setKakaoObj] = useState(null);
     const [map, setMap] = useState(null);
 
     const [points, setPoints] = useState([]); // [{lat,lng}]
     const [distanceM, setDistanceM] = useState(0);
 
+    const mapRef = useRef(null);
     const polylineRef = useRef(null);
     const startMarkerRef = useRef(null);
     const endMarkerRef = useRef(null);
     const startLabelRef = useRef(null);
     const endLabelRef = useRef(null);
+
+    const clickHandlerRef = useRef(null)
 
     const getLatLng = (latLng) => {
         if (!latLng) return null;
@@ -44,10 +47,10 @@ export function useCourseMap({
 
     const makePinSvg = (color) => {
         const svg = `
-      <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36">
-        <circle cx="18" cy="18" r="12" fill="${color}" />
-        <circle cx="18" cy="18" r="5" fill="white" opacity="0.95"/>
-      </svg>`;
+            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36">
+                <circle cx="18" cy="18" r="12" fill="${color}" />
+                <circle cx="18" cy="18" r="5" fill="white" opacity="0.95"/>
+            </svg>`;
         return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
     };
 
@@ -81,6 +84,20 @@ export function useCourseMap({
         }
     };
 
+    const fitBoundsToPoints = useCallback(
+        (pts, options = {}) => {
+            if (!kakaoObj || !map) return;
+            const arr = pts ?? points;
+            if (!arr || arr.length == 0) return;
+
+            const bounds = new kakaoObj.maps.LatLngBounds();
+            arr.forEach((p) => bounds.extend(new kakaoObj.maps.LatLng(p.lat, p.lng)))
+
+            const pad = options.padding ?? fitPadding
+            map.setBounds(bounds, pad, pad, pad, pad)
+        }, [kakaoObj, map, points, fitPadding]
+    )
+
     // 1) 지도 생성
     useEffect(() => {
         let alive = true;
@@ -90,7 +107,7 @@ export function useCourseMap({
                 if (!alive) return;
                 setKakaoObj(kakao);
 
-                const el = containerRef.current;
+                const el = mapRef.current;
                 if (!el) return;
 
                 const options = {
@@ -108,11 +125,15 @@ export function useCourseMap({
 
         return () => {
             alive = false;
+
+            if (kakaoObj && map && clickHandlerRef.current) {
+                kakaoObj.maps.event.removeListener(map, "click", clickHandlerRef.current);
+            }
+
             clearMapObjects();
             setMap(null);
             setKakaoObj(null);
         };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     // 2) 지도 클릭 -> 포인트 추가
@@ -139,16 +160,16 @@ export function useCourseMap({
     useEffect(() => {
         if (!kakaoObj || !map) return;
 
-        // 기존 폴리라인 제거(매번 재생성)
-        if (polylineRef.current) {
-            polylineRef.current.setMap(null);
-            polylineRef.current = null;
-        }
-
         if (points.length === 0) {
             setDistanceM(0);
             clearMapObjects();
             return;
+        }
+
+        // 기존 폴리라인 제거(매번 재생성)
+        if (polylineRef.current) {
+            polylineRef.current.setMap(null);
+            polylineRef.current = null;
         }
 
         const start = points[0];
@@ -175,19 +196,20 @@ export function useCourseMap({
 
         // START label
         const startLabelHtml = `
-      <div style="
-        pointer-events:none;
-        transform: translate(-50%, -120%);
-        background: ${startLabelBgRgba};
-        color: #fff;
-        padding: 4px 8px;
-        border-radius: 999px;
-        font-size: 12px;
-        font-weight: 700;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        white-space: nowrap;
-      ">START</div>
-    `;
+            <div style="
+                pointer-events:none;
+                transform: translate(-50%, -120%);
+                background: ${startLabelBgRgba};
+                color: #fff;
+                padding: 4px 8px;
+                border-radius: 999px;
+                font-size: 12px;
+                font-weight: 700;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+                white-space: nowrap;
+            ">START</div>
+        `;
+
         if (!startLabelRef.current) {
             startLabelRef.current = new kakaoObj.maps.CustomOverlay({
                 position: startPos,
@@ -228,19 +250,20 @@ export function useCourseMap({
         }
 
         const endLabelHtml = `
-      <div style="
-        pointer-events:none;
-        transform: translate(-50%, -120%);
-        background: ${endLabelBgRgba};
-        color: #fff;
-        padding: 4px 8px;
-        border-radius: 999px;
-        font-size: 12px;
-        font-weight: 700;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        white-space: nowrap;
-      ">END</div>
-    `;
+            <div style="
+                pointer-events:none;
+                transform: translate(-50%, -120%);
+                background: ${endLabelBgRgba};
+                color: #fff;
+                padding: 4px 8px;
+                border-radius: 999px;
+                font-size: 12px;
+                font-weight: 700;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+                white-space: nowrap;
+            ">END</div>
+        `;
+        
         if (!endLabelRef.current) {
             endLabelRef.current = new kakaoObj.maps.CustomOverlay({
                 position: endPos,
@@ -275,12 +298,15 @@ export function useCourseMap({
         endMarkerColor,
         startLabelBgRgba,
         endLabelBgRgba,
+        clearMapObjects,
+        fitPadding,
     ]);
 
     const undo = () => setPoints((prev) => prev.slice(0, -1));
     const clear = () => setPoints([]);
 
     return {
+        mapRef,
         kakaoObj,
         map,
         points,
@@ -288,5 +314,6 @@ export function useCourseMap({
         distanceM,
         undo,
         clear,
+        fitBoundsToPoints,
     };
 }

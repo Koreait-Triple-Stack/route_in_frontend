@@ -12,6 +12,7 @@ import { useQuery } from "@tanstack/react-query";
 import BoardRouter from "./BoardRouter";
 import MapView from "../pages/MapView";
 import MyPageRouter from "./MyPageRouter";
+import CourseRouter from "./CourseRouter";
 
 const RootRoute = () => {
     const { isLoggedIn } = usePrincipalState();
@@ -48,6 +49,7 @@ function MainRouter() {
                     <Route path="/oauth2/*" element={<OAuth2Router />} />
                     <Route path="/aaa" element={<MainPage />} />
                     <Route path="/map" element={<MapView />} />
+                    <Route path="/course/*" element={<CourseRouter />} /> 
                 </Routes>
             </Layout>
         </>
