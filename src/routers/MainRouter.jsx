@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import Layout from "../components/Layout";
 import MainPage from "../pages/MainPage/MainPage";
-import MyPage from "../pages/MyPage/MyPage";
 import OAuth2Router from "./OAuth2Router";
 import LandingPage from "../pages/LandingPage/LandingPage";
 import { usePrincipalState } from "../store/usePrincipalState";
@@ -13,6 +12,7 @@ import { useQuery } from "@tanstack/react-query";
 import BoardRouter from "./BoardRouter";
 import MapView from "../pages/MapView";
 import MyPageRouter from "./MyPageRouter";
+import CourseRouter from "./CourseRouter";
 
 const RootRoute = () => {
     const { isLoggedIn } = usePrincipalState();
@@ -30,8 +30,8 @@ function MainRouter() {
         enabled: !!accessToken,
     });
     useEffect(() => {
-        if (data?.data.status === "success") {
-            login(data?.data.data);
+        if (data?.status === "success") {
+            login(data?.data);
         }
     }, [data, login]);
     useEffect(() => {
@@ -49,6 +49,7 @@ function MainRouter() {
                     <Route path="/oauth2/*" element={<OAuth2Router />} />
                     <Route path="/aaa" element={<MainPage />} />
                     <Route path="/map" element={<MapView />} />
+                    <Route path="/course/*" element={<CourseRouter />} /> 
                 </Routes>
             </Layout>
         </>

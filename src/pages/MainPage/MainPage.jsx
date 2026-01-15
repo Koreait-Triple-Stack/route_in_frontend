@@ -1,20 +1,58 @@
-import React, { useState } from 'react';
-import { Container, Typography, Box, Paper, Stack, Button } from '@mui/material';
+import React from 'react';
+import { Container, Typography, Box, Paper, Stack } from '@mui/material';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import ScheduleItem from '../../components/ScheduleItem';
 import { usePrincipalState } from '../../store/usePrincipalState';
-import { getRoutineByUserIdRequest } from '../../apis/routine/routineApi';
+import { getRoutineRequest, updateRoutineRequest } from '../../apis/routine/routineApi';
+import { data } from 'react-router-dom';
 
 const MainPage = () => {
-  const { principal } = usePrincipalState()
-  const { data, isLoading } = useQuery({
-      queryKey: ["getRoutineByUserId"],
-      queryFn: () => getRoutineByUserIdRequest(principal?.userId),
-      enabled: !!principal,
-      refetch: 1,
+  const dbDays = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
+  const { principal } = usePrincipalState();
+  const queryClient = useQueryClient();
+  const userId = principal?.userId
+
+  const { data } = useQuery({
+    queryKey: ["getRoutine", userId], 
+    queryFn: () => getRoutineRequest(userId),
+    enabled: !!principal,
   });
 
+  const updateMutation = useMutation({
+    mutationFn: async (data) => {
+        return await updateRoutineRequest(data);
+    },
+    onSuccess: () => {
+        queryClient.invalidateQueries(["getRoutine"]);
+    },
+    onError: (error) => {
+        console.error(error);
+    }
+  });
+
+  const handleUpdate = (day, newTexts) => {
+    const exerciseString = newTexts.join(", ");
+    
+    updateMutation.mutate({
+        routineId: data?.data[dbDays.indexOf(day)]?.routineId,
+        userId: principal.userId,
+        weekday: day,
+        exercise: exerciseString,
+        checked: 0
+    });
+  };
+
+  const handleToggle = (day) => {
+    updateMutation.mutate({
+      userId: principal.userId,
+      weekday: data?.data[dbDays.indexOf(day)]?.weekday,
+      exercise: "aaa",
+      checked: data?.data[dbDays.indexOf(day)]?.checked ? 0 : 1
+    })
+  };
+
+  const getOriginRoutine = (dayStr) => data?.data?.find(r => r.day === dayStr);
   return (
     <Container maxWidth="sm" sx={{ py: 3 }}>
       <Paper sx={{ p: 3, bgcolor: 'primary.main', color: 'white', mb: 3 }}>
@@ -29,26 +67,21 @@ const MainPage = () => {
         </Stack>
         
         <Stack spacing={1.5}>
-          <ScheduleItem day="월요일" activity={data?.data?.data?.monday} />
-          <ScheduleItem day="화요일" activity={data?.data?.data?.tuesday}/>
-          <ScheduleItem day="수요일" activity={data?.data?.data?.wednesday}/>
-          <ScheduleItem day="목요일" activity={data?.data?.data?.thursday}/>
-          <ScheduleItem day="금요일" activity={data?.data?.data?.friday}/>
-          <ScheduleItem day="토요일" activity={data?.data?.data?.saturday}/>
-          <ScheduleItem day="일요일" activity={data?.data?.data?.sunday}/>
+          {dbDays.map((day) => {
+              const originRoutine = getOriginRoutine(day);
+              return (
+                <ScheduleItem 
+                    key={day}
+                    day={day}
+                    routines={data?.data?.filter(r => r.weekday === day)}
+                    active={data?.data.length > 0}
+                    onUpdate={(newTexts) => handleUpdate(day, newTexts, originRoutine)}
+                    onReset={() => handleUpdate(day, [], originRoutine)}
+                    onToggle={() => handleToggle(dbDays.indexOf(day))}
+                />
+              );
+          })}
         </Stack>
-      </Box>
-
-      <Box>
-        <Typography variant="subtitle1" sx={{ mb: 2 }}>내 러닝 코스</Typography>
-        <Paper variant="outlined" sx={{ p: 2 }}>
-          <Box sx={{ width: '100%', height: 180, bgcolor: '#e9ecef', mb: 2, borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            지도 미리보기 영역
-          </Box>
-          <Typography variant="body2">출발: 강남역 | 도착: 선릉역</Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>거리: 3.5km</Typography>
-          <Button fullWidth variant="outlined">코스 관리하기</Button>
-        </Paper>
       </Box>
     </Container>
   );

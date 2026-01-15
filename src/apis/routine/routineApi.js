@@ -1,18 +1,14 @@
 import { instance } from "../utils/instance";
 
-export const getRoutineByUserIdRequest = async (userId) => {
-    instance.interceptors.request.use(
-    (config) => {
-        const accessToken = localStorage.getItem("AccessToken");
-        if (accessToken) {
-            config.headers.Authorization = `Bearer ${accessToken}`;
-        }
-        return config;
-    },
-    (error) => {
-        return Promise.reject(error);
-    }
-);
-    const response = await instance.get(`/routine/get/user/${userId}`);
-    return response;
+export const updateRoutineRequest = async (data) => {
+    const response = await instance.post("/routine/update", data);
+    return response.data;
+};
+
+export const getRoutineRequest = async (userId) => {
+    const response = await instance.post("/routine/get", {
+        userId: userId,
+        boardId: null 
+    });
+    return response.data;
 };

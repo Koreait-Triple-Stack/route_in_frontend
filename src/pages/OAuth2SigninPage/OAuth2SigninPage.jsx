@@ -50,9 +50,9 @@ const OAuth2SigninPage = () => {
         providerUserId: providerUserId
       })
       .then((response) => {
-          if (response.data.status === "success") {
+          if (response.status === "success") {
               // [로그인 성공]
-              const token = response.data.data;
+              const token = response;
               
               // 1. 토큰 저장
               localStorage.setItem("AccessToken", token);
@@ -60,7 +60,7 @@ const OAuth2SigninPage = () => {
               // 2. 메인으로 이동
               window.location.href = "/";
 
-          } else if (response.data.status === "failed") {
+          } else if (response.status === "failed") {
               // [미가입 회원] -> 회원가입 페이지로 이동
               if (confirm("가입되지 않은 회원입니다. 회원가입 페이지로 이동하시겠습니까?")) {
                   navigate('/oauth2/signup', {

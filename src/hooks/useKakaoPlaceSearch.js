@@ -45,6 +45,8 @@ export function useKakaoPlaceSearch(kakaoObj, map) {
         const pos = new kakaoObj.maps.LatLng(lat, lng);
 
         map.panTo(pos); // ✅ 지도만 이동
+        setResults([]);
+        setQuery("");
     };
 
     return {
