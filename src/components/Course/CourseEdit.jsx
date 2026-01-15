@@ -5,7 +5,7 @@ import {
     buildUpdatePayload,
     coordToRegionWithGeocoder,
 } from "../../apis/course/courseMapper";
-import { getCourse, updateCourse } from "../../apis/course/courseService";
+import { updateCourse } from "../../apis/course/courseService";
 import { Box, padding, Stack } from "@mui/system";
 import { useKakaoPlaceSearch } from "../../hooks/useKakaoPlaceSearch";
 import { Alert, Divider, Paper } from "@mui/material";
@@ -14,8 +14,7 @@ import CoursePanel from "./CoursePanel";
 import PlaceSearchPanel from "./PlaceSearchPanel";
 import CourseSavePanel from "./CourseSavePanel";
 
-function CourseEdit() {
-    const { courseId } = useParams();
+function CourseEdit({ course }) {
     const navigate = useNavigate();
 
     const {
@@ -27,13 +26,11 @@ function CourseEdit() {
         map,
         undo,
         clear,
-        fitBoundsToPoints,
     } = useCourseMap();
 
     const [panelOpen, setPanelOpen] = useState(false);
     const [region, setRegion] = useState(null);
     const [courseName, setCourseName] = useState("");
-    const [course, setCourse] = useState(null);
 
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState(null);
@@ -41,33 +38,13 @@ function CourseEdit() {
     const search = useKakaoPlaceSearch(kakaoObj, map);
 
     useEffect(() => {
-        let alive = true;
-
-        (async () => {
-            setError(null);
-
-            const result = await getCourse(courseId);
-            if (!alive) return;
-
-            if (!result.ok) {
-                setError(result.message);
-                return;
-            }
-
-            setCourseName(result.data.courseName);
-            setCourse(result.data);
-            setPoints(
-                result.data.points.map((point) => ({
-                    lat: Number(point.lat),
-                    lng: Number(point.lng),
-                }))
-            );
-
-            if (typeof fitBoundsToPoints == "function" && points.length > 0) {
-                setTimeout(() => fitBoundsToPoints(points, { padding: 72 }), 0);
-            }
-        })();
-    }, [courseId, setPoints]);
+        setPoints(
+            result.data.points.map((point) => ({
+                lat: Number(point.lat),
+                lng: Number(point.lng),
+            }))
+        );
+    }, [course]);
 
     useEffect(() => {
         if (!kakaoObj || !map || !course) return;
@@ -75,7 +52,7 @@ function CourseEdit() {
         const { centerLat, centerLng } = course;
 
         if (typeof centerLat === "number" && typeof centerLng === "number") {
-            const center = new kakaoObj.maps.LatLng(centerLat, centerLat);
+            const center = new kakaoObj.maps.LatLng(centerLat, centerLng);
             map.panTo(center);
         }
     }, [kakaoObj, map, course]);
@@ -101,14 +78,17 @@ function CourseEdit() {
                 setRegion(regionInfo);
             }
 
-            const payload = buildUpdatePayload({
-                courseName,
-                points,
-                distanceM,
-                region: regionInfo,
-            });
-
-            const result = await updateCourse(courseId, payload);
+            const result = await updateCourse(
+                buildUpdatePayload({
+                    courseId: course.courseId,
+                    userId: course.userId,
+                    boardId: course.boardId,
+                    courseName,
+                    points,
+                    distanceM,
+                    region: regionInfo,
+                })
+            );
 
             if (!result.ok) {
                 setError(result.message);

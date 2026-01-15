@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useKakaoPlaceSearch } from "../../hooks/useKakaoPlaceSearch";
 import { addCourse } from "../../apis/course/courseService";
 import { Box, Stack } from "@mui/system";
@@ -8,23 +8,25 @@ import CoursePanel from "./CoursePanel";
 import PlaceSearchPanel from "./PlaceSearchPanel";
 import CourseSavePanel from "./CourseSavePanel";
 import { useCourseMap } from "../../hooks/useCourseMap";
-import { loadKakaoMap } from "../../apis/utils/useKaKaoMap";
 import {
     buildPayload,
     coordToRegionWithGeocoder,
 } from "../../apis/course/courseMapper";
 
-function CourseAdd() {
+function CourseAdd({ userId, boardId }) {
     const { mapRef, kakaoObj, points, distanceM, map, undo, clear } =
         useCourseMap();
 
     const [panelOpen, setPanelOpen] = useState(false);
-    const [region, setRegion] = useState(null);
     const [courseName, setCourseName] = useState("");
 
     const [saving, setSaving] = useState(false);
 
     const search = useKakaoPlaceSearch(kakaoObj, map);
+
+    useEffect(() => {
+        console.log(courseName)
+    }, [courseName])
 
     const saveCourseHandler = async () => {
         setSaving(true);
@@ -34,16 +36,18 @@ function CourseAdd() {
             points[0].lat,
             points[0].lng
         );
-        setRegion(regionInfo);
 
-        const result = await addCourse(
-            buildPayload({
-                courseName,
-                distanceM,
-                points,
-                region: regionInfo,
-            })
-        );
+        const payload = buildPayload({
+            userId,
+            boardId,
+            courseName,
+            distanceM,
+            points,
+            region: regionInfo,
+        });
+        console.log(payload)
+        const result = await addCourse(payload);
+
 
         setSaving(false);
         setCourseName("");

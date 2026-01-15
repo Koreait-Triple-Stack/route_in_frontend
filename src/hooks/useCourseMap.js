@@ -10,6 +10,8 @@ export function useCourseMap({
     startLabelBgRgba = "rgba(46,125,50,0.95)",
     endLabelBgRgba = "rgba(63,81,181,0.95)",
     fitPadding = 72,
+    enableClickAdd = true,
+    fitOnPointsChange = false,
 } = {}) {
     const [kakaoObj, setKakaoObj] = useState(null);
     const [map, setMap] = useState(null);
@@ -139,6 +141,7 @@ export function useCourseMap({
     // 2) 지도 클릭 -> 포인트 추가
     useEffect(() => {
         if (!kakaoObj || !map) return;
+        if (!enableClickAdd) return;
 
         const handleClick = (mouseEvent) => {
             const p = getLatLng(mouseEvent?.latLng);

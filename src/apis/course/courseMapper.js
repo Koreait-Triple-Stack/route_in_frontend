@@ -7,21 +7,22 @@ export const buildPayload = ({
     region,
 }) => {
     return {
-    userId,
-    boardId,
-    courseName,
-    distanceM,
-    centerLat: points[Math.floor(points.length / 2)]?.lat ?? null,
-    centerLng: points[Math.floor(points.length / 2)]?.lng ?? null,
-    si: region.si,
-    gu: region.gu,
-    dong: region.dong,
-    points: (points ?? []).map((p, idx) => ({
-        seq: idx + 1,
-        lat: Number(p.lat),
-        lng: Number(p.lng),
-    })),
-}};
+        userId,
+        boardId,
+        courseName,
+        distanceM,
+        centerLat: points[Math.floor(points.length / 2)]?.lat ?? null,
+        centerLng: points[Math.floor(points.length / 2)]?.lng ?? null,
+        si: region.si,
+        gu: region.gu,
+        dong: region.dong,
+        points: (points ?? []).map((p, idx) => ({
+            seq: idx + 1,
+            lat: Number(p.lat),
+            lng: Number(p.lng),
+        })),
+    };
+};
 
 export const coordToRegionWithGeocoder = (kakao, lat, lng) =>
     new Promise((resolve) => {
@@ -42,7 +43,18 @@ export const coordToRegionWithGeocoder = (kakao, lat, lng) =>
         });
     });
 
-export const buildUpdatePayload = ({ courseName, points, distanceM, region }) => ({
+export const buildUpdatePayload = ({
+    courseId,
+    userId,
+    boardId,
+    courseName,
+    points,
+    distanceM,
+    region,
+}) => ({
+    courseId,
+    userId,
+    boardId,
     courseName,
     distanceM,
     centerLat: points[Math.floor(points.length / 2)]?.lat ?? null,
