@@ -1,38 +1,47 @@
-import { useState } from "react";
-import { Box, Paper, Stack, Divider } from "@mui/material";
+import React, { useRef, useState } from "react";
+import { useKakaoPlaceSearch } from "../../hooks/useKakaoPlaceSearch";
+import { addCourse } from "../../apis/course/courseService";
+import { Box, Stack } from "@mui/system";
+import { Divider, Paper } from "@mui/material";
+import CourseMiniBar from "./CourseMiniBar";
+import CoursePanel from "./CoursePanel";
+import PlaceSearchPanel from "./PlaceSearchPanel";
+import CourseSavePanel from "./CourseSavePanel";
+import { useCourseMap } from "../../hooks/useCourseMap";
+import { loadKakaoMap } from "../../apis/utils/useKaKaoMap";
+import {
+    buildPayload,
+    coordToRegionWithGeocoder,
+} from "../../apis/course/courseMapper";
 
-import { useKakaoPlaceSearch } from "../hooks/useKakaoPlaceSearch";
-import { useCourseMap } from "../hooks/useCourseMap";
-
-import CourseMiniBar from "../components/Course/CourseMiniBar";
-import CoursePanel from "../components/Course/CoursePanel";
-import PlaceSearchPanel from "../components/Course/PlaceSearchPanel";
-import CourseSavePanel from "../components/Course/CourseSavePanel";
-import { addCourse } from "../apis/course/courseService";
-import { buildPayload } from "../apis/course/courseMapper";
-
-export default function MapView() {
-    const [panelOpen, setPanelOpen] = useState(false);
-
-    // 지도/경로 편집 훅
-    const { mapRef, kakaoObj, map, points, distanceM, undo, clear } =
+function CourseAdd() {
+    const { mapRef, kakaoObj, points, distanceM, map, undo, clear } =
         useCourseMap();
 
-    // 검색 훅 (지도만 이동)
-    const search = useKakaoPlaceSearch(kakaoObj, map);
-
-    // 저장 UI 상태
+    const [panelOpen, setPanelOpen] = useState(false);
+    const [region, setRegion] = useState(null);
     const [courseName, setCourseName] = useState("");
+
     const [saving, setSaving] = useState(false);
+
+    const search = useKakaoPlaceSearch(kakaoObj, map);
 
     const saveCourseHandler = async () => {
         setSaving(true);
+
+        const regionInfo = await coordToRegionWithGeocoder(
+            kakaoObj,
+            points[0].lat,
+            points[0].lng
+        );
+        setRegion(regionInfo);
 
         const result = await addCourse(
             buildPayload({
                 courseName,
                 distanceM,
                 points,
+                region: regionInfo,
             })
         );
 
@@ -105,3 +114,5 @@ export default function MapView() {
         </Box>
     );
 }
+
+export default CourseAdd;
