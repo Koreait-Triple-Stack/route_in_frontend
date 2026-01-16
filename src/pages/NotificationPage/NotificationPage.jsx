@@ -1,7 +1,177 @@
-import React from "react";
+import IconButton from "@mui/material/IconButton";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
+import { Box, Stack } from "@mui/system";
+import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+import DeleteButtonModal from "./DeleteButtonModal";
+import { useQuery } from "@tanstack/react-query";
+import { getNotificationListByUserId } from "../../apis/notification/notificationService";
+import { usePrincipalState } from "../../store/usePrincipalState";
 
 function NotificationPage() {
-    return <div>NotificationPage</div>;
+    const { principal } = usePrincipalState();
+
+    const {
+        data: response,
+        error,
+        isLoading,
+    } = useQuery({
+        queryKey: ["getNotificationListByUserId", principal.userId],
+        queryFn: () => getNotificationListByUserId(principal.userId),
+        staleTime: 30000,
+        enabled: !!principal?.userId,
+    });
+
+    console.log(principal);
+    console.log(response);
+
+    const notifications = [
+        {
+            notificationId: 1,
+            userId: 20,
+            message: "111",
+            path: "/",
+        },
+        {
+            notificationId: 2,
+            userId: 20,
+            message: "222",
+            path: "/",
+        },
+        {
+            notificationId: 3,
+            userId: 20,
+            message: "333",
+            path: "/",
+        },
+    ];
+    const onDeleteOne = () => {};
+
+    if (isLoading) return <Box>로딩중...</Box>;
+    if (error) return <Box>{error.message}</Box>;
+
+    return (
+        <Box
+            sx={{
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                flexDirection: "column",
+                bgcolor: "background.default",
+                position: "relative",
+            }}>
+            {/* 헤더 */}
+            <Box
+                sx={{
+                    px: 2,
+                    py: 1.5,
+                    borderBottom: "1px solid",
+                    borderColor: "divider",
+                    bgcolor: "background.paper",
+                }}>
+                <Typography
+                    variant="h6"
+                    sx={{ fontWeight: 900, letterSpacing: -0.3 }}>
+                    알림
+                </Typography>
+                <Typography
+                    variant="body2"
+                    sx={{ color: "text.secondary", mt: 0.5 }}>
+                    최근 활동을 확인하세요
+                </Typography>
+            </Box>
+
+            {/* 스크롤 영역 */}
+            <Box
+                sx={{
+                    flex: 1,
+                    overflowY: "auto",
+                    px: 2,
+                    py: 1.5,
+                    pb: "92px", // fixed 버튼 공간 확보
+                }}>
+                <Stack spacing={1.2}>
+                    {notifications?.length ? (
+                        notifications.map((n) => (
+                            <Paper
+                                key={n.notificationId}
+                                elevation={0}
+                                sx={{
+                                    p: 1.5,
+                                    borderRadius: 2,
+                                    border: "1px solid",
+                                    borderColor: "divider",
+                                    bgcolor: "background.paper",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 1.5,
+                                }}>
+                                {/* 텍스트 */}
+                                <Box sx={{ flex: 1, minWidth: 0 }}>
+                                    <Typography
+                                        variant="body2"
+                                        sx={{
+                                            color: "text.secondary",
+                                            lineHeight: 1.35,
+                                            display: "-webkit-box",
+                                            WebkitLineClamp: 2,
+                                            WebkitBoxOrient: "vertical",
+                                            overflow: "hidden",
+                                        }}>
+                                        {n.message}
+                                    </Typography>
+
+                                    <Typography
+                                        variant="caption"
+                                        sx={{
+                                            color: "text.disabled",
+                                            display: "block",
+                                            mt: 0.6,
+                                        }}>
+                                        {n.timeText}
+                                    </Typography>
+                                </Box>
+
+                                {/* 삭제 버튼 */}
+                                <IconButton
+                                    onClick={() => onDeleteOne(n.id)}
+                                    sx={{
+                                        borderRadius: 2,
+                                        borderColor: "divider",
+                                        bgcolor: "grey.50",
+                                    }}>
+                                    <CloseRoundedIcon fontSize="small" />
+                                </IconButton>
+                            </Paper>
+                        ))
+                    ) : (
+                        <Paper
+                            elevation={0}
+                            sx={{
+                                p: 3,
+                                borderRadius: 2,
+                                border: "1px dashed",
+                                borderColor: "divider",
+                                bgcolor: "background.paper",
+                                textAlign: "center",
+                            }}>
+                            <Typography sx={{ fontWeight: 800 }}>
+                                알림이 없어요
+                            </Typography>
+                            <Typography
+                                variant="body2"
+                                sx={{ color: "text.secondary", mt: 0.5 }}>
+                                새로운 활동이 생기면 여기에 표시됩니다.
+                            </Typography>
+                        </Paper>
+                    )}
+                </Stack>
+            </Box>
+
+            {/* 전체 삭제 fixed */}
+            <DeleteButtonModal />
+        </Box>
+    );
 }
 
 export default NotificationPage;

@@ -9,7 +9,7 @@ const queryClient = new QueryClient();
 function App() {
     return (
         <>
-            <CssBaseline/>
+            <CssBaseline />
             <QueryClientProvider client={queryClient}>
                 <BrowserRouter>
                     <MainRouter />
