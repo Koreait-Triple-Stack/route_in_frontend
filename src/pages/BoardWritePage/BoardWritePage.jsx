@@ -12,6 +12,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { usePrincipalState } from "../../store/usePrincipalState";
 import { addBoardRequest } from "../../apis/board/boardApi";
 import { EXERCISE_TAGS } from "../../constants/exerciseTags";
+import { useMutation } from "@tanstack/react-query";
 
 const DAYS = [
   "월요일",
@@ -27,8 +28,8 @@ const DAYS = [
 export default function BoardWritePage() {
   const { type } = useParams(); // /board/write/:type
 
-  if (type === "routine") return <RoutineWriteInner />;
-  if (type === "running") return <RunningWriteInner />;
+  if (type === "routine") return <RoutineWritePage />;
+  if (type === "running") return <RunningWritePage />;
 
   return (
     <Box sx={{ p: 2 }}>
@@ -37,16 +38,14 @@ export default function BoardWritePage() {
   );
 }
 
-
-// RoutineWritePage 
-function RoutineWriteInner() {
+// RoutineWritePage
+function RoutineWritePage() {
   const navigate = useNavigate();
   const { principal } = usePrincipalState();
 
   const [title, setTitle] = useState("");
   const [write, setWrite] = useState("");
   const [selectedTagIds, setSelectedTagIds] = useState([]);
-
 
   // 요일별 운동 목록 저장할 객체
   const [routine, setRoutine] = useState(
@@ -56,10 +55,24 @@ function RoutineWriteInner() {
     }, {})
   );
 
+  const mutation = useMutation({
+    mutationKey: ["addBoard"],
+    mutationFn: (data) => addBoard(data),
+    onSuccess: (response) => {
+      // queryClient.invaludateQueries(["", ""])
+      setBoardName("");
+      clear();
+      alert(response.message);
+    },
+    onError: (error) => {
+      alert(error.message);
+    },
+  });
+
   const titleInputOnChangeHandler = (e) => setTitle(e.target.value);
   const writeInputOnChangeHandler = (e) => setWrite(e.target.value);
 
-  // 운동부위 ToggleButton 
+  // 운동부위 ToggleButton
   const toggleTag = (tagId) => {
     setSelectedTagIds((prev) =>
       prev.includes(tagId)
@@ -111,7 +124,6 @@ function RoutineWriteInner() {
 
   // 저장(서버 전송)
   const submitOnClickHandler = async () => {
-
     // 제목 검사
     if (!title.trim()) {
       alert("제목을 작성해 주세요.");
@@ -134,6 +146,17 @@ function RoutineWriteInner() {
 
     if (!window.confirm("게시글을 등록하시겠습니까?")) return;
 
+    const payload = buildBoardPayload({
+      userId,
+      type: "routine",
+      title,
+      content: write,
+      tags: selectedTagLabels,
+      routine,
+    });
+
+    mutation.mutate(payload);
+
     // 서버로 보낼 루틴 목록(요일별 운동들)
     const send = Object.entries(routine).flatMap(([day, arr]) =>
       arr.map((info) => ({
@@ -142,32 +165,6 @@ function RoutineWriteInner() {
         exercise: info.exercise,
       }))
     );
-
-    // 서버로 보낼 요청 데이터
-    const data = {
-      userId,
-      type: "routine",
-      title: title.trim(),
-      content: write.trim(),
-      tags: selectedTagLabels, // label 문자열로 보내기
-      send, // 백엔드에서 send 처리 필요(리스트 insert)
-    };
-
-    try {
-      const response = await addBoardRequest(data);
-      const body = response?.data;
-
-      if (body?.status === "success") {
-        alert(body?.message ?? "게시물 작성이 완료되었습니다.");
-        navigate("/board");
-      } else {
-        alert(body?.message ?? "저장 실패");
-        console.log("addBoard failed response:", body);
-      }
-    } catch (e) {
-      console.error(e);
-      alert("서버 요청 실패");
-    }
   };
 
   return (
@@ -268,13 +265,23 @@ function RoutineWriteInner() {
   );
 }
 
-
-// RunningWritePage 
-function RunningWriteInner() {
+// RunningWritePage
+function RunningWritePage() {
   const navigate = useNavigate();
   const { principal } = usePrincipalState();
   const [title, setTitle] = useState("");
   const [write, setWrite] = useState("");
+
+  const userId = principal?.userId;
+  const mutation = useMutation({
+    mutationKey: ["addBoard", "running", userId],
+    mutationFn: (payload) => addBoard(payload),
+    onSuccess: (res) => {
+      alert(res.message ?? "게시글이 추가되었습니다.");
+      navigate("/board");
+    },
+    onError: (err) => alert(err.message),
+  });
 
   const titleInputOnChangeHandler = (e) => {
     setTitle(e.target.value);
@@ -284,46 +291,31 @@ function RunningWriteInner() {
     setWrite(e.target.value);
   };
 
-  const submitOnClickHandler = async () => {
-    const userId = principal?.userId;
-    if (!userId) {
-      alert("로그인이 필요합니다.");
-      return;
-    }
+  const submitOnClickHandler = () => {
+    if (!userId) return alert("로그인이 필요합니다.");
 
     // 빈칸 체크
-    if (title.trim().length === 0 || write.trim().length === 0) {
-      alert("모든 항목을 입력해주세요.");
-      return;
-    }
+    if (!title.trim() || !write.trim())
+      return alert("모든 항목을 입력해주세요.");
+
+    const payload = buildPayload({
+      userId,
+      type: "running",
+      title,
+      content: write,
+      tags: [],
+    });
+
+    mutation.mutate(payload);
 
     // 서버로 보낼 데이터
     const data = {
       userId,
-      type: "running", 
+      type: "running",
       title: title.trim(),
       content: write.trim(),
       tags: [],
     };
-
-    try {
-      const response = await addBoardRequest(data);
-
-      if (response.status === 200 || response.status === 201) {
-        alert("게시글이 추가되었습니다.");
-        navigate("/board");
-        return;
-      }
-
-      alert("요청이 실패했습니다.");
-    } catch (e) {
-      console.error(e);
-
-      const message =
-        e?.response?.message ?? e?.message ?? "서버 요청에 실패 했습니다.";
-
-      alert(message);
-    }
   };
 
   return (
