@@ -4,22 +4,21 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import ScheduleItem from "../../components/ScheduleItem";
 import { usePrincipalState } from "../../store/usePrincipalState";
-import { getRoutineRequest, updateRoutineRequest } from "../../apis/routine/routineApi";
+import { addRoutineRequest, getRoutineRequest, updateRoutineRequest } from "../../apis/routine/routineApi";
 import { data } from "react-router-dom";
 
 const MainPage = () => {
     const dbDays = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
     const { principal } = usePrincipalState();
     const queryClient = useQueryClient();
-    const userId = principal?.userId;
 
     const {
         data: response,
         error,
         isLoading,
     } = useQuery({
-        queryKey: ["getRoutine", userId],
-        queryFn: () => getRoutineRequest(userId),
+        queryKey: ["getRoutine", principal?.userId],
+        queryFn: () => getRoutineRequest(principal?.userId),
         staleTime: 30000,
     });
 
@@ -30,7 +29,19 @@ const MainPage = () => {
             return await updateRoutineRequest(data);
         },
         onSuccess: () => {
-            queryClient.invalidateQueries(["getRoutine"]);
+            queryClient.invalidateQueries(["getRoutine", principal?.userId]);
+        },
+        onError: (error) => {
+            console.error(error);
+        },
+    });
+
+    const addMutation = useMutation({
+        mutationFn: async (data) => {
+            return await addRoutineRequest(data);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries(["getRoutine", principal?.userId]);
         },
         onError: (error) => {
             console.error(error);
@@ -38,9 +49,23 @@ const MainPage = () => {
     });
 
     const handleUpdate = (day, newTexts, originRoutine) => {
-        const exerciseString = newTexts.join(", ");
+        const exerciseString = newTexts;
         updateMutation.mutate({
             routineId: originRoutine.routineId,
+            userId: principal.userId,
+            weekday: day,
+            exercise: exerciseString,
+            checked: 0,
+        });
+    };
+
+    const handleDelete = () => {
+        
+    }
+
+    const handleAdd = (day, newText) => {
+        const exerciseString = newText;
+        addMutation.mutate({
             userId: principal.userId,
             weekday: day,
             exercise: exerciseString,
@@ -75,7 +100,7 @@ const MainPage = () => {
                 </Stack>
 
                 <Stack spacing={1.5}>
-                    {dbDays.map((day) => {                        
+                    {dbDays.map((day) => {
                         const dayRoutines = respData.filter((r) => r.weekday === day);
                         const originRoutine = dayRoutines[0];
                         return (
@@ -87,6 +112,7 @@ const MainPage = () => {
                                 onUpdate={(newTexts) => handleUpdate(day, newTexts, originRoutine)}
                                 onReset={() => handleUpdate(day, [], originRoutine)}
                                 onToggle={handleToggle}
+                                onAdd={(newText) => handleAdd(day, newText)}
                             />
                         );
                     })}

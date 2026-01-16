@@ -22,23 +22,23 @@ import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import { useQuery } from "@tanstack/react-query";
-import { getPrincipal } from "../../apis/account/accountService";
+import { getUserByUserId } from "../../apis/account/accountService";
 
 function MyPage() {
     const navigate = useNavigate();
     const NAV_H = "56";
-    const { isLoggedIn, logout, loading } = usePrincipalState();
+    const { isLoggedIn, logout, loading, principal } = usePrincipalState();
     const {
         data: response,
         error,
         isLoading,
     } = useQuery({
-        queryKey: ["getPrincipal"],
-        queryFn: getPrincipal,
+        queryKey: ["getUserByUserId", principal?.userId],
+        queryFn: () => getUserByUserId(principal?.userId),
         staleTime: 30000,
     });
 
-    const principal = response?.data;
+    const user = response?.data;
 
     const [activeView, setActiveView] = useState(null);
     const [open, setOpen] = useState(false);
@@ -50,7 +50,7 @@ function MyPage() {
         if (!activeView) return null;
 
         const commonProps = {
-            userId: principal?.userId,
+            userId: user?.userId,
             onClose: handleCloseOverlay,
         };
 
@@ -127,14 +127,14 @@ function MyPage() {
                         />
                         <Box sx={{ display: "flex", flexDirection: "column" }}>
                             <Typography variant="h6">
-                                {principal?.username}
+                                {user?.username}
                             </Typography>
                             <Typography variant="body2">
-                                {principal?.gender} •{" "}
-                                {principal?.address?.baseAddress}
+                                {user?.gender} •{" "}
+                                {user?.address?.baseAddress}
                             </Typography>
                             <Typography variant="caption">
-                                {principal?.height}cm / {principal?.weight}kg
+                                {user?.height}cm / {principal?.weight}kg
                             </Typography>
                         </Box>
                     </Box>
