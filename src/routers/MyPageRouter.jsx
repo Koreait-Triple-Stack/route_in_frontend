@@ -7,7 +7,7 @@ function MyPageRouter() {
   return (
     <>
         <Routes>
-            <Route path="/:userId" element={<MyPage />} />
+            <Route path="/" element={<MyPage />} />
             <Route path="/inBody" element={<InBodyPage />} />
         </Routes>
     </>
