@@ -12,6 +12,7 @@ import MapView from "../pages/MapView";
 import MyPageRouter from "./MyPageRouter";
 import CourseRouter from "./CourseRouter";
 import { getPrincipal } from "../apis/account/accountService";
+import ProtectedRouter from "./ProtectedRouter";
 
 const RootRoute = () => {
     const { isLoggedIn } = usePrincipalState();
@@ -19,36 +20,38 @@ const RootRoute = () => {
 };
 
 function MainRouter() {
-    const accessToken = localStorage.getItem("AccessToken");
-    const { principal, loading, login, logout, setLoading } = usePrincipalState();
-    const {
-        data: response,
-        isLoading,
-        error,
-    } = useQuery({
-        queryKey: ["getPrincipal"],
-        queryFn: () => getPrincipal(),
-        staleTime: 30000,
-    });
-    useEffect(() => {
-        if (!isLoading && !error) {
-            login(response.data);
-        }
-    }, [response, login]);
+    const { login, setLoading } = usePrincipalState();
 
-    if (isLoading) return <div>로딩중</div>;
-    if (error) return <div>error.message</div>;
+    useEffect(() => {
+        const token = localStorage.getItem("AccessToken");
+
+        if (token) {
+            login({ token });
+        } else {
+            setLoading(false);
+        }
+    }, [login, setLoading]);
 
     return (
         <>
             <Layout>
                 <Routes>
                     <Route path="/" element={<RootRoute />} />
-                    <Route path="/board/*" element={<BoardRouter />} />
-                    <Route path="/notification" element={<NotificationPage />} />
-                    <Route path="/mypage/*" element={<MyPageRouter />} />
                     <Route path="/oauth2/*" element={<OAuth2Router />} />
-                    <Route path="/aaa" element={<MainPage />} />
+
+                    <Route path="/board/*" element={<BoardRouter />} />
+                    <Route
+                        path="/notification"
+                        element={<NotificationPage />}
+                    />
+                    <Route
+                        path="/mypage/*"
+                        element={
+                            <ProtectedRouter>
+                                <MyPageRouter />
+                            </ProtectedRouter>
+                        }
+                    />
                     <Route path="/map" element={<MapView />} />
                     <Route path="/course/*" element={<CourseRouter />} />
                 </Routes>

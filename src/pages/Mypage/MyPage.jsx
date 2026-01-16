@@ -21,24 +21,29 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
+import { useQuery } from "@tanstack/react-query";
+import { getPrincipal } from "../../apis/account/accountService";
 
 function MyPage() {
     const navigate = useNavigate();
-    const { isLoggedIn, logout, principal, loading } = usePrincipalState();
+    const { isLoggedIn, logout, loading } = usePrincipalState();
+    const {
+        data: response,
+        error,
+        isLoading,
+    } = useQuery({
+        queryKey: ["getPrincipal"],
+        queryFn: getPrincipal,
+        staleTime: 30000,
+    });
+    
+    const principal = response?.data;
     
     const [activeView, setActiveView] = useState(null);
     const [open, setOpen] = useState(false);
 
     const handleClick = () => setOpen(!open);
     const handleCloseOverlay = () => setActiveView(null);
-
-    useEffect(() => {
-        if (!isLoggedIn) {
-            window.location.href = "/oauth2/signin";
-        }
-    }, [isLoggedIn, navigate]);
-
-    if (!isLoggedIn || loading) return <></>; 
 
     const renderOverlayContent = () => {
         if (!activeView) return null;
