@@ -7,7 +7,7 @@ import CourseEdit from "../components/Course/CourseEdit";
 export default function MapView() {
     const userId = 20;
     const {
-        data: course,
+        data: response,
         isLoading,
         error,
     } = useQuery({
@@ -19,5 +19,5 @@ export default function MapView() {
     if (isLoading) return <Box>로딩중...</Box>;
     if (error) return <Box>{error.message}</Box>;
 
-    return <CourseDetail course={course.data} />;
+    return <CourseDetail course={response.data} />;
 }
