@@ -13,11 +13,17 @@ const MainPage = () => {
     const queryClient = useQueryClient();
     const userId = principal?.userId;
 
-    const { data } = useQuery({
+    const {
+        data: response,
+        error,
+        isLoading,
+    } = useQuery({
         queryKey: ["getRoutine", userId],
         queryFn: () => getRoutineRequest(userId),
-        enabled: !!principal,
+        staleTime: 30000,
     });
+
+    const respData = response?.data.data || [];
 
     const updateMutation = useMutation({
         mutationFn: async (data) => {
@@ -31,11 +37,10 @@ const MainPage = () => {
         },
     });
 
-    const handleUpdate = (day, newTexts) => {
+    const handleUpdate = (day, newTexts, originRoutine) => {
         const exerciseString = newTexts.join(", ");
-
         updateMutation.mutate({
-            routineId: data?.data[dbDays.indexOf(day)]?.routineId,
+            routineId: originRoutine.routineId,
             userId: principal.userId,
             weekday: day,
             exercise: exerciseString,
@@ -43,17 +48,19 @@ const MainPage = () => {
         });
     };
 
-    const handleToggle = (day) => {
-        // const aa = (dayStr) => data?.data?.find((r) => r.day === dayStr);
+    const handleToggle = (getWeekday) => {
         updateMutation.mutate({
+            routineId: getWeekday.routineId,
             userId: principal.userId,
-            weekday: data?.data[dbDays.indexOf(day)]?.weekday,
-            exercise: "aaa",
-            checked: data?.data[dbDays.indexOf(day)]?.checked ? 0 : 1,
+            weekday: getWeekday.weekday,
+            exercise: getWeekday.exercise,
+            checked: getWeekday.checked ? 0 : 1,
         });
     };
 
-    const getOriginRoutine = (dayStr) => data?.data?.find((r) => r.day === dayStr);
+    if (isLoading) return <div>로딩중</div>;
+    if (error) return <div>error.message</div>;
+
     return (
         <Container maxWidth="sm" sx={{ py: 3 }}>
             <Paper sx={{ p: 3, bgcolor: "primary.main", color: "white", mb: 3 }}>
@@ -68,17 +75,18 @@ const MainPage = () => {
                 </Stack>
 
                 <Stack spacing={1.5}>
-                    {dbDays.map((day) => {
-                        const originRoutine = getOriginRoutine(day);
+                    {dbDays.map((day) => {                        
+                        const dayRoutines = respData.filter((r) => r.weekday === day);
+                        const originRoutine = dayRoutines[0];
                         return (
                             <ScheduleItem
                                 key={day}
                                 day={day}
-                                routines={data?.data?.filter((r) => r.weekday === day)}
-                                active={data?.data.length > 0}
+                                routines={dayRoutines}
+                                active={dayRoutines.length > 0}
                                 onUpdate={(newTexts) => handleUpdate(day, newTexts, originRoutine)}
                                 onReset={() => handleUpdate(day, [], originRoutine)}
-                                onToggle={() => handleToggle(dbDays.indexOf(day))}
+                                onToggle={handleToggle}
                             />
                         );
                     })}
