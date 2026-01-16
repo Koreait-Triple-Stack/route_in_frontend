@@ -1,7 +1,7 @@
 import { instance } from "../utils/instance";
 
 export const addBoardRequest = async (data) => {
-  return instance.post("/board/add", data);
+    return instance.post("/board/add", data);
 };
 
 export const updateBoardRequest = async (data) => {
@@ -27,11 +27,10 @@ export const getBoardByBoardIdRequest = async (boarId) => {
 export const getBoardListByUserIdRequest = async (userId) => {
     return instance.post(`/board/user/${userId}`);
 };
-// 여기까지 함
 
-export const getBoardListByKeywordRequest = async (data) => {
-    return instance.post("/board/search", data);
-};
+// export const getBoardListByKeywordRequest = async (data) => {
+//     return instance.post("/board/search", data);
+// };
 
 export const plusRecommendRequest = async (data) => {
     return instance.post("/board/recommend/plus", data);
