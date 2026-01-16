@@ -1,42 +1,21 @@
 import { instance } from "../utils/instance";
 
-export const getPrincipal = async () => {
-    try {
-        const response = await instance.get("/user/account/principal");
-        return response.data;
-    } catch (error) {
-        return error.response;
-    }
+export const getPrincipalRequest = async () => {
+    return await instance.get("/user/account/principal");
 };
 
 export const getUserByUserIdRequest = async (userId) => {
-    const response = await instance.get(`/user/account/userId/${userId}`);
-    return response.data;
+    return await instance.get(`/user/account/userId/${userId}`);
 };
 
 export const changeUsernameRequest = async (data) => {
-    try {
-        const response = await instance.post("/user/account/change/username", data);
-        return response.data;
-    } catch (error) {
-        return error.response;
-    }
+    return await instance.post("/user/account/change/username", data);
 };
 
 export const changeAddressRequest = async (data) => {
-    try {
-        const response = await instance.post("/user/account/address", data);
-        return response.data;
-    } catch (error) {
-        return error.response;
-    }
+    return await instance.post("/user/account/address", data);
 };
 
 export const changeBodyInfoRequest = async (data) => {
-    try {
-        const response = await instance.post("/user/account/change/bodyInfo", data);
-        return response.data;
-    } catch (error) {
-        return error.response;
-    }
+    return await instance.post("/user/account/change/bodyInfo", data);
 };

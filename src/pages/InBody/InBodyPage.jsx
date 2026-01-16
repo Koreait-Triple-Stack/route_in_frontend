@@ -29,6 +29,7 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { addInBodyRequest, deleteInBodyRequest, getInBodyListByUserIdRequest } from '../../apis/inBody/inBodyApi';
 import { usePrincipalState } from '../../store/usePrincipalState';
+import { useQuery } from '@tanstack/react-query';
 
 const CustomizedLabel = (props) => {
   const { x, y, stroke, value } = props;
@@ -55,6 +56,12 @@ export default function InbodyChartWithActions() {
     bodyFatMass: "",
     monthDt: "" 
   });
+
+  const {data:response, error, isLoading} = useQuery({
+    queryFn: () => getInBodyListByUserIdRequest(principal.userId),
+    queryKey: ["getInBodyListByUserIdRequest"],
+    staleTime: 30000,
+  })
 
   const fetchInBodyData = () => {
     if (!principal?.userId) return;
@@ -141,13 +148,18 @@ export default function InbodyChartWithActions() {
     .sort((a, b) => new Date(a.monthDt) - new Date(b.monthDt))
     .slice(-4);
 
+    if (isLoading) return <div>로딩중</div>
+    if (error) return <div>error.message</div>;
+
+    console.log(response)
+
   return (
     <Box sx={{ width: 500, p: 2, bgcolor: '#fff', borderRadius: 2, boxShadow: 1 }}>
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
         <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
           인바디 변화 기록
         </Typography>
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row" spacing={1}> 
           <Button 
             variant="outlined" 
             color="error" 

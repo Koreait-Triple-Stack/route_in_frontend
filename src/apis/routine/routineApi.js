@@ -1,14 +1,12 @@
 import { instance } from "../utils/instance";
 
 export const updateRoutineRequest = async (data) => {
-    const response = await instance.post("/routine/update", data);
-    return response.data;
+    return await instance.post("/routine/update", data);
 };
 
 export const getRoutineRequest = async (userId) => {
-    const response = await instance.post("/routine/get", {
+    return await instance.post("/routine/get", {
         userId: userId,
         boardId: null 
     });
-    return response.data;
 };
