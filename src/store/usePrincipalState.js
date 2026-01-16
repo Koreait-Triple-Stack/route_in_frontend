@@ -4,16 +4,15 @@ export const usePrincipalState = create((set, get) => ({
     isLoggedIn: false,
     principal: null,
     loading: true,
-    login: (userData) => set({ isLoggedIn: true, principal: userData }),
+    login: (userData) =>
+        set({ isLoggedIn: true, principal: userData, loading: false }),
     logout: () => {
         localStorage.removeItem("AccessToken");
-        set({ isLoggedIn: false, principal: null });
+        set({ isLoggedIn: false, principal: null, loading: false });
         window.location.href = "/oauth2/signin";
     },
     setLoading: (loading) =>
         set({
-            isLoggedIn: get().isLoggedIn,
-            principal: get().principal,
             loading: loading,
         }),
 }));

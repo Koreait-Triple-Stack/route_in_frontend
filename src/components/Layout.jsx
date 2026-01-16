@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useEffect } from "react";
 /** @jsxImportSource @emotion/react */
 import { Box, Container } from "@mui/system";
 import BasicBottomNav from "./BasicBottomNav";
+import { usePrincipalState } from "../store/usePrincipalState";
 
 const NAV_H = 56;
 
 function Layout({ children }) {
+
     return (
         <Box sx={{ height: "100svh" }}>
             <Container
@@ -16,7 +18,7 @@ function Layout({ children }) {
                     sx={{
                         height: "100%",
                         overflowY: "auto",
-                        pb: `${NAV_H + 16}px`,
+                        pb: `${NAV_H}px`,
                     }}>
                     {children}
                 </Box>
