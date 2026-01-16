@@ -4,48 +4,47 @@ import Typography from "@mui/material/Typography";
 import { Box, Stack } from "@mui/system";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import DeleteButtonModal from "./DeleteButtonModal";
-import { useQuery } from "@tanstack/react-query";
-import { getNotificationListByUserId } from "../../apis/notification/notificationService";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { deleteNotificationByNotificationId, getNotificationListByUserId } from "../../apis/notification/notificationService";
 import { usePrincipalState } from "../../store/usePrincipalState";
+import { useEffect, useState } from "react";
 
 function NotificationPage() {
     const { principal } = usePrincipalState();
+    const [notifications, setNotifications] = useState([]);
+    const queryClient = useQueryClient();
 
+    // 알림 조회
     const {
         data: response,
         error,
         isLoading,
     } = useQuery({
-        queryKey: ["getNotificationListByUserId", principal.userId],
+        queryKey: ["getNotificationListByUserId", principal?.userId],
         queryFn: () => getNotificationListByUserId(principal.userId),
         staleTime: 30000,
         enabled: !!principal?.userId,
     });
 
-    console.log(principal);
-    console.log(response);
+    useEffect(() => {
+        if (!isLoading) {
+            setNotifications(response.data);
+        }
+    }, [isLoading, response]);
 
-    const notifications = [
-        {
-            notificationId: 1,
-            userId: 20,
-            message: "111",
-            path: "/",
-        },
-        {
-            notificationId: 2,
-            userId: 20,
-            message: "222",
-            path: "/",
-        },
-        {
-            notificationId: 3,
-            userId: 20,
-            message: "333",
-            path: "/",
-        },
-    ];
-    const onDeleteOne = () => {};
+    // 알림 삭제
+    const mutation = useMutation({
+        mutationFn: (notificationId) => deleteNotificationByNotificationId(notificationId),
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ["getNotificationListByUserId", principal.userId],
+            });
+        }
+    })
+
+    const onDeleteOne = (notificationId) => {
+        mutation.mutate(notificationId)
+    };
 
     if (isLoading) return <Box>로딩중...</Box>;
     if (error) return <Box>{error.message}</Box>;
@@ -88,7 +87,6 @@ function NotificationPage() {
                     overflowY: "auto",
                     px: 2,
                     py: 1.5,
-                    pb: "92px", // fixed 버튼 공간 확보
                 }}>
                 <Stack spacing={1.2}>
                     {notifications?.length ? (
@@ -134,7 +132,7 @@ function NotificationPage() {
 
                                 {/* 삭제 버튼 */}
                                 <IconButton
-                                    onClick={() => onDeleteOne(n.id)}
+                                    onClick={() => onDeleteOne(n.notificationId)}
                                     sx={{
                                         borderRadius: 2,
                                         borderColor: "divider",
