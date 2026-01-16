@@ -7,24 +7,21 @@ const NAV_H = 56;
 
 function Layout({ children }) {
     return (
-        <Box
-            sx={{
-                minHeight: "100dvh",
-                bgcolor: "background.default",
-            }}>
+        <Box sx={{ height: "100svh" }}>
             <Container
                 maxWidth="sm"
                 disableGutters
-                sx={{
-                    minHeight: "100dvh",
-                    px: { xs: 0, sm: 2 },
-                    pt: { xs: 0, sm: 2 },
-                    pb: `${NAV_H + 16}px`, // 네비 + 여유
-                }}>
-                <Box sx={{ width: "100%" }}>{children}</Box>
-
-                <BasicBottomNav />
+                sx={{ height: "100%", px: { xs: 2, sm: 2 }, py: 1 }}>
+                <Box
+                    sx={{
+                        height: "100%",
+                        overflowY: "auto",
+                        pb: `${NAV_H + 16}px`,
+                    }}>
+                    {children}
+                </Box>
             </Container>
+            <BasicBottomNav />
         </Box>
     );
 }

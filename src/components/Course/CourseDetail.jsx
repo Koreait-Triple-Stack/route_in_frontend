@@ -19,7 +19,7 @@ function DetailRow({ courseName, value, valueColor }) {
             <Typography
                 variant="body1"
                 sx={{ fontWeight: 600, color: valueColor ?? "text.primary" }}>
-                {valueColor ? value/1000 + "km" : value}
+                {valueColor ? value / 1000 + "km" : value}
             </Typography>
         </Box>
     );
@@ -40,6 +40,19 @@ function CourseDetail({ course }) {
             map.panTo(center);
         }
     }, [kakaoObj, map, course]);
+
+    useEffect(() => {
+        if (!map || !kakaoObj) return;
+
+        const onResize = () => {
+            kakaoObj.maps.event.trigger(map, "resize");
+            // 필요하면 현재 경로를 화면에 맞추기:
+            // fitBoundsToCourse();
+        };
+
+        window.addEventListener("resize", onResize);
+        return () => window.removeEventListener("resize", onResize);
+    }, [map, kakaoObj]);
 
     useEffect(() => {
         setPoints(
@@ -74,15 +87,15 @@ function CourseDetail({ course }) {
                 border: "1px solid",
                 borderColor: "divider",
                 width: "100%",
-                maxWidth: 520,
-                mx: "auto",
+                maxWidth: { xs: "100%", sm: 520 },
+                mx: { xs: 0, sm: "auto" },
             }}>
             {/* 지도 영역 */}
             <Box
                 sx={{
                     position: "relative",
                     width: "100%",
-                    height: { xs: 220, sm: 280 }, // 높이 필수
+                    height: "clamp(220px, 35vh, 280px)", // 높이 필수
                     bgcolor: "grey.200",
                 }}>
                 {/* 여기 ref에 카카오맵이 렌더됨 */}
