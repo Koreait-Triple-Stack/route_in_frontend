@@ -44,11 +44,11 @@ function MainRouter() {
             <Layout>
                 <Routes>
                     <Route path="/" element={<RootRoute />} />
-                    <Route path="/oauth2/*" element={<OAuth2Router />} />
-                    
                     <Route path="/board/*" element={<BoardRouter />} />
                     <Route path="/notification" element={<NotificationPage />} />
                     <Route path="/mypage/*" element={<MyPageRouter />} />
+                    <Route path="/oauth2/*" element={<OAuth2Router />} />
+                    <Route path="/aaa" element={<MainPage />} />
                     <Route path="/map" element={<MapView />} />
                     <Route path="/course/*" element={<CourseRouter />} />
                 </Routes>
