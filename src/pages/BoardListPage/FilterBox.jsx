@@ -34,7 +34,6 @@ function FilterBox({
                 boxSizing: "border-box",
                 borderRadius: "12px",
                 mb: 1,
-                maxWidth: 400,
             }}>
             {type !== "전체" &&
                 (type === "러닝코스" ? (
