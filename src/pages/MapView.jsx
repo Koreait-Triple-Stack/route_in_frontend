@@ -19,5 +19,7 @@ export default function MapView() {
     if (isLoading) return <Box>로딩중...</Box>;
     if (error) return <Box>{error.message}</Box>;
 
+    console.log(response)
+
     return <CourseDetail course={response.data} />;
 }

@@ -3,24 +3,29 @@ import React from "react";
 import { Box, Container } from "@mui/system";
 import BasicBottomNav from "./BasicBottomNav";
 
+const NAV_H = 56;
 
 function Layout({ children }) {
     return (
-        <Container
+        <Box
             sx={{
-                maxWidth: "sm",
-                minHeight: "100vh",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                pt: 3,
-                pb: 8
+                minHeight: "100dvh",
+                bgcolor: "background.default",
             }}>
-            <Box sx={{ flex: 1, overflowY: "auto" }}>{children}</Box>
+            <Container
+                maxWidth="sm"
+                disableGutters
+                sx={{
+                    minHeight: "100dvh",
+                    px: { xs: 0, sm: 2 },
+                    pt: { xs: 0, sm: 2 },
+                    pb: `${NAV_H + 16}px`, // 네비 + 여유
+                }}>
+                <Box sx={{ width: "100%" }}>{children}</Box>
 
-            <BasicBottomNav />
-        </Container>
+                <BasicBottomNav />
+            </Container>
+        </Box>
     );
 }
 
