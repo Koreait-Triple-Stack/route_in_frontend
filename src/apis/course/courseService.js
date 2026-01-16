@@ -8,30 +8,30 @@ import {
 
 export const addCourse = async (data) => {
     const result = await addCourseRequest(data);
-    if (result.data.status === "failed") throw new Error(result.data.message)
+    if (result.data.status !== "success") throw new Error(result.data.message)
     return result.data;
 };
 
 export const getCourseByBoardId = async (boardId) => {
     const result = await getCourseByBoardIdRequest(boardId);
-    if (result.data.status === "failed") throw new Error(result.data.message);
+    if (result.data.status !== "success") throw new Error(result.data.message);
     return result.data;
 };
 
 export const getCourseListByUserId = async (userId) => {
     const result = await getCourseListByUserIdRequest(userId);
-    if (result.data.status === "failed") throw new Error(result.data.message);
+    if (result.data.status !== "success") throw new Error(result.data.message);
     return result.data;
 };
 
 export const getCourseFavoriteByUserId = async (userId) => {
     const result = await getCourseFavoriteByUserIdRequest(userId);
-    if (result.data.status === "failed") throw new Error(result.data.message);
+    if (result.data.status !== "success") throw new Error(result.data.message);
     return result.data;
 };
 
 export const updateCourse = async (data) => {
     const result = await updateCourseRequest(data);
-    if (result.data.status === "failed") throw new Error(result.data.message);
+    if (result.data.status !== "success") throw new Error(result.data.message);
     return result.data;
 };
