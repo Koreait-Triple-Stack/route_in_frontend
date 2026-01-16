@@ -10,9 +10,9 @@ import {
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { usePrincipalState } from "../../store/usePrincipalState";
-import { addBoardRequest } from "../../apis/board/boardApi";
 import { EXERCISE_TAGS } from "../../constants/exerciseTags";
 import { useMutation } from "@tanstack/react-query";
+import { addBoardRequest } from "../../apis/board/boardApi";
 
 const DAYS = [
   "월요일",
@@ -24,7 +24,7 @@ const DAYS = [
   "일요일",
 ];
 
-// 렌더링을 위해 추가
+// BoardWritePage
 export default function BoardWritePage() {
   const { type } = useParams(); // /board/write/:type
 
@@ -42,12 +42,12 @@ export default function BoardWritePage() {
 function RoutineWritePage() {
   const navigate = useNavigate();
   const { principal } = usePrincipalState();
+  const userId = principal?.userId;
 
   const [title, setTitle] = useState("");
   const [write, setWrite] = useState("");
   const [selectedTagIds, setSelectedTagIds] = useState([]);
 
-  // 요일별 운동 목록 저장할 객체
   const [routine, setRoutine] = useState(
     DAYS.reduce((acc, day) => {
       acc[day] = [];
@@ -57,22 +57,16 @@ function RoutineWritePage() {
 
   const mutation = useMutation({
     mutationKey: ["addBoard"],
-    mutationFn: (data) => addBoard(data),
-    onSuccess: (response) => {
-      // queryClient.invaludateQueries(["", ""])
-      setBoardName("");
-      clear();
-      alert(response.message);
+    mutationFn: addBoardRequest,
+    onSuccess: (res) => {
+      alert(res?.data?.message ?? "등록 완료");
+      navigate("/board");
     },
-    onError: (error) => {
-      alert(error.message);
+    onError: (err) => {
+      alert(err?.response?.data?.message ?? err?.message ?? "요청 실패");
     },
   });
 
-  const titleInputOnChangeHandler = (e) => setTitle(e.target.value);
-  const writeInputOnChangeHandler = (e) => setWrite(e.target.value);
-
-  // 운동부위 ToggleButton
   const toggleTag = (tagId) => {
     setSelectedTagIds((prev) =>
       prev.includes(tagId)
@@ -81,14 +75,12 @@ function RoutineWritePage() {
     );
   };
 
-  // 선택된 tag id -> label 문자열로 변환 (백엔드 List<String> 대응)
   const selectedTagLabels = useMemo(() => {
     return EXERCISE_TAGS.filter((t) => selectedTagIds.includes(t.id)).map(
       (t) => t.label
     );
   }, [selectedTagIds]);
 
-  // 운동 추가 작성
   const handleOpenForm = (day) => {
     const name = window.prompt("운동 이름");
     if (name === null) return;
@@ -103,7 +95,7 @@ function RoutineWritePage() {
     if (!trimmedExercise) return;
 
     const addRoutine = {
-      id: Date.now(), // 삭제를 위함
+      id: Date.now(),
       name: trimmedName,
       exercise: trimmedExercise,
     };
@@ -114,7 +106,6 @@ function RoutineWritePage() {
     }));
   };
 
-  // 운동 삭제
   const handleDeleteExercise = (day, id) => {
     setRoutine((prev) => ({
       ...prev,
@@ -122,49 +113,34 @@ function RoutineWritePage() {
     }));
   };
 
-  // 저장(서버 전송)
-  const submitOnClickHandler = async () => {
-    // 제목 검사
-    if (!title.trim()) {
-      alert("제목을 작성해 주세요.");
-      return;
-    }
+  const submitOnClickHandler = () => {
+    if (userId == null) return alert("로그인이 필요합니다.");
 
-    // 하나 이상의 루틴 작성 검사
+    if (!title.trim()) return alert("제목을 작성해 주세요.");
+
     const hasAnyRoutine = Object.values(routine).some((arr) => arr.length > 0);
-    if (!hasAnyRoutine) {
-      alert("하나 이상의 루틴을 추가해주세요");
-      return;
-    }
-
-    // 로그인 검사
-    const userId = principal?.userId;
-    if (!userId) {
-      alert("로그인이 필요합니다.");
-      return;
-    }
+    if (!hasAnyRoutine) return alert("하나 이상의 루틴을 추가해주세요");
 
     if (!window.confirm("게시글을 등록하시겠습니까?")) return;
 
-    const payload = buildBoardPayload({
-      userId,
-      type: "routine",
-      title,
-      content: write,
-      tags: selectedTagLabels,
-      routine,
-    });
-
-    mutation.mutate(payload);
-
-    // 서버로 보낼 루틴 목록(요일별 운동들)
     const send = Object.entries(routine).flatMap(([day, arr]) =>
-      arr.map((info) => ({
+      arr.map((item) => ({
         day,
-        name: info.name,
-        exercise: info.exercise,
+        name: item.name,
+        exercise: item.exercise,
       }))
     );
+
+    const payload = {
+      userId,
+      type: "routine",
+      title: title.trim(),
+      content: write.trim(),
+      tags: selectedTagLabels,
+      send,
+    };
+
+    mutation.mutate(payload);
   };
 
   return (
@@ -177,10 +153,9 @@ function RoutineWritePage() {
           placeholder="제목을 입력하세요."
           fullWidth
           value={title}
-          onChange={titleInputOnChangeHandler}
+          onChange={(e) => setTitle(e.target.value)}
         />
 
-        {/* 운동 부위 */}
         <Typography sx={{ fontWeight: "bold" }}>운동 부위</Typography>
         <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
           {EXERCISE_TAGS.map((tag) => (
@@ -198,7 +173,6 @@ function RoutineWritePage() {
 
         <Divider />
 
-        {/* 운동 루틴 */}
         <Typography sx={{ fontWeight: "bold" }}>운동 루틴</Typography>
 
         <Stack spacing={2}>
@@ -254,11 +228,11 @@ function RoutineWritePage() {
           multiline
           minRows={4}
           value={write}
-          onChange={writeInputOnChangeHandler}
+          onChange={(e) => setWrite(e.target.value)}
         />
 
         <Button variant="contained" onClick={submitOnClickHandler}>
-          확인
+          {mutation.isPending ? "저장 중.." : "확인"}
         </Button>
       </Stack>
     </Box>
@@ -269,53 +243,38 @@ function RoutineWritePage() {
 function RunningWritePage() {
   const navigate = useNavigate();
   const { principal } = usePrincipalState();
+  const userId = principal?.userId;
+
   const [title, setTitle] = useState("");
   const [write, setWrite] = useState("");
 
-  const userId = principal?.userId;
   const mutation = useMutation({
-    mutationKey: ["addBoard", "running", userId],
-    mutationFn: (payload) => addBoard(payload),
-    onSuccess: (res) => {
-      alert(res.message ?? "게시글이 추가되었습니다.");
+    mutationKey: ["addBoard"],
+    mutationFn: (data) => addBoardRequest(data),
+    onSuccess: (response) => {
+      alert(response?.data?.message ?? "등록 완료");
       navigate("/board");
     },
-    onError: (err) => alert(err.message),
+    onError: (error) => {
+      alert(error?.response?.data?.message ?? error?.message ?? "요청 실패");
+    }, 
   });
 
-  const titleInputOnChangeHandler = (e) => {
-    setTitle(e.target.value);
-  };
-
-  const writeInputOnChangeHandler = (e) => {
-    setWrite(e.target.value);
-  };
-
   const submitOnClickHandler = () => {
-    if (!userId) return alert("로그인이 필요합니다.");
+    if (userId == null) return alert("로그인이 필요합니다.");
 
-    // 빈칸 체크
     if (!title.trim() || !write.trim())
       return alert("모든 항목을 입력해주세요.");
 
-    const payload = buildPayload({
-      userId,
-      type: "running",
-      title,
-      content: write,
-      tags: [],
-    });
-
-    mutation.mutate(payload);
-
-    // 서버로 보낼 데이터
-    const data = {
+    const payload = {
       userId,
       type: "running",
       title: title.trim(),
       content: write.trim(),
       tags: [],
     };
+
+    mutation.mutate(payload);
   };
 
   return (
@@ -337,7 +296,7 @@ function RunningWritePage() {
           fullWidth
           variant="outlined"
           value={title}
-          onChange={titleInputOnChangeHandler}
+          onChange={(e) => setTitle(e.target.value)}
         />
       </Stack>
 
@@ -356,7 +315,9 @@ function RunningWritePage() {
       >
         지도 미리보기 영역
       </Box>
+
       <Divider />
+
       <Box sx={{}}>
         코스정보
         <TextField
@@ -368,9 +329,10 @@ function RunningWritePage() {
           fullWidth
           variant="outlined"
           value={write}
-          onChange={writeInputOnChangeHandler}
+          onChange={(e) => setWrite(e.target.value)}
         />
       </Box>
+
       <Button onClick={submitOnClickHandler}>확인</Button>
     </Box>
   );
