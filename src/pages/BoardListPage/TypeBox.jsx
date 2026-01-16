@@ -13,7 +13,6 @@ function TypeBox({ type, setType, checked, setChecked }) {
     return (
         <Box
             sx={{
-                width: 400,
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
