@@ -15,7 +15,7 @@ import PlaceSearchPanel from "./PlaceSearchPanel";
 import CourseSavePanel from "./CourseSavePanel";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-function CourseEdit({ course }) {
+function CourseEdit({ course, userId, boardId }) {
     const navigate = useNavigate();
 
     const { mapRef, kakaoObj, points, setPoints, distanceM, map, undo, clear } =

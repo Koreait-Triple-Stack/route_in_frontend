@@ -19,8 +19,13 @@ function BasicBottomNav() {
             sx={{
                 position: "fixed",
                 bottom: 0,
-                left: 0,
-                right: 0,
+                left: "50%",
+                transform: "translateX(-50%)",
+                width: "100%",
+                maxWidth: 600, // Container sm에 맞춰 조절 (sm이 600px)
+                height: 56,
+                zIndex: (theme) => theme.zIndex.appBar, // 위로 올리기
+                pb: "env(safe-area-inset-bottom)",
             }}
             elevation={3}>
             <BottomNavigation
