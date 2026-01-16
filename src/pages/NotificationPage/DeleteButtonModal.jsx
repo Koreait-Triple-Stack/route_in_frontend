@@ -7,11 +7,26 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import { Fab, Typography } from "@mui/material";
+import { usePrincipalState } from "../../store/usePrincipalState";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { deleteNotificationByUserId } from "../../apis/notification/notificationService";
 
 function DeleteButtonModal() {
+    const { principal } = usePrincipalState();
+    const queryClient = useQueryClient();
     const [openDeleteAll, setOpenDeleteAll] = useState(false);
+    const mutation = useMutation({
+        mutationFn: () => deleteNotificationByUserId(principal?.userId),
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ["getNotificationListByUserId", principal.userId],
+            });
+        }
+    })
 
-    const onDeleteAll = () => {};
+    const onDeleteAll = () => {
+        mutation.mutate(principal?.userId)
+    };
 
     return (
         <>
