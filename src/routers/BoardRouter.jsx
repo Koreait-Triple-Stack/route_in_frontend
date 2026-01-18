@@ -34,7 +34,7 @@ import React from "react";
 import { Routes, Route } from "react-router-dom";
 import BoardListPage from "../pages/BoardListPage/BoardListPage";
 import BoardWritePage from "../pages/BoardWritePage/BoardWritePage";
-import RoutineDetailPage from "../pages/RoutineDetailPage/RoutineDetailPage";
+// import RoutineDetailPage from "../pages/RoutineDetailPage/RoutineDetailPage";
 // 러닝 상세가 따로 있으면 추가
 // import CourseDetailPage from "../pages/CourseDetailPage/CourseDetailPage";
 
