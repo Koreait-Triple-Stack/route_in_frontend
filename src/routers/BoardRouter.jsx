@@ -1,3 +1,4 @@
+import React from "react";
 import { Routes, Route } from "react-router-dom";
 import BoardListPage from "../pages/BoardListPage/BoardListPage";
 import BoardWritePage from "../pages/BoardWritePage/BoardWritePage";

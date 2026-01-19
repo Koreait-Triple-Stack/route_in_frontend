@@ -20,7 +20,7 @@ function BoardListPage() {
 
 
     const RoutineWritePage = () => navigate("/board/write/routine");
-    const RunningWritePage = () => navigate("/board/write/running");
+    const CourseWritePage = () => navigate("/board/write/course");
     const posts = [
         {
             id: "1",
@@ -132,7 +132,7 @@ function BoardListPage() {
                 <Button variant="contained" onClick={RoutineWritePage}>
                     루틴 작성
                 </Button>
-                <Button variant="contained" onClick={RunningWritePage}>
+                <Button variant="contained" onClick={CourseWritePage}>
                     러닝 작성
                 </Button>
             </Stack>
