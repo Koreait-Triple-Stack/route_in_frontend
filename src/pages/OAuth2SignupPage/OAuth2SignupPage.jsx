@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import {
     Container,
     Paper,
@@ -15,11 +15,23 @@ import {
     Stack,
 } from "@mui/material";
 import { useDaumPostcodePopup } from "react-daum-postcode"; // 라이브러리 import
-import { oAuth2SignupRequest } from "../../apis/oAuth2/oAuth2Api";
+import { oAuth2Signup } from "../../apis/oAuth2/oAuth2Service";
+import { useMutation } from "@tanstack/react-query";
 
 const OAuth2SignupPage = () => {
-    const navigate = useNavigate();
-    const location = useLocation();
+    const [searchParams] = useSearchParams();
+    const provider = searchParams.get("provider");
+    const providerUserId = searchParams.get("providerUserId");
+    const mutation = useMutation({
+        mutationFn: (data) => oAuth2Signup(data),
+        onSuccess: (response) => {
+            alert(response.message);
+            window.location.href = "/";
+        },
+        onError: (error) => {
+            alert(error);
+        },
+    });
 
     // 1. 주소 검색 팝업 훅 설정
     const open = useDaumPostcodePopup();
@@ -29,8 +41,8 @@ const OAuth2SignupPage = () => {
         birthDate: "",
         gender: "",
         zipCode: "",
-        addressBasic: "",
-        addressDetail: "",
+        baseAddress: "",
+        detailAddress: "",
         height: "",
         weight: "",
     });
@@ -38,27 +50,10 @@ const OAuth2SignupPage = () => {
     const [errors, setErrors] = useState({});
 
     const handleAddressComplete = (data) => {
-        let fullAddress = data.address;
-        let extraAddress = "";
-
-        if (data.addressType === "R") {
-            if (data.bname !== "") {
-                extraAddress += data.bname;
-            }
-            if (data.buildingName !== "") {
-                extraAddress +=
-                    extraAddress !== ""
-                        ? `, ${data.buildingName}`
-                        : data.buildingName;
-            }
-            fullAddress += extraAddress !== "" ? ` (${extraAddress})` : "";
-        }
-
         setFormData((prev) => ({
             ...prev,
             zipCode: data.zonecode,
-            addressBasic: fullAddress,
-            addressDetail: "",
+            baseAddress: data.address,
         }));
 
         if (errors.address) {
@@ -88,20 +83,20 @@ const OAuth2SignupPage = () => {
         }
     };
 
-    const handleSignup = () => {
+    const handleSignup = async () => {
         const newErrors = {};
 
-        if (!formData.nickname.trim())
-            newErrors.nickname = "닉네임을 입력해주세요.";
+        if (!formData.username.trim())
+            newErrors.username = "닉네임을 입력해주세요.";
         if (formData.birthDate.length !== 8)
             newErrors.birthDate = "생년월일 8자리를 입력해주세요.";
         if (!formData.gender) newErrors.gender = "성별을 선택해주세요.";
 
         // [수정] 주소 유효성 검사 (우편번호나 상세주소 체크)
-        if (!formData.zipCode || !formData.addressBasic) {
+        if (!formData.zipCode || !formData.baseAddress) {
             newErrors.address = "주소를 검색해주세요.";
-        } else if (!formData.addressDetail.trim()) {
-            newErrors.address = "상세주소를 입력해주세요.";
+        } else if (!formData.detailAddress.trim()) {
+            newErrors.detailAddress = "상세주소를 입력해주세요.";
         }
 
         if (Object.keys(newErrors).length > 0) {
@@ -116,31 +111,20 @@ const OAuth2SignupPage = () => {
             4
         )}-${formData.birthDate.slice(4, 6)}-${formData.birthDate.slice(6, 8)}`;
 
-        // [수정] 백엔드로 보낼 때 주소 합치기 (예: "12345 서울시 강남구 ... 101호")
-        // 필요에 따라 zipCode를 별도로 보낼 수도 있습니다.
-        const fullAddressString = `(${formData.zipCode}) ${formData.addressBasic} ${formData.addressDetail}`;
-
-        oAuth2SignupRequest({
-            username: formData.nickname,
+        mutation.mutate({
+            username: formData.username,
             birthDate: formattedBirthDate,
             gender: formData.gender,
-            address: fullAddressString, // 합쳐진 주소 문자열
             height: Number(formData.height),
             weight: Number(formData.weight),
-            provider: location.state?.provider,
-            providerUserId: location.state?.providerUserId,
-            email: location.state?.email,
-        })
-            .then((response) => {
-                if (response.status === "success") {
-                    alert("회원가입이 완료되었습니다.");
-                    navigate("/oauth2/signin");
-                }
-            })
-            .catch((error) => {
-                console.error(error);
-                alert("회원가입 중 오류가 발생했습니다.");
-            });
+            provider: provider,
+            providerUserId: providerUserId,
+            address: {
+                zipCode: formData.zipCode,
+                baseAddress: formData.baseAddress,
+                detailAddress: formData.detailAddress,
+            },
+        });
     };
 
     const Label = ({ children, required }) => (
@@ -169,12 +153,12 @@ const OAuth2SignupPage = () => {
                         <Label required>닉네임</Label>
                         <TextField
                             fullWidth
-                            name="nickname"
+                            name="username"
                             placeholder="닉네임을 입력해주세요"
-                            value={formData.nickname}
+                            value={formData.username}
                             onChange={handleInputChange}
-                            error={!!errors.nickname}
-                            helperText={errors.nickname}
+                            error={!!errors.username}
+                            helperText={errors.username}
                             variant="outlined"
                             size="small"
                             sx={{
@@ -238,6 +222,7 @@ const OAuth2SignupPage = () => {
                                     placeholder="우편번호"
                                     value={formData.zipCode}
                                     variant="outlined"
+                                    onClick={handleAddressSearch}
                                     size="small"
                                     fullWidth
                                     // 사용자가 직접 수정 못하게 readOnly 설정
@@ -266,7 +251,8 @@ const OAuth2SignupPage = () => {
                             <TextField
                                 fullWidth
                                 placeholder="기본 주소"
-                                value={formData.addressBasic}
+                                onClick={handleAddressSearch}
+                                value={formData.baseAddress}
                                 variant="outlined"
                                 size="small"
                                 InputProps={{
@@ -279,9 +265,9 @@ const OAuth2SignupPage = () => {
                             {/* 상세 주소 */}
                             <TextField
                                 fullWidth
-                                name="addressDetail"
+                                name="detailAddress"
                                 placeholder="상세 주소를 입력해주세요 (예: 101동 101호)"
-                                value={formData.addressDetail}
+                                value={formData.detailAddress}
                                 onChange={handleInputChange}
                                 variant="outlined"
                                 size="small"
@@ -290,8 +276,8 @@ const OAuth2SignupPage = () => {
                                         borderRadius: 2,
                                     },
                                 }}
-                                error={!!errors.address}
-                                helperText={errors.address} // 에러 메시지는 상세주소 밑에 표시
+                                error={!!errors.detailAddress}
+                                helperText={errors.detailAddress} // 에러 메시지는 상세주소 밑에 표시
                             />
                         </Stack>
                     </Box>

@@ -13,6 +13,7 @@ import CourseRouter from "./CourseRouter";
 import ProtectedRouter from "./ProtectedRouter";
 import { useQuery } from "@tanstack/react-query";
 import { getPrincipal } from "../apis/account/accountService";
+import { Box } from "@mui/system";
 
 const RootRoute = () => {
     const { isLoggedIn } = usePrincipalState();
@@ -43,17 +44,8 @@ function MainRouter() {
         }
     }, [isSuccess, isLoading, response, login, setLoading]);
 
-    useEffect(() => {
-        if (!error) return;
-
-        const status = error?.response?.status; // axios 에러면 보통 여기 있음
-
-        if (status === 401) {
-            localStorage.removeItem("AccessToken");
-        }
-
-        setLoading(false);
-    }, [error, setLoading]);
+    if (isLoading) return <Box>로딩중</Box>;
+    if (error) return <Box>{error}</Box>;
 
     return (
         <>
