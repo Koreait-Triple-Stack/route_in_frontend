@@ -81,6 +81,7 @@ function MainRouter() {
 
           <Route path="/map" element={<MapView />} />
           <Route path="/course/*" element={<CourseRouter />} />
+          <Route path="*" element={<div>404</div>} />
         </Routes>
       </Layout>
     </>

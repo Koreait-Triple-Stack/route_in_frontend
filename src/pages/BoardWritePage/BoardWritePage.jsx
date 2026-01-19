@@ -19,6 +19,7 @@ function BoardWritePage() {
   const [titleInputValue, setTitleInputValue] = useState("");
   const [contentInputValue, setContentInputValue] = useState("");
 
+  
   const mutation = useMutation({
     mutationKey: ["addBoard"],
     mutationFn: (payload) => addBoardRequest(payload),

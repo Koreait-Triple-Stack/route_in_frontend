@@ -3,12 +3,7 @@ import { Box, Grid } from "@mui/system";
 import React from "react";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 
-function TypeBox({ type, setType, checked, setChecked }) {
-    const handleChange = (e, newValue) => {
-        if (newValue !== null) {
-            setType(newValue);
-        }
-    };
+function TypeBox({checked, setChecked }) {
 
     return (
         <Box
@@ -18,14 +13,7 @@ function TypeBox({ type, setType, checked, setChecked }) {
                 alignItems: "center",
                 pb: 1,
             }}>
-            <ToggleButtonGroup value={type} exclusive onChange={handleChange}>
-                <Grid container spacing={1}>
-                    <ToggleButton value="전체">전체</ToggleButton>
-                    <ToggleButton value="러닝코스">러닝코스</ToggleButton>
-                    <ToggleButton value="운동루틴">운동루틴</ToggleButton>
-                </Grid>
-            </ToggleButtonGroup>
-
+    
             <ToggleButton
                 value="checked"
                 selected={checked}
