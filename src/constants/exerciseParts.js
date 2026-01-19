@@ -1,4 +1,4 @@
-export const EXERCISE_TAGS = [
+export const EXERCISE_PARTS = [
     "가슴",
     "등",
     "하체",
