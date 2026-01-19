@@ -15,22 +15,14 @@ const AddressForm = ({ userId, onClose }) => {
     const openPostcode = useDaumPostcodePopup('https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js');
 
     const handleAddressComplete = (data) => {
-        let fullAddress = data.address;
-        let extraAddress = '';
-
-        if (data.addressType === 'R') {
-            if (data.bname !== '') extraAddress += data.bname;
-            if (data.buildingName !== '') extraAddress += (extraAddress !== '' ? `, ${data.buildingName}` : data.buildingName);
-            fullAddress += (extraAddress !== '' ? ` (${extraAddress})` : '');
-        }
-
         setAddressInputValue(prev => ({
             ...prev,
             zipCode: data.zonecode,
-            baseAddress: fullAddress,
-            detailAddress: '' 
+            baseAddress: data.address,
         }));
-        setError("");
+        if (error.address) {
+            setError((prev) => ({ ...prev, address: "" }));
+        }
     };
 
     const handleAddressSearch = () => {
@@ -54,11 +46,11 @@ const AddressForm = ({ userId, onClose }) => {
             ...addressInputValue
         })
         .then((response) => {
-            if (response.status === "success") {
-                alert(response.message);
+            if (response.data.status === "success") {
+                alert(response.data.message);
                 onClose(); 
             } else {
-                alert(response.message);
+                alert(response.data.message);
             }
         })
         .catch(() => alert("오류가 발생했습니다."));

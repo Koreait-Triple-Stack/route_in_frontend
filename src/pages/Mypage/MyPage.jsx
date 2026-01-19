@@ -22,22 +22,32 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
-import { useQuery } from "@tanstack/react-query";
-import { getUserByUserId } from "../../apis/account/accountService";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { getUserByUserIdRequest } from "../../apis/account/accountApi";
+import { getFollowerUserListRequest, getFollowingUserListRequest } from "../../apis/follow/followApi";
 
 function MyPage() {
     const navigate = useNavigate();
     const { logout, principal } = usePrincipalState();
-    const {
-        data: response,
-        isLoading,
-    } = useQuery({
+    const { data: response, isLoading } = useQuery({
         queryKey: ["getUserByUserId", principal?.userId],
-        queryFn: () => getUserByUserId(principal?.userId),
+        queryFn: () => getUserByUserIdRequest(principal?.userId),
         staleTime: 30000,
     });
 
-    const user = response?.data;
+    const user = response?.data?.data;
+
+    const { data: followerUser } = useQuery({
+        queryKey: ["getFollowerUserList", principal?.userId],
+        queryFn: () => getFollowerUserListRequest(principal?.userId),
+        staleTime: 30000,
+    });
+
+    const { data: followingUser } = useQuery({
+        queryKey: ["getFollowingUserList", principal?.userId],
+        queryFn: () => getFollowingUserListRequest(principal?.userId),
+        staleTime: 30000,
+    });
 
     const [activeView, setActiveView] = useState(null);
     const [open, setOpen] = useState(false);
@@ -135,7 +145,9 @@ function MyPage() {
                             <Typography variant="caption">
                                 {user?.height}cm / {user?.weight}kg
                             </Typography>
-                            <Typography variant="h6">1</Typography>
+                            <Typography variant="body2">
+                                follower : {followerUser.data.data.length} / following : {followingUser.data.data.length}
+                            </Typography>
                         </Box>
                     </Box>
 
@@ -145,13 +157,13 @@ function MyPage() {
                         </ListItemIcon>
                         <ListItemText primary="인바디 기록 추가/삭제" />
                     </ListItemButton>
-                    <ListItemButton onClick={() => navigate("/mypage/boardList")}>
+                    <ListItemButton onClick={() => navigate("/myPage/boardList")}>
                         <ListItemIcon>
                             <DescriptionIcon />
                         </ListItemIcon>
                         <ListItemText primary="작성한 게시물 관리" />
                     </ListItemButton>
-                    <ListItemButton>
+                    <ListItemButton onClick={() => navigate("/myPage/courseList")}>
                         <ListItemIcon>
                             <DraftsIcon />
                         </ListItemIcon>
