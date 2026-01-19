@@ -98,10 +98,14 @@ function BoardListPage() {
                 </Box>
             </Box>
             <Stack direction="row" spacing={1}>
-                <Button variant="contained" onClick={RoutineWritePage}>
+                <Button
+                    variant="contained"
+                    onClick={() => navigate("/board/write/routine")}>
                     루틴 작성
                 </Button>
-                <Button variant="contained" onClick={CourseWritePage}>
+                <Button
+                    variant="contained"
+                    onClick={() => navigate("/board/write/course")}>
                     러닝 작성
                 </Button>
             </Stack>

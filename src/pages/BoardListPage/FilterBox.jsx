@@ -6,10 +6,8 @@ import {
 } from "@mui/material";
 import { Box, Grid } from "@mui/system";
 import { EXERCISE_PARTS } from "../../constants/exerciseParts";
-import { useQueryClient } from "@tanstack/react-query";
 
 function FilterBox({ form, setForm, setTags }) {
-    const queryClient = useQueryClient();
     const resetOnClickHandler = () => {
         setTags([])
         setForm({
@@ -28,7 +26,6 @@ function FilterBox({ form, setForm, setTags }) {
         } else if (form.type === "ROUTINE") {
             setTags(form.parts);
         }
-        queryClient.invalidateQueries(["getBoardListInfinite"]);
     }
 
     // handler에 invalid
