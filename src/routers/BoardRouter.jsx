@@ -34,7 +34,8 @@ import React from "react";
 import { Routes, Route } from "react-router-dom";
 import BoardListPage from "../pages/BoardListPage/BoardListPage";
 import BoardWritePage from "../pages/BoardWritePage/BoardWritePage";
-import RoutineDetailPage from "../pages/RoutineDetailPage/RoutineDetailPage";
+import BoardDetailPage from "../pages/BoardDetailPage/BoardDetailPage";
+
 // 러닝 상세가 따로 있으면 추가
 // import CourseDetailPage from "../pages/CourseDetailPage/CourseDetailPage";
 
@@ -48,12 +49,8 @@ export default function BoardRouter() {
       <Route path="write/:type" element={<BoardWritePage />} />
 
       {/* /board/123 */}
-      <Route path=":boardId" element={<RoutineDetailPage />} />
+      <Route path=":type/:boardId" element={<BoardDetailPage />} />
 
-      {/* 필요하면 러닝 상세 라우트 별도 추가 */}
-      {/* <Route path="course/:courseId" element={<CourseDetailPage />} /> */}
-
-      {/* board 하위 404 */}
       <Route path="*" element={<div>Board 404</div>} />
     </Routes>
   );

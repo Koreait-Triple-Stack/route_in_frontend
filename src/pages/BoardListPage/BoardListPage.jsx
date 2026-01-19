@@ -17,8 +17,9 @@ function BoardListPage() {
     const navigate = useNavigate();
     const { selectedTagIds, toggleTag, resetTags } = useExerciseTagStore();
 
-    const RoutineWrite = () => navigate("/board/write/routine");
-    const RunningWrite = () => navigate("/board/write/running");
+
+    const RoutineWritePage = () => navigate("/board/write/routine");
+    const RunningWritePage = () => navigate("/board/write/running");
     const posts = [
         {
             id: "1",
@@ -131,10 +132,10 @@ function BoardListPage() {
                 </Box>
             </Box>
             <Stack direction="row" spacing={1}>
-                <Button variant="contained" onClick={RoutineWrite}>
+                <Button variant="contained" onClick={RoutineWritePage}>
                     루틴 작성
                 </Button>
-                <Button variant="contained" onClick={RunningWrite}>
+                <Button variant="contained" onClick={RunningWritePage}>
                     러닝 작성
                 </Button>
             </Stack>
