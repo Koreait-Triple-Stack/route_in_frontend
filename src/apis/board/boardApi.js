@@ -16,9 +16,9 @@ export const getBoardListRequest = async () => {
     return instance.get("/board/list");
 };
 
-// export const getBoardInfiniteRequest = async (data) => {
-//     return instance.post("/board/list/infinite", data);
-// };
+export const getBoardInfiniteRequest = async (params) => {
+    return instance.get("/board/list/infinite", {params});
+};
 
 export const getBoardByBoardIdRequest = async (boarId) => {
     return instance.get(`/board/${boarId}`);

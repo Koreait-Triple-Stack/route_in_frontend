@@ -5,32 +5,50 @@ import {
     ToggleButtonGroup,
 } from "@mui/material";
 import { Box, Grid } from "@mui/system";
-import { EXERCISE_TAGS } from "../../constants/exerciseTags";
+import { EXERCISE_PARTS } from "../../constants/exerciseParts";
+import { useQueryClient } from "@tanstack/react-query";
 
-function FilterBox({ form, setForm }) {
+function FilterBox({ form, setForm, setTags }) {
+    const queryClient = useQueryClient();
     const resetOnClickHandler = () => {
+        setTags([])
         setForm({
             type: "ALL",
             region: "",
             distance: 0,
-            tags: [],
+            parts: [],
         });
     };
+
+    const getOnClickHandler = () => {
+        if (form.type === "ALL") {
+            setTags([]);
+        } else if (form.type === "COURSE") {
+            setTags([form.region, form.distance]);
+        } else if (form.type === "ROUTINE") {
+            setTags(form.parts);
+        }
+        queryClient.invalidateQueries(["getBoardListInfinite"]);
+    }
+
+    // handler에 invalid
+    // birthdate를 나이대로 바꾸기
+    // 맨밑에 닿을 때 마다 다시 부르기 -> listPage
 
     const inputChangeHandler = (e) => {
         const { name, value } = e.target;
 
-        if (name === "tags") {
+        if (name === "parts") {
             setForm((prev) => {
-                if (prev.tags.includes(value)) {
+                if (prev.parts.includes(value)) {
                     return {
                         ...prev,
-                        [name]: prev.tags.filter((tag) => tag !== value),
+                        [name]: prev.parts.filter((part) => part !== value),
                     };
                 } else {
                     return {
                         ...prev,
-                        [name]: [...prev.tags, value],
+                        [name]: [...prev.parts, value],
                     };
                 }
             });
@@ -55,22 +73,7 @@ function FilterBox({ form, setForm }) {
                 borderRadius: "12px",
                 mb: 1,
             }}>
-            <ToggleButtonGroup
-                value={form.type}
-                exclusive
-                onChange={inputChangeHandler}>
-                <Grid container spacing={1}>
-                    <ToggleButton name="type" value="ALL">
-                        전체
-                    </ToggleButton>
-                    <ToggleButton name="type" value="COURSE">
-                        러닝코스
-                    </ToggleButton>
-                    <ToggleButton name="type" value="ROUTINE">
-                        운동루틴
-                    </ToggleButton>
-                </Grid>
-            </ToggleButtonGroup>
+            
 
             {form.type !== "ALL" &&
                 (form.type === "COURSE" ? (
@@ -97,29 +100,29 @@ function FilterBox({ form, setForm }) {
                     </>
                 ) : (
                     <ToggleButtonGroup
-                        value={form.tags}
+                        value={form.parts}
                         exclusive
                         onChange={inputChangeHandler}>
                         <Grid container spacing={1}>
-                            {EXERCISE_TAGS.map((tag) => (
+                            {EXERCISE_PARTS.map((part) => (
                                 <ToggleButton
-                                    key={tag}
-                                    name="tags"
-                                    value={tag}
-                                    selected={form.tags.includes(tag)}
+                                    key={part}
+                                    name="parts"
+                                    value={part}
+                                    selected={form.parts.includes(part)}
                                     sx={{
                                         borderRadius: 999,
                                         px: 2,
                                         boxSizing: "border-box",
                                     }}>
-                                    {tag}
+                                    {part}
                                 </ToggleButton>
                             ))}
                         </Grid>
                     </ToggleButtonGroup>
                 ))}
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                <Button variant="contained" onClick={resetOnClickHandler}>
+                <Button variant="contained" onClick={getOnClickHandler}>
                     적용
                 </Button>
                 <Button variant="outlined" onClick={resetOnClickHandler}>

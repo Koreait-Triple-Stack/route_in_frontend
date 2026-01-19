@@ -7,6 +7,7 @@ import {
     plusRecommendRequest,
     removeBoardRequest,
     updateBoardRequest,
+    getBoardInfiniteRequest,
 } from "./boardApi";
 
 export const addBoard = async (data) => {
@@ -29,6 +30,18 @@ export const removeBoard = async (data) => {
 
 export const getBoardList = async () => {
     const result = await getBoardListRequest();
+    if (result.data.status !== "success") throw new Error(result.data.message);
+    return result.data;
+};
+
+export const getBoardListInfinite = async ({pageParam, queryKey}) => {
+    const [_key, params] = queryKey;
+
+    const requestData = {
+        ...params,
+        ...(pageParam ?? {}), // 처음은 null이니까 안전하게
+    };
+    const result = await getBoardInfiniteRequest(requestData);
     if (result.data.status !== "success") throw new Error(result.data.message);
     return result.data;
 };
