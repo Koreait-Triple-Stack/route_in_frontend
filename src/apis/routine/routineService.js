@@ -1,7 +1,9 @@
 import {
     updateRoutineRequest,
     getRoutineRequest,
-    addRoutineRequest
+    addRoutineRequest,
+    removeRoutineRequest,
+    deleteRoutineByRoutineIdRequest
 } from "./routineApi";
 
 export const addRoutine = async (data) => {
@@ -18,6 +20,18 @@ export const updateRoutine = async (data) => {
 
 export const getRoutine = async (userId) => {
     const result = await getRoutineRequest(userId);
+    if (result.data.status !== "success") throw new Error(result.data.message)
+    return result.data;
+};
+
+export const removeRoutine = async (data) => {
+    const result = await removeRoutineRequest(data);
+    if (result.data.status !== "success") throw new Error(result.data.message)
+    return result.data;
+};
+
+export const deleteRoutineByRoutineId = async (routineId) => {
+    const result = await deleteRoutineByRoutineIdRequest(routineId);
     if (result.data.status !== "success") throw new Error(result.data.message)
     return result.data;
 };
