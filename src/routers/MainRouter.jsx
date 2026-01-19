@@ -16,75 +16,68 @@ import { getPrincipal } from "../apis/account/accountService";
 import { Box } from "@mui/system";
 
 const RootRoute = () => {
-    const { isLoggedIn } = usePrincipalState();
-    return isLoggedIn ? <MainPage /> : <LandingPage />;
+  const { isLoggedIn } = usePrincipalState();
+  return isLoggedIn ? <MainPage /> : <LandingPage />;
 };
 
 function MainRouter() {
-    const { login, setLoading } = usePrincipalState();
-    const token = localStorage.getItem("AccessToken");
-    const {
-        data: response,
-        error,
-        isLoading,
-        isSuccess,
-    } = useQuery({
-        queryFn: getPrincipal,
-        queryKey: ["getPrincipal", token],
-        enabled: !!token,
-        retry: false,
-        staleTime: 5 * 60 * 1000,
-    });
+  const { login, setLoading } = usePrincipalState();
+  const token = localStorage.getItem("AccessToken");
+  const {
+    data: response,
+    error,
+    isLoading,
+    isSuccess,
+  } = useQuery({
+    queryFn: getPrincipal,
+    queryKey: ["getPrincipal", token],
+    enabled: !!token,
+    retry: false,
+    staleTime: 5 * 60 * 1000,
+  });
 
-    useEffect(() => {
-        if (isSuccess) {
-            login(response.data);
-        } else if (!isLoading) {
-            setLoading(false);
-        }
-    }, [isSuccess, isLoading, response, login, setLoading]);
+  useEffect(() => {
+    if (isSuccess) {
+      login(response.data);
+    } else if (!isLoading) {
+      setLoading(false);
+    }
+  }, [isSuccess, isLoading, response, login, setLoading]);
 
     if (isLoading) return <Box>로딩중</Box>;
     if (error) return <Box>{error}</Box>;
 
-    return (
-        <>
-            <Layout>
-                <Routes>
-                    <Route path="/" element={<RootRoute />} />
-                    <Route path="/oauth2/*" element={<OAuth2Router />} />
+  return (
+    <>
+      <Layout>
+        <Routes>
+          <Route path="/" element={<RootRoute />} />
+          <Route path="/oauth2/*" element={<OAuth2Router />} />
 
-                    <Route
-                        path="/board/*"
-                        element={
-                            <ProtectedRouter>
-                                <BoardRouter />
-                            </ProtectedRouter>
-                        }
-                    />
-                    <Route
-                        path="/notification"
-                        element={
-                            <ProtectedRouter>
-                                <NotificationPage />
-                            </ProtectedRouter>
-                        }
-                    />
-                    <Route
-                        path="/mypage/*"
-                        element={
-                            <ProtectedRouter>
-                                <MyPageRouter />
-                            </ProtectedRouter>
-                        }
-                    />
+          <Route path="/board/*" element={<BoardRouter />} />
+          <Route
+            path="/notification"
+            element={
+              <ProtectedRouter>
+                <NotificationPage />
+              </ProtectedRouter>
+            }
+          />
+          <Route
+            path="/mypage/*"
+            element={
+              <ProtectedRouter>
+                <MyPageRouter />
+              </ProtectedRouter>
+            }
+          />
 
-                    <Route path="/map" element={<MapView />} />
-                    <Route path="/course/*" element={<CourseRouter />} />
-                </Routes>
-            </Layout>
-        </>
-    );
+          <Route path="/map" element={<MapView />} />
+          <Route path="/course/*" element={<CourseRouter />} />
+        </Routes>
+      </Layout>
+    </>
+  );
 }
 
 export default MainRouter;
