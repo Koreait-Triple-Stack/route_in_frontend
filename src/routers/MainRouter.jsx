@@ -44,8 +44,8 @@ function MainRouter() {
     }
   }, [isSuccess, isLoading, response, login, setLoading]);
 
-    if (isLoading) return <Box>로딩중</Box>;
-    if (error) return <Box>{error}</Box>;
+  if (isLoading) return <Box>로딩중</Box>;
+  if (error) return <Box>{error}</Box>;
 
   return (
     <>
@@ -54,7 +54,14 @@ function MainRouter() {
           <Route path="/" element={<RootRoute />} />
           <Route path="/oauth2/*" element={<OAuth2Router />} />
 
-          <Route path="/board/*" element={<BoardRouter />} />
+          <Route
+            path="/board/*"
+            element={
+              <ProtectedRouter>
+                <BoardRouter />
+              </ProtectedRouter>
+            }
+          />
           <Route
             path="/notification"
             element={
