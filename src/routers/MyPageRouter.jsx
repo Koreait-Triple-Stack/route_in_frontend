@@ -1,7 +1,7 @@
-import React from 'react'
-import { Route, Routes } from 'react-router-dom'
-import MyPage from '../pages/Mypage/MyPage'
-import InBodyPage from '../pages/InBody/InBodyPage'
+import React from "react";
+import { Route, Routes } from "react-router-dom";
+import MyPage from "../pages/Mypage/MyPage";
+import InBodyPage from "../pages/InBody/InBodyPage";
 import MyBoardListPage from "../pages/MyBoardListPage/MyBoardListPage";
 import CourseListPage from '../pages/CourseListPage/CourseListPage';
 
@@ -18,4 +18,4 @@ function MyPageRouter() {
   );
 }
 
-export default MyPageRouter
+export default MyPageRouter;
