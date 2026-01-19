@@ -3,7 +3,7 @@ import { loadKakaoMap } from "../apis/utils/useKaKaoMap";
 
 export function useCourseMap({
     initialCenter = { lat: 37.5665, lng: 126.978 },
-    level = 3,
+    level = 5,
     polylineColor = "#FF3D00",
     startMarkerColor = "#2e7d32",
     endMarkerColor = "#3F51B5",
