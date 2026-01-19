@@ -39,7 +39,10 @@ function NotificationPage() {
             queryClient.invalidateQueries({
                 queryKey: ["getNotificationListByUserId", principal.userId],
             });
-        }
+        },
+        onError: (error) => {
+            alert(error);
+        },
     })
 
     const onDeleteOne = (notificationId) => {

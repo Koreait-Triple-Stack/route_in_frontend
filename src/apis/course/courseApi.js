@@ -1,7 +1,7 @@
 import { instance } from "../utils/instance";
 
 export const addCourseRequest = async (data) => {
-    return instance.post("/course/add", data);
+    return await instance.post("/course/add", data);
 };
 
 export const getCourseByBoardIdRequest = async (boardId) => {
