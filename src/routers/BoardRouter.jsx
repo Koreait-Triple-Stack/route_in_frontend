@@ -48,7 +48,7 @@ export default function BoardRouter() {
       <Route path="write/:type" element={<BoardWritePage />} />
 
       {/* /board/123 */}
-      <Route path=":boardId" element={<RoutineDetailPage />} />
+      {/* <Route path=":boardId" element={<RoutineDetailPage />} /> */}
 
       {/* 필요하면 러닝 상세 라우트 별도 추가 */}
       {/* <Route path="course/:courseId" element={<CourseDetailPage />} /> */}
