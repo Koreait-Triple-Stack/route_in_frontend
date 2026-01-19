@@ -10,6 +10,7 @@ import OverlayWrapper from "./OverlayWrapper";
 import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
+import DescriptionIcon from "@mui/icons-material/Description";
 import ListItemText from "@mui/material/ListItemText";
 import ListSubheader from "@mui/material/ListSubheader";
 import { Box, Container, Typography, Collapse } from "@mui/material";
@@ -26,11 +27,9 @@ import { getUserByUserId } from "../../apis/account/accountService";
 
 function MyPage() {
     const navigate = useNavigate();
-    const NAV_H = "56";
-    const { isLoggedIn, logout, loading, principal } = usePrincipalState();
+    const { logout, principal } = usePrincipalState();
     const {
         data: response,
-        error,
         isLoading,
     } = useQuery({
         queryKey: ["getUserByUserId", principal?.userId],
@@ -63,9 +62,7 @@ function MyPage() {
                 return <BodyInfoForm {...commonProps} />;
             case "withdraw":
                 return (
-                    <OverlayWrapper
-                        title="회원 탈퇴"
-                        onClose={handleCloseOverlay}>
+                    <OverlayWrapper title="회원 탈퇴" onClose={handleCloseOverlay}>
                         <Typography>정말 탈퇴하시겠습니까?</Typography>
                     </OverlayWrapper>
                 );
@@ -74,6 +71,8 @@ function MyPage() {
         }
     };
 
+    if (isLoading) return <div>로딩중...</div>;
+
     return (
         <Box
             sx={{
@@ -81,13 +80,14 @@ function MyPage() {
                 top: 0,
                 left: 0,
                 right: 0,
-                bottom: `${NAV_H}px`, // ✅ 네비 높이만큼 제외
+                bottom: 56, // ✅ 네비 높이만큼 제외
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 px: 2,
                 bgcolor: "background.default",
-            }}>
+            }}
+        >
             <Container maxWidth="sm" sx={{ padding: "20px", maxWidth: 500 }}>
                 <List
                     sx={{
@@ -105,7 +105,8 @@ function MyPage() {
                         <ListSubheader component="div" id="profile">
                             마이 프로필
                         </ListSubheader>
-                    }>
+                    }
+                >
                     {renderOverlayContent()}
 
                     <Box
@@ -114,7 +115,8 @@ function MyPage() {
                             display: "flex",
                             alignItems: "center",
                             gap: "10px",
-                        }}>
+                        }}
+                    >
                         <Box
                             component="img"
                             src="https://firebasestorage.googleapis.com/v0/b/board-study-26e00.firebasestorage.app/o/profile-img%2F40aaf171-5eae-4e81-96af-a89730616960_jpeg?alt=media&token=86b09376-18b3-49a9-881d-2b5ae5a728eb"
@@ -126,16 +128,14 @@ function MyPage() {
                             }}
                         />
                         <Box sx={{ display: "flex", flexDirection: "column" }}>
-                            <Typography variant="h6">
-                                {user?.username}
-                            </Typography>
+                            <Typography variant="h6">{user?.username}</Typography>
                             <Typography variant="body2">
-                                {user?.gender} •{" "}
-                                {user?.address?.baseAddress}
+                                {user?.gender} • {user?.address?.baseAddress}
                             </Typography>
                             <Typography variant="caption">
-                                {user?.height}cm / {principal?.weight}kg
+                                {user?.height}cm / {user?.weight}kg
                             </Typography>
+                            <Typography variant="h6">1</Typography>
                         </Box>
                     </Box>
 
@@ -144,6 +144,12 @@ function MyPage() {
                             <SendIcon />
                         </ListItemIcon>
                         <ListItemText primary="인바디 기록 추가/삭제" />
+                    </ListItemButton>
+                    <ListItemButton onClick={() => navigate("/mypage/boardList")}>
+                        <ListItemIcon>
+                            <DescriptionIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="작성한 게시물 관리" />
                     </ListItemButton>
                     <ListItemButton>
                         <ListItemIcon>
@@ -162,33 +168,25 @@ function MyPage() {
 
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <List component="div" disablePadding>
-                            <ListItemButton
-                                sx={{ pl: 4 }}
-                                onClick={() => setActiveView("username")}>
+                            <ListItemButton sx={{ pl: 4 }} onClick={() => setActiveView("username")}>
                                 <ListItemIcon>
                                     <StarBorderIcon />
                                 </ListItemIcon>
                                 <ListItemText primary="닉네임 변경" />
                             </ListItemButton>
-                            <ListItemButton
-                                sx={{ pl: 4 }}
-                                onClick={() => setActiveView("address")}>
+                            <ListItemButton sx={{ pl: 4 }} onClick={() => setActiveView("address")}>
                                 <ListItemIcon>
                                     <StarBorderIcon />
                                 </ListItemIcon>
                                 <ListItemText primary="주소 변경" />
                             </ListItemButton>
-                            <ListItemButton
-                                sx={{ pl: 4 }}
-                                onClick={() => setActiveView("bodyInfo")}>
+                            <ListItemButton sx={{ pl: 4 }} onClick={() => setActiveView("bodyInfo")}>
                                 <ListItemIcon>
                                     <StarBorderIcon />
                                 </ListItemIcon>
                                 <ListItemText primary="키/몸무게 변경" />
                             </ListItemButton>
-                            <ListItemButton
-                                sx={{ pl: 4 }}
-                                onClick={() => setActiveView("withdraw")}>
+                            <ListItemButton sx={{ pl: 4 }} onClick={() => setActiveView("withdraw")}>
                                 <ListItemIcon>
                                     <StarBorderIcon />
                                 </ListItemIcon>

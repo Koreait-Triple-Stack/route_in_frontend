@@ -13,7 +13,7 @@ export const removeBoardRequest = async (data) => {
 };
 
 export const getBoardListRequest = async () => {
-    return instance.post("/board/list");
+    return instance.get("/board/list");
 };
 
 // export const getBoardInfiniteRequest = async (data) => {
@@ -21,11 +21,11 @@ export const getBoardListRequest = async () => {
 // };
 
 export const getBoardByBoardIdRequest = async (boarId) => {
-    return instance.post(`/board/${boarId}`);
+    return instance.get(`/board/${boarId}`);
 };
 
 export const getBoardListByUserIdRequest = async (userId) => {
-    return instance.post(`/board/user/${userId}`);
+    return instance.get(`/board/user/${userId}`);
 };
 
 // export const getBoardListByKeywordRequest = async (data) => {
