@@ -7,20 +7,40 @@ import {
 import { Box, Grid } from "@mui/system";
 import { EXERCISE_TAGS } from "../../constants/exerciseTags";
 
-function FilterBox({
-    type,
-    region,
-    setRegion,
-    distance,
-    setDistance,
-    selectedTagIds,
-    toggleTag,
-    resetTags,
-}) {
+function FilterBox({ form, setForm }) {
     const resetOnClickHandler = () => {
-        setRegion("");
-        setDistance("");
-        resetTags();
+        setForm({
+            type: "ALL",
+            region: "",
+            distance: 0,
+            tags: [],
+        });
+    };
+
+    const inputChangeHandler = (e) => {
+        const { name, value } = e.target;
+
+        if (name === "tags") {
+            setForm((prev) => {
+                if (prev.tags.includes(value)) {
+                    return {
+                        ...prev,
+                        [name]: prev.tags.filter((tag) => tag !== value),
+                    };
+                } else {
+                    return {
+                        ...prev,
+                        [name]: [...prev.tags, value],
+                    };
+                }
+            });
+            return;
+        }
+
+        setForm((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
     };
 
     return (
@@ -35,52 +55,77 @@ function FilterBox({
                 borderRadius: "12px",
                 mb: 1,
             }}>
-            {type !== "전체" &&
-                (type === "러닝코스" ? (
+            <ToggleButtonGroup
+                value={form.type}
+                exclusive
+                onChange={inputChangeHandler}>
+                <Grid container spacing={1}>
+                    <ToggleButton name="type" value="ALL">
+                        전체
+                    </ToggleButton>
+                    <ToggleButton name="type" value="COURSE">
+                        러닝코스
+                    </ToggleButton>
+                    <ToggleButton name="type" value="ROUTINE">
+                        운동루틴
+                    </ToggleButton>
+                </Grid>
+            </ToggleButtonGroup>
+
+            {form.type !== "ALL" &&
+                (form.type === "COURSE" ? (
                     <>
                         <TextField
                             label="지역"
                             variant="standard"
-                            value={region}
-                            onChange={(e) => setRegion(e.target.value)}
+                            value={form.region}
+                            name="region"
+                            onChange={inputChangeHandler}
                         />
                         <TextField
                             label="최대 거리(km)"
                             type="number"
                             variant="standard"
-                            value={distance}
+                            value={form.distance}
+                            name="distance"
                             inputProps={{
                                 min: 0,
                                 step: 1,
                             }}
-                            onChange={(e) => setDistance(e.target.value)}
+                            onChange={inputChangeHandler}
                         />
                     </>
                 ) : (
                     <ToggleButtonGroup
-                        value={selectedTagIds}
+                        value={form.tags}
                         exclusive
-                        onChange={(e, value) => toggleTag(value)}>
+                        onChange={inputChangeHandler}>
                         <Grid container spacing={1}>
                             {EXERCISE_TAGS.map((tag) => (
                                 <ToggleButton
-                                    key={tag.id}
-                                    value={tag.id}
-                                    selected={selectedTagIds.includes(tag.id)}
+                                    key={tag}
+                                    name="tags"
+                                    value={tag}
+                                    selected={form.tags.includes(tag)}
                                     sx={{
                                         borderRadius: 999,
                                         px: 2,
                                         boxSizing: "border-box",
                                     }}>
-                                    {tag.label}
+                                    {tag}
                                 </ToggleButton>
                             ))}
                         </Grid>
                     </ToggleButtonGroup>
                 ))}
-            <Button variant="outlined" onClick={resetOnClickHandler}>
-                필터 초기화
-            </Button>
+            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                <Button variant="contained" onClick={resetOnClickHandler}>
+                    적용
+                </Button>
+                <Button variant="outlined" onClick={resetOnClickHandler}>
+                    필터 초기화
+                </Button>
+            </Box>
         </Box>
     );
 }
