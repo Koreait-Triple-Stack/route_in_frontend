@@ -14,3 +14,11 @@ export const getRoutineRequest = async (userId) => {
         boardId: null 
     });
 };
+
+export const removeRoutineRequest = async (data) => {
+    return await instance.post("/routine/remove", data);
+};
+
+export const deleteRoutineByRoutineIdRequest = async (routineId) => {
+    return await instance.get(`/routine/delete/${routineId}`);
+};
