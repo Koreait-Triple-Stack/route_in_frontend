@@ -3,6 +3,7 @@ import axios from "axios";
 export const instance = axios.create({
     baseURL: import.meta.env.VITE_API_BASE_URL ?? "",
     timeout: 15000,
+    withCredentials: false,
 });
 
 instance.interceptors.request.use((config) => {
@@ -10,3 +11,16 @@ instance.interceptors.request.use((config) => {
     if (accessToken) config.headers.Authorization = `Bearer ${accessToken}`;
     return config;
 });
+
+instance.interceptors.response.use(
+    (res) => res,
+    (err) => {
+        const status = err?.response?.status;
+
+        if (status === 401) {
+            localStorage.removeItem("AccessToken");
+        }
+
+        return Promise.reject(err);
+    }
+);

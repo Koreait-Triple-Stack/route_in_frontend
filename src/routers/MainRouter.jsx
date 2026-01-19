@@ -44,11 +44,15 @@ function MainRouter() {
     }, [isSuccess, isLoading, response, login, setLoading]);
 
     useEffect(() => {
-        if (error) {
+        if (!error) return;
+
+        const status = error?.response?.status; // axios 에러면 보통 여기 있음
+
+        if (status === 401) {
             localStorage.removeItem("AccessToken");
-            setLoading(false);
-            // window.location.href = "/oauth2/signin"; // 필요하면
         }
+
+        setLoading(false);
     }, [error, setLoading]);
 
     return (
