@@ -3,6 +3,7 @@ import {
     deleteNotificationByNotificationIdRequest,
     deleteNotificationByUserIdRequest,
     getNotificationListByUserIdRequest,
+    testNotificationRequest,
 } from "./notificationApi";
 
 export const addNotification = async (boardId) => {
@@ -25,6 +26,12 @@ export const deleteNotificationByNotificationId = async (userId) => {
 
 export const deleteNotificationByUserId = async (data) => {
     const result = await deleteNotificationByUserIdRequest(data);
+    if (result.data.status !== "success") throw new Error(result.data.message);
+    return result.data;
+};
+
+export const testNotification = async (data) => {
+    const result = await testNotificationRequest(data);
     if (result.data.status !== "success") throw new Error(result.data.message);
     return result.data;
 };
