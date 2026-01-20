@@ -4,10 +4,12 @@ import { usePrincipalState } from "../store/usePrincipalState";
 import { useNotificationStore } from "../store/useNotificationStore";
 import { useNotificationWS } from "../hooks/useNotificationWS";
 import { Alert, Button, Snackbar } from "@mui/material";
+import { useQueryClient } from "@tanstack/react-query";
 
 function NotificationListener() {
     const navigate = useNavigate();
     const token = localStorage.getItem("AccessToken");
+    const queryClient = useQueryClient();
     const { principal } = usePrincipalState();
     const { push } = useNotificationStore();
     const [open, setOpen] = useState(false);
@@ -15,7 +17,7 @@ function NotificationListener() {
     const [toastMsg, setToastMsg] = useState("새 알림이 도착했어요");
 
     const close = (_, reason) => {
-        if (reason === "clickway") return;
+        if (reason === "clickaway") return;
         setOpen(false);
     };
 
@@ -36,6 +38,8 @@ function NotificationListener() {
             setLastId(id);
             setToastMsg(message);
             setOpen(true);
+
+            queryClient.invalidateQueries(["countUnreadNotificationByUserId"]);
         },
         [push],
     );

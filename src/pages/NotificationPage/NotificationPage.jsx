@@ -40,6 +40,7 @@ function NotificationPage() {
     useEffect(() => {
         if (!isLoading) {
             setNotifications(response.data);
+            queryClient.invalidateQueries(["countUnreadNotificationByUserId"]);
         }
     }, [isLoading, response]);
 

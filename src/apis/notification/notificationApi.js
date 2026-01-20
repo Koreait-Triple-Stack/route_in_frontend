@@ -18,6 +18,6 @@ export const deleteNotificationByUserIdRequest = async (userId) => {
     return instance.post(`/notification/delete/all/${userId}`);
 };
 
-export const testNotificationRequest = async (data) => {
-    return instance.post("/notification/test", data);
+export const countUnreadNotificationByUserIdRequest = async (userId) => {
+    return instance.get(`/notification/count/${userId}`);
 };
