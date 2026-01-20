@@ -8,11 +8,22 @@ import FilterFramesOutlinedIcon from "@mui/icons-material/FilterFramesOutlined";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useNotificationStore } from "../store/useNotificationStore";
 import { Badge } from "@mui/material";
+import { countUnreadNotificationByUserId } from "../apis/notification/notificationService";
+import { usePrincipalState } from "../store/usePrincipalState";
+import { useQuery } from "@tanstack/react-query";
 
 function BasicBottomNav() {
     const location = useLocation();
     const navigate = useNavigate();
+    const { principal } = usePrincipalState();
     const unread = useNotificationStore((s) => s.unreadCount());
+    const { data: response } = useQuery({
+        queryFn: () => countUnreadNotificationByUserId(principal.userId),
+        queryKey: ["countUnreadNotificationByUserId", principal?.userId],
+        staleTime: 30000,
+    });
+
+    console.log(response)
 
     const value = location.pathname;
 
@@ -51,7 +62,7 @@ function BasicBottomNav() {
                     value="/notification"
                     icon={
                         <Badge
-                            badgeContent={unread}
+                            badgeContent={response?.data}
                             color="error"
                             overlap="circular"
                             showZero={false}>

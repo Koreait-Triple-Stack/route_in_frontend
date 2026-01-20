@@ -12,6 +12,7 @@ import CourseRouter from "./CourseRouter";
 import ProtectedRouter from "./ProtectedRouter";
 import NotFoundPage from "../pages/NotFoundPage/NotFoundPage";
 import WsTestPage from "../pages/WsTestPage";
+import { useQuery } from "@tanstack/react-query";
 
 const RootRoute = () => {
     const { isLoggedIn } = usePrincipalState();
@@ -19,34 +20,6 @@ const RootRoute = () => {
 };
 
 function MainRouter() {
-    const { login, setLoading } = usePrincipalState();
-    const token = localStorage.getItem("AccessToken");
-    const {
-        data: response,
-        error,
-        isLoading,
-        isSuccess,
-    } = useQuery({
-        queryFn: getPrincipal,
-        queryKey: ["getPrincipal", token],
-        enabled: !!token,
-        retry: false,
-        staleTime: 5 * 60 * 1000,
-    });
-
-    useEffect(() => {
-        if (isSuccess) {
-            login(response.data);
-        } else if (!isLoading) {
-            setLoading(false);
-        }
-    }, [isSuccess, isLoading, response, login, setLoading]);
-
-  if (isLoading) return <Box>로딩중</Box>;
-  if (error) {
-    console.log(error)
-    // return <Box>{error.message}</Box>
-  }
 
     return (
         <>
