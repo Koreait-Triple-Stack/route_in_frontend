@@ -22,20 +22,20 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { getUserByUserIdRequest } from "../../apis/account/accountApi";
+import { useQuery } from "@tanstack/react-query";
 import { getFollowerUserListRequest, getFollowingUserListRequest } from "../../apis/follow/followApi";
+import { getUserByUserId } from "../../apis/account/accountService";
 
 function MyPage() {
     const navigate = useNavigate();
     const { logout, principal } = usePrincipalState();
     const { data: response, isLoading } = useQuery({
         queryKey: ["getUserByUserId", principal?.userId],
-        queryFn: () => getUserByUserIdRequest(principal?.userId),
+        queryFn: () => getUserByUserId(principal?.userId),
         staleTime: 30000,
     });
 
-    const user = response?.data?.data;
+    const user = response?.data;
 
     const { data: followerUser } = useQuery({
         queryKey: ["getFollowerUserList", principal?.userId],
@@ -146,24 +146,24 @@ function MyPage() {
                                 {user?.height}cm / {user?.weight}kg
                             </Typography>
                             <Typography variant="body2">
-                                follower : {followerUser.data.data.length} / following : {followingUser.data.data.length}
+                                follower : {user?.followerCnt} / following : {user?.followingCnt}
                             </Typography>
                         </Box>
                     </Box>
 
-                    <ListItemButton onClick={() => navigate("/myPage/inBody")}>
+                    <ListItemButton onClick={() => navigate("/mypage/inBody")}>
                         <ListItemIcon>
                             <SendIcon />
                         </ListItemIcon>
                         <ListItemText primary="인바디 기록 추가/삭제" />
                     </ListItemButton>
-                    <ListItemButton onClick={() => navigate("/myPage/boardList")}>
+                    <ListItemButton onClick={() => navigate("/mypage/boardList")}>
                         <ListItemIcon>
                             <DescriptionIcon />
                         </ListItemIcon>
                         <ListItemText primary="작성한 게시물 관리" />
                     </ListItemButton>
-                    <ListItemButton onClick={() => navigate("/myPage/courseList")}>
+                    <ListItemButton onClick={() => navigate("/mypage/courseList")}>
                         <ListItemIcon>
                             <DraftsIcon />
                         </ListItemIcon>

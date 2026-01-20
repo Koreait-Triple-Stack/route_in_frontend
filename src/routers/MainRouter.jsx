@@ -45,7 +45,10 @@ function MainRouter() {
     }, [isSuccess, isLoading, response, login, setLoading]);
 
   if (isLoading) return <Box>로딩중</Box>;
-  if (error) return <Box>{error}</Box>;
+  if (error) {
+    console.log(error)
+    // return <Box>{error.message}</Box>
+  }
 
     return (
         <>

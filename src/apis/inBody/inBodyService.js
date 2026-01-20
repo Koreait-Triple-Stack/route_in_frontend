@@ -2,7 +2,7 @@ import {
     addInBodyRequest,
     deleteInBodyRequest,
     getInBodyListByUserIdRequest
-} from "./courseApi";
+} from "./inBodyApi";
 
 export const addInBody = async (data) => {
     const result = await addInBodyRequest(data);

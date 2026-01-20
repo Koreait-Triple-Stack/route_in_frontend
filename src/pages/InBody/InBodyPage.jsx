@@ -3,10 +3,11 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 import { Box, Typography, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Stack, List, ListItem, ListItemText, IconButton, Divider } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { addInBodyRequest, deleteInBodyRequest, getInBodyListByUserIdRequest } from "../../apis/inBody/inBodyApi";
+import { addInBodyRequest, deleteInBodyRequest } from "../../apis/inBody/inBodyApi";
 import { usePrincipalState } from "../../store/usePrincipalState";
 import { useQuery } from "@tanstack/react-query";
 import { Container } from "@mui/system";
+import { getInBodyListByUserId } from "../../apis/inBody/inBodyService";
 
 const CustomizedLabel = (props) => {
     const { x, y, stroke, value } = props;
@@ -35,7 +36,7 @@ export default function InbodyChartWithActions() {
         isLoading,
         refetch,
     } = useQuery({
-        queryFn: () => getInBodyListByUserIdRequest(principal.userId),
+        queryFn: () => getInBodyListByUserId(principal.userId),
         queryKey: ["getInBodyListByUserId", principal.userId],
         staleTime: 30000,
     });
@@ -108,7 +109,7 @@ export default function InbodyChartWithActions() {
     if (isLoading) return <div>로딩중</div>;
     if (error) return <div>error.message</div>;
 
-    const inBodyList = response?.data?.data || [];
+    const inBodyList = response?.data || [];
 
     const recentData = [...inBodyList].sort((a, b) => new Date(a.monthDt) - new Date(b.monthDt)).slice(-4);
 
