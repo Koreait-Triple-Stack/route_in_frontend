@@ -20,6 +20,12 @@ function BoardWritePage() {
   const [contentInputValue, setContentInputValue] = useState("");
 
   
+
+
+
+
+  
+  // 게시물 추가
   const mutation = useMutation({
     mutationKey: ["addBoard"],
     mutationFn: (payload) => addBoardRequest(payload),

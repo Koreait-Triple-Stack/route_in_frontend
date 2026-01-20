@@ -2,7 +2,7 @@ import { Avatar, Chip, Paper, Typography } from "@mui/material";
 import { Box, Stack } from "@mui/system";
 import React from "react";
 
-function PostCard({ post }) {
+function PostCard({ board }) {
     return (
         <Paper
             elevation={1}
@@ -29,23 +29,23 @@ function PostCard({ post }) {
                         justifyContent: "space-between",
                         alignItems: "center",
                     }}>
-                    <Chip label={post.category} size="small" />
+                    <Chip label={board.type === "COURSE" ? "러닝코스" : "운동루틴"} size="small" />
                     <Typography variant="caption" color="text.secondary">
-                        {post.date}
+                        {board.createDt}
                     </Typography>
                 </Box>
 
-                <Typography fontWeight={700}>{post.title}</Typography>
+                <Typography fontWeight={700}>{board.title}</Typography>
 
                 <Stack direction="row" spacing={1} alignItems="center">
                     <Avatar sx={{ width: 32, height: 32 }} />
                     <Typography variant="body2">
-                        {post.author} · {post.age}
+                        {board.username} · {board.birthDate}
                     </Typography>
                 </Stack>
 
                 <Stack direction="row" spacing={1} flexWrap="wrap">
-                    {post.meta.map((m, i) => (
+                    {board.tags.map((m, i) => (
                         <Chip key={i} label={m} size="small" />
                     ))}
                 </Stack>
