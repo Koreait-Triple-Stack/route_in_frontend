@@ -7,24 +7,32 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { addBoardRequest } from "../../apis/board/boardApi";
 
 function BoardWritePage() {
-  const { type } = useParams();
   const navigate = useNavigate();
+
   const { principal } = usePrincipalState();
   const userId = principal?.userId;
+
   const queryClient = useQueryClient();
 
-  const Routine = type === "routine";
-  const Course = type === "course";
+  const { type } = useParams();
+  const normalizedType = (type ?? "").toLowerCase();
+  const upperType = normalizedType.toUpperCase();
 
-  const [titleInputValue, setTitleInputValue] = useState("");
-  const [contentInputValue, setContentInputValue] = useState("");
+  const isRoutine = normalizedType === "routine";
+  const isCourse = normalizedType === "course";
 
-  
+  const [form, setForm] = useState({
+    title: "",
+    content: "",
+  });
 
-
-
-
-  
+  const onChangeHandler = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
   // 게시물 추가
   const mutation = useMutation({
     mutationKey: ["addBoard"],
@@ -33,7 +41,7 @@ function BoardWritePage() {
       queryClient.invalidateQueries({
         queryKey: ["getBoardListByUserId", userId],
       });
-      alert(res?.message ?? "게시물 작성 완료");
+      alert(res?.data?.message ?? "게시물 작성 완료");
       navigate("/board");
     },
     onError: (error) => {
@@ -42,32 +50,29 @@ function BoardWritePage() {
   });
 
   const submitOnClickHandler = () => {
-    if (!Routine && !Course) return alert("잘못된 접근입니다.");
+    if (!isRoutine && !isCourse) return alert("잘못된 접근입니다.");
     if (!userId) return alert("로그인이 필요합니다.");
 
-    if (
-      titleInputValue.trim().length === 0 ||
-      contentInputValue.trim().length === 0
-    ) {
+    if (form.title.trim().length === 0 || form.content.trim().length === 0) {
       alert("모든 항목을 입력해주세요.");
       return;
     }
 
-    mutation.mutate({
-      title: titleInputValue,
-      content: contentInputValue,
+    const payload = {
+      title: form.title.trim(),
+      content: form.content.trim(),
       userId,
-      type,
-    });
+      type: upperType,
+    };
+    mutation.mutate(payload);
   };
 
   const cancelOnClickHandler = () => {
-    setTitleInputValue("");
-    setContentInputValue("");
+    setForm({ title: "", content: "" });
     navigate("/board");
   };
 
-  if (!Routine && !Course) {
+  if (!isRoutine && !isCourse) {
     return (
       <Box sx={{ p: 2 }}>
         <Typography variant="h6">잘못된 접근입니다.</Typography>
@@ -100,7 +105,7 @@ function BoardWritePage() {
               lineHeight: 1.2,
             }}
           >
-            {Routine ? "루틴 작성" : "러닝 작성"}
+            {isRoutine ? "루틴 작성" : "코스 작성"}
           </Typography>
           <Typography
             sx={{
@@ -129,8 +134,9 @@ function BoardWritePage() {
               <TextField
                 fullWidth
                 placeholder="제목을 입력하세요."
-                value={titleInputValue}
-                onChange={(e) => setTitleInputValue(e.target.value)}
+                name="title"
+                value={form.title}
+                onChange={onChangeHandler}
               />
             </Box>
 
@@ -143,8 +149,9 @@ function BoardWritePage() {
                 multiline
                 minRows={6}
                 placeholder="내용을 입력하세요."
-                value={contentInputValue}
-                onChange={(e) => setContentInputValue(e.target.value)}
+                name="content"
+                value={form.content}
+                onChange={onChangeHandler}
               />
             </Box>
 
@@ -157,7 +164,7 @@ function BoardWritePage() {
                 fontWeight: 700,
               }}
             >
-              <span>{contentInputValue.length}자</span>
+              <span>{form.content.length}자</span>
               <span>최소 10자 이상 작성해주세요</span>
             </Box>
 
