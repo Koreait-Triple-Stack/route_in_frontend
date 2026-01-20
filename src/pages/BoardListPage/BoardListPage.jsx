@@ -1,13 +1,12 @@
 import { Box, Container, Stack } from "@mui/system";
-import React, { useState } from "react";
-import { Button, Fab } from "@mui/material";
+import { useEffect, useRef, useState } from "react";
 import TypeBox from "./TypeBox";
 import FilterBox from "./FilterBox";
 import PostCard from "./PostCard";
-import CreateOutlinedIcon from "@mui/icons-material/CreateOutlined";
-import { useNavigate } from "react-router-dom";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { getBoardListInfinite } from "../../apis/board/boardService";
+import { ClipLoader } from "react-spinners";
+import WriteDial from "./WriteDial";
 
 function BoardListPage() {
     const [form, setForm] = useState({
@@ -18,10 +17,13 @@ function BoardListPage() {
     });
     const [tags, setTags] = useState([]);
     const [checked, setChecked] = useState(false);
-    const navigate = useNavigate();
+    const bottomRef = useRef(null);
     const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
         useInfiniteQuery({
-            queryKey: ["getBoardListInfinite", { type: form.type, tags: tags, limit: 5 }],
+            queryKey: [
+                "getBoardListInfinite",
+                { type: form.type, tags: tags, limit: 5 },
+            ],
             queryFn: getBoardListInfinite,
             initialPageParam: null,
 
@@ -37,11 +39,26 @@ function BoardListPage() {
             },
         });
     const boardList =
-        data?.pages?.flatMap((p) => p?.data?.boardRespDtoList ?? []) ??
-        [];
+        data?.pages?.flatMap((p) => p?.data?.boardRespDtoList ?? []) ?? [];
 
-    const RoutineWritePage = () => navigate("/board/write/routine");
-    const CourseWritePage = () => navigate("/board/write/course");
+    useEffect(() => {
+        if (!bottomRef.current) return;
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                const first = entries[0];
+                if (!first.isIntersecting) return;
+                if (!hasNextPage) return;
+                if (isFetchingNextPage) return;
+
+                fetchNextPage();
+            },
+            { threshold: 0.1 },
+        );
+
+        observer.observe(bottomRef.current);
+        return () => observer.disconnect();
+    }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
     if (isLoading) return <Box>로딩중</Box>;
 
@@ -61,54 +78,16 @@ function BoardListPage() {
                 {boardList.map((board) => (
                     <PostCard key={board.boardId} board={board} />
                 ))}
+                <Box sx={{ height: 1 }} ref={bottomRef} />
             </Stack>
-            <Box
-                sx={{
-                    position: "fixed",
-                    inset: 0, // 화면 전체를 덮는 레이어
-                    zIndex: 1300,
-                    pointerEvents: "none",
-                }}>
-                <Box
-                    sx={{
-                        position: "absolute",
-                        left: "50%",
-                        transform: "translateX(-50%)",
-                        bottom: 56 + 16,
-                        width: "100%",
-                        maxWidth: 600,
-                        px: 2,
-                        display: "flex",
-                        justifyContent: "flex-end",
-                        pointerEvents: "none", // 기본은 none
-                    }}>
-                    <Box sx={{ pointerEvents: "auto" }}>
-                        <Fab
-                            sx={{
-                                width: 64,
-                                height: 64,
-                                bgcolor: "grey.200",
-                                color: "text.primary",
-                                boxShadow: "0 12px 30px rgba(0,0,0,0.18)",
-                                "&:hover": { bgcolor: "grey.300" },
-                            }}>
-                            <CreateOutlinedIcon />
-                        </Fab>
-                    </Box>
+            {isFetchingNextPage && (
+                <Box>
+                    <ClipLoader />
                 </Box>
-            </Box>
-            <Stack direction="row" spacing={1}>
-                <Button
-                    variant="contained"
-                    onClick={() => navigate("/board/write/routine")}>
-                    루틴 작성
-                </Button>
-                <Button
-                    variant="contained"
-                    onClick={() => navigate("/board/write/course")}>
-                    러닝 작성
-                </Button>
-            </Stack>
+            )}
+            {!hasNextPage && <Box>마지막 페이지입니다.</Box>}
+            
+            <WriteDial />
         </Container>
     );
 }

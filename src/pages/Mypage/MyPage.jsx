@@ -92,7 +92,6 @@ function MyPage() {
                 right: 0,
                 bottom: 56, // ✅ 네비 높이만큼 제외
                 display: "flex",
-                alignItems: "center",
                 justifyContent: "center",
                 px: 2,
                 bgcolor: "background.default",
@@ -146,7 +145,7 @@ function MyPage() {
                                 {user?.height}cm / {user?.weight}kg
                             </Typography>
                             <Typography variant="body2">
-                                follower : {followerUser.data.data.length} / following : {followingUser.data.data.length}
+                                {/* follower : {followerUser.data.data.length} / following : {followingUser.data.data.length} */}
                             </Typography>
                         </Box>
                     </Box>

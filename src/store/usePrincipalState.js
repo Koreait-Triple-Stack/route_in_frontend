@@ -4,6 +4,7 @@ export const usePrincipalState = create((set, get) => ({
     isLoggedIn: false,
     principal: null,
     loading: true,
+    unreadCount: 0,
     login: (userData) =>
         set({ isLoggedIn: true, principal: userData, loading: false }),
     logout: () => {

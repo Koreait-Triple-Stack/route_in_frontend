@@ -1,4 +1,3 @@
-import React, { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import Layout from "../components/Layout";
 import MainPage from "../pages/MainPage/MainPage";
@@ -11,81 +10,55 @@ import MapView from "../pages/MapView";
 import MyPageRouter from "./MyPageRouter";
 import CourseRouter from "./CourseRouter";
 import ProtectedRouter from "./ProtectedRouter";
-import { useQuery } from "@tanstack/react-query";
-import { getPrincipal } from "../apis/account/accountService";
-import { Box } from "@mui/system";
+import NotFoundPage from "../pages/NotFoundPage/NotFoundPage";
+import WsTestPage from "../pages/WsTestPage";
 
 const RootRoute = () => {
-  const { isLoggedIn } = usePrincipalState();
-  return isLoggedIn ? <MainPage /> : <LandingPage />;
+    const { isLoggedIn } = usePrincipalState();
+    return isLoggedIn ? <MainPage /> : <LandingPage />;
 };
 
 function MainRouter() {
-  const { login, setLoading } = usePrincipalState();
-  const token = localStorage.getItem("AccessToken");
-  const {
-    data: response,
-    error,
-    isLoading,
-    isSuccess,
-  } = useQuery({
-    queryFn: getPrincipal,
-    queryKey: ["getPrincipal", token],
-    enabled: !!token,
-    retry: false,
-    staleTime: 5 * 60 * 1000,
-  });
+    return (
+        <>
+            <Layout>
+                <Routes>
+                    <Route path="/" element={<RootRoute />} />
+                    <Route path="/oauth2/*" element={<OAuth2Router />} />
 
-  useEffect(() => {
-    if (isSuccess) {
-      login(response.data);
-    } else if (!isLoading) {
-      setLoading(false);
-    }
-  }, [isSuccess, isLoading, response, login, setLoading]);
+                    <Route
+                        path="/board/*"
+                        element={
+                            <ProtectedRouter>
+                                <BoardRouter />
+                            </ProtectedRouter>
+                        }
+                    />
+                    <Route
+                        path="/notification"
+                        element={
+                            <ProtectedRouter>
+                                <NotificationPage />
+                            </ProtectedRouter>
+                        }
+                    />
+                    <Route
+                        path="/mypage/*"
+                        element={
+                            <ProtectedRouter>
+                                <MyPageRouter />
+                            </ProtectedRouter>
+                        }
+                    />
 
-  if (isLoading) return <Box>로딩중</Box>;
-  if (error) return <Box>{error}</Box>;
-
-  return (
-    <>
-      <Layout>
-        <Routes>
-          <Route path="/" element={<RootRoute />} />
-          <Route path="/oauth2/*" element={<OAuth2Router />} />
-
-          <Route
-            path="/board/*"
-            element={
-              <ProtectedRouter>
-                <BoardRouter />
-              </ProtectedRouter>
-            }
-          />
-          <Route
-            path="/notification"
-            element={
-              <ProtectedRouter>
-                <NotificationPage />
-              </ProtectedRouter>
-            }
-          />
-          <Route
-            path="/mypage/*"
-            element={
-              <ProtectedRouter>
-                <MyPageRouter />
-              </ProtectedRouter>
-            }
-          />
-
-          <Route path="/map" element={<MapView />} />
-          <Route path="/course/*" element={<CourseRouter />} />
-          <Route path="*" element={<div>404</div>} />
-        </Routes>
-      </Layout>
-    </>
-  );
+                    <Route path="/map" element={<MapView />} />
+                    <Route path="/course/*" element={<CourseRouter />} />
+                    <Route path="*" element={<NotFoundPage />} />
+                    <Route path="/noti" element={<WsTestPage />} />
+                </Routes>
+            </Layout>
+        </>
+    );
 }
 
 export default MainRouter;
