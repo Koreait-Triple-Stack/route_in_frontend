@@ -1,4 +1,5 @@
 import axios from "axios";
+import { isJwtExpired } from "./jwt";
 
 export const instance = axios.create({
     baseURL: import.meta.env.VITE_API_BASE_URL ?? "",
@@ -8,7 +9,14 @@ export const instance = axios.create({
 
 instance.interceptors.request.use((config) => {
     const accessToken = localStorage.getItem("AccessToken");
-    if (accessToken) config.headers.Authorization = `Bearer ${accessToken}`;
+    if (accessToken) {
+        if (isJwtExpired(accessToken)) {
+            localStorage.removeItem("AccessToken");
+            return config;
+        }
+
+        config.headers.Authorization = `Bearer ${accessToken}`;
+    }
     return config;
 });
 
@@ -22,5 +30,5 @@ instance.interceptors.response.use(
         }
 
         return Promise.reject(err);
-    }
+    },
 );
