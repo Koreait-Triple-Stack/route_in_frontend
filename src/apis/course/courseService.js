@@ -1,5 +1,6 @@
 import {
     addCourseRequest,
+    deleteCourseRequest,
     getCourseByBoardIdRequest,
     getCourseFavoriteByUserIdRequest,
     getCourseListByUserIdRequest,
@@ -32,6 +33,12 @@ export const getCourseFavoriteByUserId = async (userId) => {
 
 export const updateCourse = async (data) => {
     const result = await updateCourseRequest(data);
+    if (result.data.status !== "success") throw new Error(result.data.message);
+    return result.data;
+};
+
+export const deleteCourse = async (courseId) => {
+    const result = await deleteCourseRequest(courseId);
     if (result.data.status !== "success") throw new Error(result.data.message);
     return result.data;
 };

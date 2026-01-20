@@ -4,7 +4,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
 import PostCard from "../../pages/MyBoardListPage/PostCard"; 
 import { usePrincipalState } from "../../store/usePrincipalState"; 
-import { getBoardListByUserIdRequest } from "../../apis/board/boardApi";
+import { getBoardListByUserId } from "../../apis/board/boardService";
 import { useQuery } from "@tanstack/react-query";
 
 function MyBoardListPage() {
@@ -13,21 +13,18 @@ function MyBoardListPage() {
 
     const { data: response, isLoading } = useQuery({
         queryKey: ["getBoardListByUserId", principal?.userId],
-        queryFn: () => getBoardListByUserIdRequest(principal?.userId),
+        queryFn: () => getBoardListByUserId(principal?.userId),
         staleTime: 30000,
         enabled: !!principal?.userId,
     });
 
-    const respData = response?.data.data || [];
+    const respData = response?.data || [];
 
     if (isLoading) return <div>로딩중...</div>;
 
     return (
         <Container maxWidth="sm" sx={{ padding: "20px", maxWidth: 500 }}>
             <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
-                <IconButton onClick={() => navigate(-1)} edge="start">
-                    <ArrowBackIcon />
-                </IconButton>
                 <Typography variant="h6" sx={{ fontWeight: "bold" }}>
                     작성한 게시물 관리
                 </Typography>
@@ -41,7 +38,6 @@ function MyBoardListPage() {
                         <PostCard
                             key={post.userId}
                             post={post}
-                            isMyPost={true}
                         />
                     ))
                 ) : (

@@ -4,7 +4,7 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import ScheduleItem from "../../components/ScheduleItem";
 import { usePrincipalState } from "../../store/usePrincipalState";
-import { addRoutineRequest, getRoutineRequest, updateRoutineRequest, removeRoutineRequest, deleteRoutineByRoutineIdRequest } from "../../apis/routine/routineApi";
+import { addRoutine, deleteRoutineByRoutineId, getRoutine, removeRoutine, updateRoutine } from "../../apis/routine/routineService";
 
 const MainPage = () => {
     const dbDays = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
@@ -17,30 +17,30 @@ const MainPage = () => {
 
     const { data: response, isLoading } = useQuery({
         queryKey: ["getRoutine", principal?.userId],
-        queryFn: () => getRoutineRequest(principal?.userId),
+        queryFn: () => getRoutine(principal?.userId),
         staleTime: 30000,
         enabled: !!principal?.userId
     });
 
-    const respData = response?.data.data || [];
+    const respData = response?.data || [];
 
     const addMutation = useMutation({
-        mutationFn: addRoutineRequest,
+        mutationFn: addRoutine,
         onSuccess: () => queryClient.invalidateQueries(["getRoutine", principal?.userId])
     });
 
     const updateMutation = useMutation({
-        mutationFn: updateRoutineRequest,
+        mutationFn: updateRoutine,
         onSuccess: () => queryClient.invalidateQueries(["getRoutine", principal?.userId])
     });
 
     const deleteMutation = useMutation({
-        mutationFn: deleteRoutineByRoutineIdRequest, 
+        mutationFn: deleteRoutineByRoutineId, 
         onSuccess: () => queryClient.invalidateQueries(["getRoutine", principal?.userId])
     });
 
     const resetMutation = useMutation({
-        mutationFn: removeRoutineRequest,
+        mutationFn: removeRoutine,
         onSuccess: () => queryClient.invalidateQueries(["getRoutine", principal?.userId])
     });
 
@@ -59,9 +59,9 @@ const MainPage = () => {
         });
     };
 
-    const handleSave = (day, finalRoutines, originalRoutines) => {
+    const handleSave = (day, finalRoutines, dayRoutines) => {
         const finalIds = finalRoutines.map(r => r.routineId).filter(id => id !== null);
-        const toDelete = originalRoutines.filter(r => !finalIds.includes(r.routineId));
+        const toDelete = dayRoutines.filter(r => !finalIds.includes(r.routineId));
 
         const toAdd = finalRoutines.filter(r => r.routineId === null);
 

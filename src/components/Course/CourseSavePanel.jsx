@@ -6,9 +6,10 @@ export default function CourseSavePanel({
     setCourseName,
     onSave,
     disabled,
+    onCancel
 }) {
     return (
-        <Stack spacing={1.5}>
+        <Stack spacing={1.5} sx={{ height:150 }}>
             <Typography variant="subtitle2" fontWeight={800}>
                 코스 저장
             </Typography>
@@ -29,6 +30,14 @@ export default function CourseSavePanel({
                 disabled={disabled}
                 startIcon={<SaveIcon />}
                 fullWidth>
+            </Button>
+
+            <Button
+                size="small"
+                color="error"
+                onClick={onCancel}
+                fullWidth>
+                    취소
             </Button>
         </Stack>
     );

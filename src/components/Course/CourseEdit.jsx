@@ -15,7 +15,7 @@ import PlaceSearchPanel from "./PlaceSearchPanel";
 import CourseSavePanel from "./CourseSavePanel";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-function CourseEdit({ course, userId, boardId }) {
+function CourseEdit({ course, userId, boardId, isEditing }) {
     const navigate = useNavigate();
 
     const { mapRef, kakaoObj, points, setPoints, distanceM, map, undo, clear } =
@@ -110,7 +110,7 @@ function CourseEdit({ course, userId, boardId }) {
     }
 
     return (
-        <Box sx={{ width: "100vw", height: "100vh", position: "relative" }}>
+        <Box sx={{ width: 500, height: 500, position: "relative" }} >
             {/* 지도 */}
             <Box ref={mapRef} sx={{ width: "100%", height: "100%", zIndex: 10, overflow: "hidden" }} />
 
@@ -157,6 +157,7 @@ function CourseEdit({ course, userId, boardId }) {
                             setCourseName={setCourseName}
                             onSave={handleUpdate}
                             disabled={points.length < 2}
+                            onCancel={isEditing}
                         />
                     </Stack>
                 </CoursePanel>

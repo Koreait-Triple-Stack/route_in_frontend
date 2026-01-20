@@ -19,6 +19,35 @@ const RootRoute = () => {
 };
 
 function MainRouter() {
+    const { login, setLoading } = usePrincipalState();
+    const token = localStorage.getItem("AccessToken");
+    const {
+        data: response,
+        error,
+        isLoading,
+        isSuccess,
+    } = useQuery({
+        queryFn: getPrincipal,
+        queryKey: ["getPrincipal", token],
+        enabled: !!token,
+        retry: false,
+        staleTime: 5 * 60 * 1000,
+    });
+
+    useEffect(() => {
+        if (isSuccess) {
+            login(response.data);
+        } else if (!isLoading) {
+            setLoading(false);
+        }
+    }, [isSuccess, isLoading, response, login, setLoading]);
+
+  if (isLoading) return <Box>로딩중</Box>;
+  if (error) {
+    console.log(error)
+    // return <Box>{error.message}</Box>
+  }
+
     return (
         <>
             <Layout>
