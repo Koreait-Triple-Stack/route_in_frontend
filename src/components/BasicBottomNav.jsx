@@ -1,4 +1,3 @@
-import { Box } from "@mui/system";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import BottomNavigationAction from "@mui/material/BottomNavigationAction";
 import BottomNavigation from "@mui/material/BottomNavigation";
@@ -7,11 +6,13 @@ import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined
 import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
 import FilterFramesOutlinedIcon from "@mui/icons-material/FilterFramesOutlined";
 import { useLocation, useNavigate } from "react-router-dom";
-import { usePrincipalState } from "../store/usePrincipalState";
+import { useNotificationStore } from "../store/useNotificationStore";
+import { Badge } from "@mui/material";
 
 function BasicBottomNav() {
     const location = useLocation();
     const navigate = useNavigate();
+    const unread = useNotificationStore((s) => s.unreadCount());
 
     const value = location.pathname;
 
@@ -23,7 +24,7 @@ function BasicBottomNav() {
                 left: "50%",
                 transform: "translateX(-50%)",
                 width: "100%",
-                maxWidth: 600, // Container sm에 맞춰 조절 (sm이 600px)
+                // maxWidth: 600, // Container sm에 맞춰 조절 (sm이 600px)
                 height: 56,
                 zIndex: (theme) => theme.zIndex.appBar, // 위로 올리기
                 pb: "env(safe-area-inset-bottom)",
@@ -48,7 +49,15 @@ function BasicBottomNav() {
                 <BottomNavigationAction
                     label="알림"
                     value="/notification"
-                    icon={<NotificationsNoneOutlinedIcon />}
+                    icon={
+                        <Badge
+                            badgeContent={unread}
+                            color="error"
+                            overlap="circular"
+                            showZero={false}>
+                            <NotificationsNoneOutlinedIcon />
+                        </Badge>
+                    }
                 />
                 <BottomNavigationAction
                     label="마이"

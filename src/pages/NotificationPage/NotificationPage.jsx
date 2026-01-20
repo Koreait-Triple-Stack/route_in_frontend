@@ -5,14 +5,25 @@ import { Box, Stack } from "@mui/system";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import DeleteButtonModal from "./DeleteButtonModal";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { deleteNotificationByNotificationId, getNotificationListByUserId } from "../../apis/notification/notificationService";
+import {
+    deleteNotificationByNotificationId,
+    getNotificationListByUserId,
+} from "../../apis/notification/notificationService";
 import { usePrincipalState } from "../../store/usePrincipalState";
 import { useEffect, useState } from "react";
+import { useNotificationStore } from "../../store/useNotificationStore";
+import { useNavigate } from "react-router-dom";
 
 function NotificationPage() {
     const { principal } = usePrincipalState();
     const [notifications, setNotifications] = useState([]);
     const queryClient = useQueryClient();
+    const navigate = useNavigate();
+    const { markAllRead } = useNotificationStore();
+
+    useEffect(() => {
+        markAllRead();
+    }, [markAllRead]);
 
     // 알림 조회
     const {
@@ -34,7 +45,8 @@ function NotificationPage() {
 
     // 알림 삭제
     const mutation = useMutation({
-        mutationFn: (notificationId) => deleteNotificationByNotificationId(notificationId),
+        mutationFn: (notificationId) =>
+            deleteNotificationByNotificationId(notificationId),
         onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: ["getNotificationListByUserId", principal.userId],
@@ -43,11 +55,15 @@ function NotificationPage() {
         onError: (error) => {
             alert(error);
         },
-    })
+    });
 
     const onDeleteOne = (notificationId) => {
-        mutation.mutate(notificationId)
+        mutation.mutate(notificationId);
     };
+
+    const onClickNotification = (path) => {
+        if (path) navigate(path)
+    }
 
     if (isLoading) return <Box>로딩중...</Box>;
     if (error) return <Box>{error.message}</Box>;
@@ -97,6 +113,7 @@ function NotificationPage() {
                             <Paper
                                 key={n.notificationId}
                                 elevation={0}
+                                onClick={() => onClickNotification(n.path)}
                                 sx={{
                                     p: 1.5,
                                     borderRadius: 2,
@@ -135,7 +152,12 @@ function NotificationPage() {
 
                                 {/* 삭제 버튼 */}
                                 <IconButton
-                                    onClick={() => onDeleteOne(n.notificationId)}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        onDeleteOne(n.notificationId);
+                                    
+                                    }
+                                    }
                                     sx={{
                                         borderRadius: 2,
                                         borderColor: "divider",

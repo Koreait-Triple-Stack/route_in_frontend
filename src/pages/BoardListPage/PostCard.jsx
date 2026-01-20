@@ -3,6 +3,8 @@ import { Box, Stack } from "@mui/system";
 import React from "react";
 
 function PostCard({ board }) {
+    const year = new Date().getFullYear();
+
     return (
         <Paper
             elevation={1}
@@ -29,9 +31,19 @@ function PostCard({ board }) {
                         justifyContent: "space-between",
                         alignItems: "center",
                     }}>
-                    <Chip label={board.type === "COURSE" ? "러닝코스" : "운동루틴"} size="small" />
+                    <Stack direction="row" spacing={1}>
+                        <Chip
+                            label={
+                                board.type === "COURSE"
+                                    ? "러닝코스"
+                                    : "운동루틴"
+                            }
+                            size="small"
+                        />
+                        <Chip label={`추천수 ${board.recommendCnt}`} size="small" />
+                    </Stack>
                     <Typography variant="caption" color="text.secondary">
-                        {board.createDt}
+                        {board.createDt.split("T")[0]}
                     </Typography>
                 </Box>
 
@@ -40,7 +52,11 @@ function PostCard({ board }) {
                 <Stack direction="row" spacing={1} alignItems="center">
                     <Avatar sx={{ width: 32, height: 32 }} />
                     <Typography variant="body2">
-                        {board.username} · {board.birthDate}
+                        {board.username} ·{" "}
+                        {Math.floor(
+                            (year - board.birthDate.split("-")[0] + 1) / 10,
+                        ) * 10}
+                        대
                     </Typography>
                 </Stack>
 

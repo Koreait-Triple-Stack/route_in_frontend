@@ -1,4 +1,3 @@
-import React, { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import Layout from "../components/Layout";
 import MainPage from "../pages/MainPage/MainPage";
@@ -11,9 +10,8 @@ import MapView from "../pages/MapView";
 import MyPageRouter from "./MyPageRouter";
 import CourseRouter from "./CourseRouter";
 import ProtectedRouter from "./ProtectedRouter";
-import { useQuery } from "@tanstack/react-query";
-import { getPrincipal } from "../apis/account/accountService";
-import { Box } from "@mui/system";
+import NotFoundPage from "../pages/NotFoundPage/NotFoundPage";
+import WsTestPage from "../pages/WsTestPage";
 
 const RootRoute = () => {
     const { isLoggedIn } = usePrincipalState();
@@ -57,34 +55,35 @@ function MainRouter() {
                     <Route path="/" element={<RootRoute />} />
                     <Route path="/oauth2/*" element={<OAuth2Router />} />
 
-          <Route
-            path="/board/*"
-            element={
-              <ProtectedRouter>
-                <BoardRouter />
-              </ProtectedRouter>
-            }
-          />
-          <Route
-            path="/notification"
-            element={
-              <ProtectedRouter>
-                <NotificationPage />
-              </ProtectedRouter>
-            }
-          />
-          <Route
-            path="/mypage/*"
-            element={
-              <ProtectedRouter>
-                <MyPageRouter />
-              </ProtectedRouter>
-            }
-          />
+                    <Route
+                        path="/board/*"
+                        element={
+                            <ProtectedRouter>
+                                <BoardRouter />
+                            </ProtectedRouter>
+                        }
+                    />
+                    <Route
+                        path="/notification"
+                        element={
+                            <ProtectedRouter>
+                                <NotificationPage />
+                            </ProtectedRouter>
+                        }
+                    />
+                    <Route
+                        path="/mypage/*"
+                        element={
+                            <ProtectedRouter>
+                                <MyPageRouter />
+                            </ProtectedRouter>
+                        }
+                    />
 
                     <Route path="/map" element={<MapView />} />
                     <Route path="/course/*" element={<CourseRouter />} />
-                    <Route path="*" element={<div>404</div>} />
+                    <Route path="*" element={<NotFoundPage />} />
+                    <Route path="/noti" element={<WsTestPage />} />
                 </Routes>
             </Layout>
         </>

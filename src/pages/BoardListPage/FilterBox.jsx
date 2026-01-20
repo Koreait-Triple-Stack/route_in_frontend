@@ -18,7 +18,7 @@ function FilterBox({ form, setForm, setTags }) {
         });
     };
 
-    const getOnClickHandler = () => {
+    const applyOnClickHandler = () => {
         if (form.type === "ALL") {
             setTags([]);
         } else if (form.type === "COURSE") {
@@ -27,10 +27,6 @@ function FilterBox({ form, setForm, setTags }) {
             setTags(form.parts);
         }
     }
-
-    // handler에 invalid
-    // birthdate를 나이대로 바꾸기
-    // 맨밑에 닿을 때 마다 다시 부르기 -> listPage
 
     const inputChangeHandler = (e) => {
         const { name, value } = e.target;
@@ -70,8 +66,6 @@ function FilterBox({ form, setForm, setTags }) {
                 borderRadius: "12px",
                 mb: 1,
             }}>
-            
-
             {form.type !== "ALL" &&
                 (form.type === "COURSE" ? (
                     <>
@@ -119,7 +113,7 @@ function FilterBox({ form, setForm, setTags }) {
                     </ToggleButtonGroup>
                 ))}
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                <Button variant="contained" onClick={getOnClickHandler}>
+                <Button variant="contained" onClick={applyOnClickHandler}>
                     적용
                 </Button>
                 <Button variant="outlined" onClick={resetOnClickHandler}>

@@ -33,13 +33,10 @@ function DeleteButtonModal() {
             <Box
                 sx={{
                     position: "fixed",
-                    left: "50%",
-                    transform: "translateX(-50%)",
+                    right: 16,
                     bottom: 56 + 16, // BottomNav(56) 위로 16px
-                    width: "100%",
-                    maxWidth: 600, // Container sm 폭
-                    px: 2,
                     zIndex: 1300,
+                    px: 1,
                     pointerEvents: "none", // ✅ 박스는 클릭 막고
                 }}>
                 <Box
