@@ -20,7 +20,7 @@ import {
 } from "../../apis/board/boardService";
 import { useNavigate } from "react-router-dom";
 
-function Header({ boardData }) {
+function Header({ boardData, setOpenCopy }) {
     const { principal } = usePrincipalState();
     const navigate = useNavigate();
     const queryClient = useQueryClient();
@@ -145,12 +145,7 @@ function Header({ boardData }) {
         navigate(`/board/edit`, { boardData: boardData });
     };
 
-    // 코스 리스트 저장(지금은 스타일만: 필요 시 API 연결)
-    const saveToCourseListHandler = () => {
-        closeMenu();
-        if (!principal.userId) return alert("로그인이 필요합니다.");
-        alert("코스 리스트 저장 기능 연결 예정");
-    };
+    
 
     return (
         <Box sx={{ p: 2.2 }}>
@@ -233,15 +228,15 @@ function Header({ boardData }) {
                         }}>
                         {boardData.type === "COURSE" ? (
                             <MenuItem
-                                onClick={saveToCourseListHandler}
+                                onClick={() => setOpenCopy(true)}
                                 sx={{ fontWeight: 800 }}>
-                                러닝코스 리스트에 저장
+                                러닝 코스 리스트에 저장
                             </MenuItem>
                         ) : (
                             <MenuItem
-                                onClick={saveToCourseListHandler}
+                                onClick={() => setOpenCopy(true)}
                                 sx={{ fontWeight: 800 }}>
-                                운동 루틴에 저장
+                                운동 루틴에 복사
                             </MenuItem>
                         )}
 
