@@ -86,7 +86,6 @@ function BoardWritePage() {
     return (
         <Box
             sx={{
-                minHeight: "100vh",
                 bgcolor: "grey.50",
                 px: { xs: 2, sm: 3 },
                 py: { xs: 2, sm: 4 },

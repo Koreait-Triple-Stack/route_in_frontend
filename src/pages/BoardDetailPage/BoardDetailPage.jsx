@@ -48,7 +48,7 @@ function BoardDetailPage() {
         // 러닝 코스, 운동루틴 저장 버튼
         // boardId, userId로 요청을 보내서 boardId로 db에서 course를 찾은 다음
         // boardId = null, userId = userId로 해서 db에 저장
-        show("저장 완료", "error");
+        show("저장 완료", "success");
     };
 
     if (isLoading) return <></>;
@@ -84,17 +84,16 @@ function BoardDetailPage() {
                     />
 
                     <Divider />
-                    <CourseDetail />
+                    {boardData.type === "COURSE" ? (
+                        <CourseDetail boardId={boardData.boardId} />
+                    ) : (
+                        <></>
+                    )}
+
                     <Divider />
 
                     <Box sx={{ p: 2.2 }}>{boardData.content}</Box>
                 </Paper>
-
-                {(isLoading || error) && (
-                    <Box sx={{ mt: 2, color: "text.secondary", fontSize: 13 }}>
-                        {isLoading ? "로딩중..." : "조회 실패"}
-                    </Box>
-                )}
             </Container>
 
             <Dialog
