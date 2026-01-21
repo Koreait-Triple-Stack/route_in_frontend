@@ -5,6 +5,7 @@ import { Routes, Route } from "react-router-dom";
 import BoardListPage from "../pages/BoardListPage/BoardListPage";
 import BoardWritePage from "../pages/BoardWritePage/BoardWritePage";
 import BoardDetailPage from "../pages/BoardDetailPage/BoardDetailPage";
+import BoardEditPage from "../pages/BoardEditPage/BoardEditPage";
 import NotFoundPage from "../pages/NotFoundPage/NotFoundPage";
 
 export default function BoardRouter() {
@@ -18,6 +19,8 @@ export default function BoardRouter() {
 
       {/* /board/routine/123 , /board/running/123 */}
       <Route path="detail/:boardId" element={<BoardDetailPage />} />
+
+      <Route path="edit" element={<BoardEditPage />} />
 
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
