@@ -87,19 +87,18 @@ function BoardDetailPage() {
             setOpenCopy={setOpenCopy}
           />
 
-          <Divider />
-          <CourseDetail />
-          <Divider />
+                    <Divider />
+                    {boardData.type === "COURSE" ? (
+                        <CourseDetail boardId={boardData.boardId} />
+                    ) : (
+                        <></>
+                    )}
 
-          <Box sx={{ p: 2.2 }}>{boardData.content}</Box>
-        </Paper>
+                    <Divider />
 
-        {(isLoading || error) && (
-          <Box sx={{ mt: 2, color: "text.secondary", fontSize: 13 }}>
-            {isLoading ? "로딩중..." : "조회 실패"}
-          </Box>
-        )}
-      </Container>
+                    <Box sx={{ p: 2.2 }}>{boardData.content}</Box>
+                </Paper>
+            </Container>
 
       <Dialog
         open={openCopy}

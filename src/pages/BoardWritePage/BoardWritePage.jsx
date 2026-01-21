@@ -127,55 +127,25 @@ function BoardWritePage() {
         >
           <Typography
             sx={{
-              fontWeight: 900,
-              fontSize: { xs: 20, sm: 24 },
-              lineHeight: 1.2,
-            }}
-          >
-            {isRoutine ? "루틴 작성" : "코스 작성"}
-          </Typography>
-          <Typography
-            sx={{
-              mt: 0.8,
-              color: "text.secondary",
-              fontWeight: 600,
-              fontSize: { xs: 13, sm: 14 },
-            }}
-          ></Typography>
-        </Box>
-
-        <Paper
-          elevation={0}
-          variant="outlined"
-          sx={{
-            borderRadius: 3,
-            p: { xs: 2, sm: 3 },
-            bgcolor: "white",
-          }}
-        >
-          <Stack spacing={2}>
-            <Box>
-              <Typography sx={{ fontWeight: 800, mb: 0.8, fontSize: 14 }}>
-                제목
-              </Typography>
-              <TextField
-                fullWidth
-                placeholder="제목을 입력하세요."
-                name="title"
-                value={form.title}
-                onChange={onChangeHandler}
-              />
-            </Box>
-            {isRoutine && (
-              <Box>
-                <Stack spacing={1.2}>
-                  <Stack
-                    direction="row"
-                    alignItems="baseline"
-                    justifyContent="space-between"
-                  >
-                    <Typography sx={{ fontWeight: 900, fontSize: 14 }}>
-                      운동 부위
+                bgcolor: "grey.50",
+                px: { xs: 2, sm: 3 },
+                py: { xs: 2, sm: 4 },
+                display: "flex",
+                justifyContent: "center",
+            }}>
+            <Box sx={{ width: "100%", maxWidth: 560 }}>
+                <Box
+                    sx={{
+                        mb: 2,
+                        px: { xs: 0.5, sm: 0 },
+                    }}>
+                    <Typography
+                        sx={{
+                            fontWeight: 900,
+                            fontSize: { xs: 20, sm: 24 },
+                            lineHeight: 1.2,
+                        }}>
+                        {isRoutine ? "루틴 작성" : "코스 작성"}
                     </Typography>
                     <Typography
                       sx={{

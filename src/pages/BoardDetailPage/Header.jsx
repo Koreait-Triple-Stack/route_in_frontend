@@ -52,9 +52,6 @@ function Header({ boardData, setOpenCopy }) {
             }
 
             queryClient.invalidateQueries({
-                queryKey: ["getBoardByBoardId", boardData.boardId],
-            });
-            queryClient.invalidateQueries({
                 queryKey: ["getRecommendListByBoardId", boardData.boardId],
             });
         },
@@ -72,9 +69,6 @@ function Header({ boardData, setOpenCopy }) {
                 return;
             }
 
-            queryClient.invalidateQueries({
-                queryKey: ["getBoardByBoardId", boardData.boardId],
-            });
             queryClient.invalidateQueries({
                 queryKey: ["getRecommendListByBoardId", boardData.boardId],
             });
@@ -147,8 +141,6 @@ function Header({ boardData, setOpenCopy }) {
         navigate(`/board/edit`, { state : {boardData : boardData} });
     };
 
-    
-
     return (
         <Box sx={{ p: 2.2 }}>
             <Stack
@@ -169,14 +161,14 @@ function Header({ boardData, setOpenCopy }) {
                     {/* 추천수 pill */}
                     <Chip
                         icon={<ThumbUpAltIcon sx={{ fontSize: 18 }} />}
-                        label={boardData?.recommendCnt ?? 0}
+                        label={recommendList?.data?.length ?? 0}
                         onClick={onClickRecommend}
                         clickable
-                        size="small"
+                        size="medium"
                         variant={recommended ? "filled" : "outlined"}
                         sx={{
                             fontWeight: 900,
-                            p: 1,
+                            p: 0.5,
 
                             // ✅ 핵심: 항상 border 1px 유지
                             border: "1px solid",

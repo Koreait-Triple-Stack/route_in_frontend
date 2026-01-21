@@ -57,7 +57,7 @@ function CourseAdd({ userId, boardId }) {
     };
 
     return (
-        <Box sx={{ width: "100vw", height: "calc(100vh - 100px)", position: "relative" }}>
+        <Box sx={{ width: "100%", height: "100%", position: "relative" }}>
             {/* 지도 */}
             <Box ref={mapRef} sx={{ width: "100%", height: "100%", zIndex: 10, overflow: "hidden" }} />
 

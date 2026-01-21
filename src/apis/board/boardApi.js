@@ -43,3 +43,7 @@ export const minusRecommendRequest = async (data) => {
 export const getRecommendListByBoardIdRequest = async (boardId) => {
     return instance.get(`/board/recommend/${boardId}`);
 };
+
+export const copyCourseRequest = async (data) => {
+    return instance.post(`/board/copy/payload`, data);
+};
