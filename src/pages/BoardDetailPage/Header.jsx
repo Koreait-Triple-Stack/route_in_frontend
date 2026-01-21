@@ -135,6 +135,7 @@ function Header({ boardData, setOpenCopy }) {
         removeMutation.mutate({
             userId: principal.userId,
             boardId: boardData?.boardId,
+            tags:[],
         });
     };
 
@@ -142,7 +143,8 @@ function Header({ boardData, setOpenCopy }) {
         closeMenu();
         if (!principal.userId) return alert("로그인이 필요합니다.");
         if (!isOwner) return alert("수정 권한이 없습니다.");
-        navigate(`/board/edit`, { boardData: boardData });
+        console.log(boardData)
+        navigate(`/board/edit`, { state : {boardData : boardData} });
     };
 
     
