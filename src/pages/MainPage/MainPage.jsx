@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import ScheduleItem from "../../components/ScheduleItem";
 import { usePrincipalState } from "../../store/usePrincipalState";
 import { addRoutine, deleteRoutineByRoutineId, getRoutine, removeRoutine, updateRoutine } from "../../apis/routine/routineService";
+import Loading from "../../components/Loading";
 
 const MainPage = () => {
     const dbDays = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
@@ -77,7 +78,7 @@ const MainPage = () => {
         });
     };
 
-    if (isLoading) return <div>로딩중...</div>;
+    if (isLoading) return <Loading />;
 
     return (
         <Container maxWidth="sm" sx={{ py: 3 }}>

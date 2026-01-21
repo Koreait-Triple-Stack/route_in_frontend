@@ -24,6 +24,7 @@ import ExpandMore from "@mui/icons-material/ExpandMore";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import { useQuery } from "@tanstack/react-query";
 import { getUserByUserId } from "../../apis/account/accountService";
+import Loading from "../../components/Loading";
 
 function MyPage() {
     const navigate = useNavigate();
@@ -68,7 +69,7 @@ function MyPage() {
         }
     };
 
-    if (isLoading) return <div>로딩중...</div>;
+    if (isLoading) return <Loading />;
 
     return (
         <Box

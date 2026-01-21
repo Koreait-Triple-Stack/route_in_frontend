@@ -17,6 +17,7 @@ import { getBoardByBoardId } from "../../apis/board/boardService";
 import Header from "./Header";
 import CourseDetail from "./CourseDetail";
 import { useToastStore } from "../../store/useToastStore";
+import Loading from "../../components/Loading";
 
 function BoardDetailPage() {
     const { show } = useToastStore();
@@ -51,7 +52,7 @@ function BoardDetailPage() {
         show("저장 완료", "success");
     };
 
-    if (isLoading) return <></>;
+    if (isLoading) return <Loading />;
     if (error) return <></>;
 
     return (

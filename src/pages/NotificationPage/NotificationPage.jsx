@@ -12,6 +12,7 @@ import {
 import { usePrincipalState } from "../../store/usePrincipalState";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Loading from "../../components/Loading";
 
 function NotificationPage() {
     const { principal } = usePrincipalState();
@@ -60,7 +61,7 @@ function NotificationPage() {
         if (path) navigate(path)
     }
 
-    if (isLoading) return <Box>로딩중...</Box>;
+    if (isLoading) return <Loading />;
     if (error) return <Box>{error.message}</Box>;
 
     return (

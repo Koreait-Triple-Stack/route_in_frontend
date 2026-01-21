@@ -7,6 +7,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { getBoardListInfinite } from "../../apis/board/boardService";
 import { ClipLoader } from "react-spinners";
 import WriteDial from "./WriteDial";
+import Loading from "../../components/Loading";
 
 function BoardListPage() {
     const [form, setForm] = useState({
@@ -60,7 +61,7 @@ function BoardListPage() {
         return () => observer.disconnect();
     }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
-    if (isLoading) return <Box>로딩중</Box>;
+    if (isLoading) return <Loading />;
 
     return (
         <Container maxWidth="sm" sx={{ padding: "20px", maxWidth: 500 }}>
