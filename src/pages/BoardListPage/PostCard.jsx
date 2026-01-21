@@ -1,13 +1,17 @@
 import { Avatar, Chip, Paper, Typography } from "@mui/material";
 import { Box, Stack } from "@mui/system";
 import React from "react";
+import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
+import { useNavigate } from "react-router-dom";
 
 function PostCard({ board }) {
     const year = new Date().getFullYear();
+    const navigate = useNavigate();
 
     return (
         <Paper
             elevation={1}
+            onClick={() => navigate(`/board/detail/${board.boardId}`)}
             sx={{
                 p: 2,
                 borderRadius: 3,
@@ -40,7 +44,16 @@ function PostCard({ board }) {
                             }
                             size="small"
                         />
-                        <Chip label={`추천수 ${board.recommendCnt}`} size="small" />
+                        <Chip
+                            size="small"
+                            icon={<ThumbUpAltIcon />}
+                            label={board.recommendCnt}
+                            sx={{
+                                px: 0.5,
+                                "& .MuiChip-icon": { fontSize: 16 },
+                                "& .MuiChip-label": { fontSize: 12, px: 1 },
+                            }}
+                        />
                     </Stack>
                     <Typography variant="caption" color="text.secondary">
                         {board.createDt.split("T")[0]}

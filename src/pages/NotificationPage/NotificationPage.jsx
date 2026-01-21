@@ -11,7 +11,6 @@ import {
 } from "../../apis/notification/notificationService";
 import { usePrincipalState } from "../../store/usePrincipalState";
 import { useEffect, useState } from "react";
-import { useNotificationStore } from "../../store/useNotificationStore";
 import { useNavigate } from "react-router-dom";
 
 function NotificationPage() {
@@ -19,11 +18,6 @@ function NotificationPage() {
     const [notifications, setNotifications] = useState([]);
     const queryClient = useQueryClient();
     const navigate = useNavigate();
-    const { markAllRead } = useNotificationStore();
-
-    useEffect(() => {
-        markAllRead();
-    }, [markAllRead]);
 
     // 알림 조회
     const {
@@ -124,6 +118,7 @@ function NotificationPage() {
                                     display: "flex",
                                     alignItems: "center",
                                     gap: 1.5,
+                                    cursor: "pointer",
                                 }}>
                                 {/* 텍스트 */}
                                 <Box sx={{ flex: 1, minWidth: 0 }}>

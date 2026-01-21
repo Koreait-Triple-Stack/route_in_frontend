@@ -36,7 +36,7 @@ function MyBoardListPage() {
                 {respData.length > 0 ? (
                     respData.map((post) => (
                         <PostCard
-                            key={post.userId}
+                            key={post.boardId}
                             post={post}
                         />
                     ))
