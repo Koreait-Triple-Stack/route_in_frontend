@@ -1,8 +1,7 @@
 import { useCourseMap } from "../../hooks/useCourseMap";
-import { useEffect, useState } from "react";
-import { Button, Divider, Paper, Typography } from "@mui/material";
+import { useEffect } from "react";
+import { Divider, Paper, Typography } from "@mui/material";
 import { Box, Stack } from "@mui/system";
-import CourseEdit from "./CourseEdit";
 
 function DetailRow({ label, value, valueColor }) {
     return (
@@ -24,8 +23,7 @@ function DetailRow({ label, value, valueColor }) {
     );
 }
 
-function CourseDetail({ course, onDelete }) {
-    const [isEditing, setIsEditing] = useState(false);
+function CourseDetail({ course }) {
     const { mapRef, map, kakaoObj, setPoints } = useCourseMap({
         enableClickAdd: false,
     });
@@ -62,10 +60,6 @@ function CourseDetail({ course, onDelete }) {
             })),
         );
     }, [course]);
-
-    const deleteClick = () => {
-        onDelete(course);
-    };
 
     if (!course) {
         return (
@@ -133,19 +127,12 @@ function CourseDetail({ course, onDelete }) {
                     </Stack>
                     <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                         <DetailRow label="거리" value={course.distanceM} valueColor="primary.main" />
-                        <Button onClick={() => setIsEditing(true)}>수정</Button>
                     </Box>
                     <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                         <DetailRow label="지역" value={course.region} />
-                        <Button onClick={deleteClick}>삭제</Button>
                     </Box>
                 </Box>
             </Box>
-            {isEditing && (
-                <Box>
-                    <CourseEdit key={course.courseId} course={course} isEditing={() => setIsEditing(false)} />
-                </Box>
-            )}
         </Paper>
     );
 }
