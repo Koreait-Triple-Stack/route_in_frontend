@@ -4,6 +4,8 @@ import MyPage from "../pages/Mypage/MyPage";
 import InBodyPage from "../pages/InBody/InBodyPage";
 import MyBoardListPage from "../pages/MyBoardListPage/MyBoardListPage";
 import CourseListPage from "../pages/CourseListPage/CourseListPage";
+import FollowerListPage from "../pages/FollowerListPage/FollowerListPage";
+import FollowingListPage from "../pages/FollowingListPage/FollowingListPage";
 
 function MyPageRouter() {
     return (
@@ -13,6 +15,8 @@ function MyPageRouter() {
                 <Route path="/inBody" element={<InBodyPage />} />
                 <Route path="/boardList" element={<MyBoardListPage />} />
                 <Route path="/courseList" element={<CourseListPage />} />
+                <Route path="/followerList" element={<FollowerListPage />} />
+                <Route path="/followingList" element={<FollowingListPage />} />
             </Routes>
         </>
     );

@@ -1,22 +1,10 @@
 import React, { useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import {
-    Container,
-    Paper,
-    Typography,
-    Box,
-    TextField,
-    Button,
-    MenuItem,
-    Select,
-    FormControl,
-    FormHelperText,
-    InputAdornment,
-    Stack,
-} from "@mui/material";
+import { Container, Paper, Typography, Box, TextField, Button, MenuItem, Select, FormControl, FormHelperText, InputAdornment, Stack, ToggleButtonGroup, ToggleButton } from "@mui/material";
 import { useDaumPostcodePopup } from "react-daum-postcode"; // 라이브러리 import
 import { oAuth2Signup } from "../../apis/oAuth2/oAuth2Service";
 import { useMutation } from "@tanstack/react-query";
+import { Grid } from "@mui/system";
 
 const OAuth2SignupPage = () => {
     const [searchParams] = useSearchParams();
@@ -86,10 +74,8 @@ const OAuth2SignupPage = () => {
     const handleSignup = async () => {
         const newErrors = {};
 
-        if (!formData.username.trim())
-            newErrors.username = "닉네임을 입력해주세요.";
-        if (formData.birthDate.length !== 8)
-            newErrors.birthDate = "생년월일 8자리를 입력해주세요.";
+        if (!formData.username.trim()) newErrors.username = "닉네임을 입력해주세요.";
+        if (formData.birthDate.length !== 8) newErrors.birthDate = "생년월일 8자리를 입력해주세요.";
         if (!formData.gender) newErrors.gender = "성별을 선택해주세요.";
 
         // [수정] 주소 유효성 검사 (우편번호나 상세주소 체크)
@@ -106,10 +92,7 @@ const OAuth2SignupPage = () => {
 
         if (!confirm("회원가입하시겠습니까?")) return;
 
-        const formattedBirthDate = `${formData.birthDate.slice(
-            0,
-            4
-        )}-${formData.birthDate.slice(4, 6)}-${formData.birthDate.slice(6, 8)}`;
+        const formattedBirthDate = `${formData.birthDate.slice(0, 4)}-${formData.birthDate.slice(4, 6)}-${formData.birthDate.slice(6, 8)}`;
 
         mutation.mutate({
             username: formData.username,
@@ -135,20 +118,12 @@ const OAuth2SignupPage = () => {
 
     return (
         <Container maxWidth="xs" sx={{ py: 4 }}>
-            <Paper
-                elevation={0}
-                sx={{ p: 4, borderRadius: 4, border: "1px solid #eee" }}>
-                <Typography
-                    variant="h5"
-                    align="center"
-                    sx={{ mb: 4, fontWeight: 700 }}>
+            <Paper elevation={0} sx={{ p: 4, borderRadius: 4, border: "1px solid #eee" }}>
+                <Typography variant="h5" align="center" sx={{ mb: 4, fontWeight: 700 }}>
                     회원가입
                 </Typography>
 
-                <Box
-                    component="form"
-                    noValidate
-                    sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                <Box component="form" noValidate sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
                     <Box>
                         <Label required>닉네임</Label>
                         <TextField
@@ -188,28 +163,16 @@ const OAuth2SignupPage = () => {
 
                     <Box>
                         <Label required>성별</Label>
-                        <FormControl
-                            fullWidth
-                            size="small"
-                            error={!!errors.gender}>
-                            <Select
-                                name="gender"
-                                value={formData.gender}
-                                onChange={handleInputChange}
-                                displayEmpty
-                                sx={{ borderRadius: 2 }}>
-                                <MenuItem value="" disabled>
-                                    <Typography color="text.secondary">
-                                        선택해주세요
-                                    </Typography>
-                                </MenuItem>
-                                <MenuItem value="M">남성</MenuItem>
-                                <MenuItem value="F">여성</MenuItem>
-                            </Select>
-                            {errors.gender && (
-                                <FormHelperText>{errors.gender}</FormHelperText>
-                            )}
-                        </FormControl>
+                        <ToggleButtonGroup value={formData.gender} exclusive onChange={handleInputChange}>
+                            <Grid container spacing={1}>
+                                <ToggleButton name="gender" value="남성">
+                                    남성
+                                </ToggleButton>
+                                <ToggleButton name="gender" value="여성">
+                                    여성
+                                </ToggleButton>
+                            </Grid>
+                        </ToggleButtonGroup>
                     </Box>
 
                     {/* [수정된 부분] 주소 입력 영역 (우편번호, 기본주소, 상세주소) */}
@@ -242,7 +205,8 @@ const OAuth2SignupPage = () => {
                                         borderRadius: 2,
                                         whiteSpace: "nowrap",
                                         minWidth: "80px",
-                                    }}>
+                                    }}
+                                >
                                     주소 검색
                                 </Button>
                             </Stack>
@@ -295,11 +259,7 @@ const OAuth2SignupPage = () => {
                             variant="outlined"
                             size="small"
                             InputProps={{
-                                endAdornment: (
-                                    <InputAdornment position="end">
-                                        cm
-                                    </InputAdornment>
-                                ),
+                                endAdornment: <InputAdornment position="end">cm</InputAdornment>,
                                 sx: { borderRadius: 2 },
                             }}
                         />
@@ -318,11 +278,7 @@ const OAuth2SignupPage = () => {
                             variant="outlined"
                             size="small"
                             InputProps={{
-                                endAdornment: (
-                                    <InputAdornment position="end">
-                                        kg
-                                    </InputAdornment>
-                                ),
+                                endAdornment: <InputAdornment position="end">kg</InputAdornment>,
                                 sx: { borderRadius: 2 },
                             }}
                         />
@@ -341,7 +297,8 @@ const OAuth2SignupPage = () => {
                             fontSize: "1rem",
                             bgcolor: "#2563eb",
                             "&:hover": { bgcolor: "#1d4ed8" },
-                        }}>
+                        }}
+                    >
                         가입하기
                     </Button>
                 </Box>

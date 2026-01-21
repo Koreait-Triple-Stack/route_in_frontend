@@ -23,7 +23,7 @@ function BasicBottomNav() {
         staleTime: 30000,
     });
 
-    console.log(response)
+    // console.log(response)
 
     const value = location.pathname;
 
