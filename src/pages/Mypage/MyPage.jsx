@@ -23,7 +23,6 @@ import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import { useQuery } from "@tanstack/react-query";
-import { getFollowerUserListRequest, getFollowingUserListRequest } from "../../apis/follow/followApi";
 import { getUserByUserId } from "../../apis/account/accountService";
 
 function MyPage() {
@@ -36,18 +35,6 @@ function MyPage() {
     });
 
     const user = response?.data;
-
-    const { data: followerUser } = useQuery({
-        queryKey: ["getFollowerUserList", principal?.userId],
-        queryFn: () => getFollowerUserListRequest(principal?.userId),
-        staleTime: 30000,
-    });
-
-    const { data: followingUser } = useQuery({
-        queryKey: ["getFollowingUserList", principal?.userId],
-        queryFn: () => getFollowingUserListRequest(principal?.userId),
-        staleTime: 30000,
-    });
 
     const [activeView, setActiveView] = useState(null);
     const [open, setOpen] = useState(false);
@@ -144,9 +131,14 @@ function MyPage() {
                             <Typography variant="caption">
                                 {user?.height}cm / {user?.weight}kg
                             </Typography>
-                            <Typography variant="body2">
-                                follower : {user?.followerCnt} / following : {user?.followingCnt}
-                            </Typography>
+                            <Box sx={{ display: "flex" }}>
+                                <Typography variant="body2" onClick={() => navigate("/mypage/followerList")}>
+                                    follower : {user?.followerCnt} /
+                                </Typography>
+                                <Typography variant="body2" onClick={() => navigate("/mypage/followingList")}>
+                                    following : {user?.followingCnt}
+                                </Typography>
+                            </Box>
                         </Box>
                     </Box>
 

@@ -3,10 +3,12 @@ import { Box, Container, Stack } from "@mui/system";
 import { usePrincipalState } from "../../store/usePrincipalState";
 import { deleteCourse, getCourseListByUserId } from "../../apis/course/courseService";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Divider, Typography } from "@mui/material";
-import CourseDetail from "../../components/Course/CourseDetail";
+import { Button, Divider, Typography } from "@mui/material";
+import CourseDetail from "./CourseDetail";
+import CourseAdd from "./CourseAdd";
 
 function CourseListPage() {
+    const [isAdd, setIsAdd] = useState(false);
     const { principal } = usePrincipalState();
     const queryClient = useQueryClient();
 
@@ -22,28 +24,39 @@ function CourseListPage() {
     const deleteMutation = useMutation({
         mutationFn: deleteCourse,
         onSuccess: () => queryClient.invalidateQueries(["getCourseListByUserId", principal?.userId]),
-        onError: () => setCourseList([])
+        onError: () => setCourseList([]),
     });
 
     const handleDelete = (course) => {
         deleteMutation.mutate(course.courseId);
     };
 
+    const handleAdd = () => {
+        setIsAdd(true);
+    };
+
     useEffect(() => {
         setCourseList(response?.data);
-    }, [response, isLoading])
+    }, [response, isLoading]);
 
     if (isLoading) return <div>로딩중...</div>;
 
     return (
         <Container maxWidth="sm" sx={{ padding: "20px", maxWidth: 500 }}>
-            <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
+            <Stack display="flex" flexDirection="row" justifyContent="space-between" alignItems="center" spacing={1} sx={{ mb: 2 }}>
                 <Typography variant="h6" sx={{ fontWeight: "bold" }}>
                     코스 리스트 관리
                 </Typography>
+                <Button variant="contained" onClick={handleAdd}>추가</Button>
             </Stack>
 
             <Divider sx={{ mb: 3 }} />
+
+            {isAdd && (
+                <Box>
+                    <CourseAdd userId={principal?.userId} isAdd={() => setIsAdd(false)} />
+                </Box>
+            )}
 
             <Stack spacing={2}>
                 {courseList?.length > 0 ? (
