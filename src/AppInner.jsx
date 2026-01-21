@@ -7,13 +7,11 @@ import { getPrincipal } from "./apis/account/accountService";
 import { useQuery } from "@tanstack/react-query";
 import { Box } from "@mui/system";
 import NotificationListener from "./components/NotificationListener";
+import Loading from "./components/Loading";
 
 function AppInner() {
     const token = localStorage.getItem("AccessToken");
     const { login, setLoading } = usePrincipalState();
-    const [toast, setToast] = useState({
-        
-    })
     const {
         data: response,
         error,
@@ -35,7 +33,7 @@ function AppInner() {
         }
     }, [isSuccess, isLoading, response, login, setLoading]);
 
-    if (isLoading) return <Box>로딩중</Box>;
+    if (isLoading) return <Loading />;
     if (error) return <Box>{error}</Box>;
 
     return (

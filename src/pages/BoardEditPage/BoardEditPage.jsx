@@ -13,8 +13,8 @@ function BoardEditPage() {
   const { principal } = usePrincipalState();
   const userId = principal?.userId;
 
-  const queryClient = useQueryClient();
-  const navigate = useNavigate();
+    const queryClient = useQueryClient();
+    const navigate = useNavigate();
 
   const [form, setForm] = useState({
     title: "",
