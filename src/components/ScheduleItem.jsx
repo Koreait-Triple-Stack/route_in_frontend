@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Typography, Box, Paper, Button, TextField, Chip, Stack, IconButton } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import { usePrincipalState } from "../store/usePrincipalState";
 
-const ScheduleItem = ({ day, routines, active, onReset, onSave, onToggle }) => {
+const ScheduleItem = ({ dayEng, day, routines, active, onReset, onSave, onToggle }) => {
+    const {principal} = usePrincipalState();
     const [isEditing, setIsEditing] = useState(false);
     
     const [localRoutines, setLocalRoutines] = useState([]);
@@ -18,9 +20,10 @@ const ScheduleItem = ({ day, routines, active, onReset, onSave, onToggle }) => {
         if (!inputText.trim()) return;
         
         const newRoutine = { 
+            routineId: null,
+            userId: principal?.userId,
             exercise: inputText, 
-            routineId: null, 
-            checked: 0 
+            weekday: dayEng,
         };
         setLocalRoutines([...localRoutines, newRoutine]);
         setInputText("");
