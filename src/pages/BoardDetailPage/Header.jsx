@@ -19,8 +19,10 @@ import {
     removeBoard,
 } from "../../apis/board/boardService";
 import { useNavigate } from "react-router-dom";
+import { useToastStore } from "../../store/useToastStore";
 
 function Header({ boardData, setOpenCopy }) {
+    const { show } = useToastStore();
     const { principal } = usePrincipalState();
     const navigate = useNavigate();
     const queryClient = useQueryClient();
@@ -45,36 +47,26 @@ function Header({ boardData, setOpenCopy }) {
     const plusRecommendedMutation = useMutation({
         mutationKey: ["plusRecommend", boardData?.boardId],
         mutationFn: (data) => plusRecommend(data),
-        onSuccess: (response) => {
-            if (response?.status !== "success") {
-                alert(response?.message ?? "추천 실패");
-                return;
-            }
-
+        onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: ["getRecommendListByBoardId", boardData.boardId],
             });
         },
         onError: (error) => {
-            alert(error?.message ?? "추천 실패");
+            show(error?.message ?? "추천 실패", "error");
         },
     });
 
     const minusRecommendedMutation = useMutation({
         mutationKey: ["minusRecommend", boardData?.boardId],
         mutationFn: (data) => minusRecommend(data),
-        onSuccess: (response) => {
-            if (response?.status !== "success") {
-                alert(response?.message ?? "취소 실패");
-                return;
-            }
-
+        onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: ["getRecommendListByBoardId", boardData.boardId],
             });
         },
         onError: (error) => {
-            alert(error?.message ?? "취소 실패");
+            show(error?.message ?? "취소 실패", "error");
         },
     });
 
@@ -101,12 +93,8 @@ function Header({ boardData, setOpenCopy }) {
         mutationKey: ["removeBoard", boardData?.boardId],
         mutationFn: removeBoard,
         onSuccess: (response) => {
-            if (response?.status !== "success") {
-                alert(response?.message ?? "삭제 실패");
-                return;
-            }
+            show(response.message, "success");
 
-            alert("게시물이 삭제 되었습니다.");
             queryClient.invalidateQueries({
                 queryKey: ["getBoardListInfinite"],
             });
@@ -116,7 +104,7 @@ function Header({ boardData, setOpenCopy }) {
             navigate("/board");
         },
         onError: (error) => {
-            alert(error?.message ?? "삭제 실패");
+            show(error?.message ?? "삭제 실패", "error");
         },
     });
 
@@ -137,7 +125,6 @@ function Header({ boardData, setOpenCopy }) {
         closeMenu();
         if (!principal.userId) return alert("로그인이 필요합니다.");
         if (!isOwner) return alert("수정 권한이 없습니다.");
-        console.log(boardData)
         navigate(`/board/edit`, { state : {boardData : boardData} });
     };
 

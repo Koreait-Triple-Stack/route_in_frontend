@@ -9,8 +9,9 @@ function Layout({ children }) {
             <Container
                 maxWidth="sm"
                 disableGutters
-                sx={{ height: "100%", px: { xs: 2, sm: 2 }, py: 1 }}>
+                sx={{ height: "100%", py: 1 }}>
                 <Box
+                    id="app-scroll"
                     sx={{
                         height: "100%",
                         overflowY: "auto",

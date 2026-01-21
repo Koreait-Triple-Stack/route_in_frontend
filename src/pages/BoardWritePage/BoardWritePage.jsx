@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Stack } from "@mui/system";
+import { Box, Container, Stack } from "@mui/system";
 import {
     Typography,
     TextField,
@@ -111,172 +111,160 @@ function BoardWritePage() {
     }
 
     return (
-        <Box
-            sx={{
-                minHeight: "100vh",
-                bgcolor: "grey.50",
-                px: { xs: 2, sm: 3 },
-                py: { xs: 2, sm: 4 },
-                display: "flex",
-                justifyContent: "center",
-            }}>
-            <Box sx={{ width: "100%", maxWidth: 560 }}>
-                <Box
+        <Container>
+            <Box
+                sx={{
+                    mb: 2,
+                    px: { xs: 0.5, sm: 0 },
+                }}>
+                <Typography
                     sx={{
-                        mb: 2,
-                        px: { xs: 0.5, sm: 0 },
+                        fontWeight: 900,
+                        fontSize: { xs: 20, sm: 24 },
+                        lineHeight: 1.2,
                     }}>
-                    <Typography
-                        sx={{
-                            fontWeight: 900,
-                            fontSize: { xs: 20, sm: 24 },
-                            lineHeight: 1.2,
-                        }}>
-                        {isRoutine ? "루틴 작성" : "코스 작성"}
-                    </Typography>
-                    <Typography
-                        sx={{
-                            mt: 0.8,
-                            color: "text.secondary",
-                            fontWeight: 600,
-                            fontSize: { xs: 13, sm: 14 },
-                        }}></Typography>
-                </Box>
-
-                <Paper
-                    elevation={0}
-                    variant="outlined"
+                    {isRoutine ? "루틴 작성" : "코스 작성"}
+                </Typography>
+                <Typography
                     sx={{
-                        borderRadius: 3,
-                        p: { xs: 2, sm: 3 },
-                        bgcolor: "white",
-                    }}>
-                    <Stack spacing={2}>
-                        <Box>
-                            <Typography
-                                sx={{ fontWeight: 800, mb: 0.8, fontSize: 14 }}>
-                                제목
-                            </Typography>
-                            <TextField
-                                fullWidth
-                                placeholder="제목을 입력하세요."
-                                name="title"
-                                value={form.title}
-                                onChange={onChangeHandler}
-                            />
-                        </Box>
-                        {isRoutine && (
-                            <Box>
-                                <Stack spacing={1.2}>
-                                    <Stack
-                                        direction="row"
-                                        alignItems="baseline"
-                                        justifyContent="space-between">
-                                        <Typography
-                                            sx={{
-                                                fontWeight: 900,
-                                                fontSize: 14,
-                                            }}>
-                                            운동 부위
-                                        </Typography>
-                                        <Typography
-                                            sx={{
-                                                fontSize: 12,
-                                                fontWeight: 700,
-                                                color: "text.secondary",
-                                            }}>
-                                            복수 선택 가능
-                                        </Typography>
-                                    </Stack>
-
-                                    <Box
-                                        sx={{
-                                            display: "flex",
-                                            flexWrap: "wrap",
-                                            gap: 1,
-                                        }}>
-                                        {EXERCISE_TAGS.map((tag) => {
-                                            const tagId = idx + 1;
-                                            const selected =
-                                                selectedTagIds.includes(
-                                                    tag.label,
-                                                );
-                                            return (
-                                                <ToggleButton
-                                                    key={tag.label}
-                                                    value={tag.label}
-                                                    selected={selected}
-                                                    onChange={() =>
-                                                        toggleTag(tag.label)
-                                                    }
-                                                    sx={{}}>
-                                                    {tag.label}
-                                                </ToggleButton>
-                                            );
-                                        })}
-                                    </Box>
-                                </Stack>
-                            </Box>
-                        )}
-                        <Box>
-                            <Typography
-                                sx={{ fontWeight: 800, mb: 0.8, fontSize: 14 }}>
-                                내용
-                            </Typography>
-                            <TextField
-                                fullWidth
-                                multiline
-                                minRows={6}
-                                placeholder="내용을 입력하세요."
-                                name="content"
-                                value={form.content}
-                                onChange={onChangeHandler}
-                            />
-                        </Box>
-
-                        <Box
-                            sx={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                                color: "text.secondary",
-                                fontSize: 12,
-                                fontWeight: 700,
-                            }}>
-                            <span>{form.content.length}자</span>
-                            <span>최소 10자 이상 작성해주세요</span>
-                        </Box>
-
-                        {/* 버튼 */}
-                        <Stack direction="row" spacing={1}>
-                            <Button
-                                variant="outlined"
-                                fullWidth
-                                onClick={cancelOnClickHandler}
-                                disabled={mutation.isPending}
-                                sx={{
-                                    borderRadius: 2,
-                                    py: 1.2,
-                                    fontWeight: 900,
-                                }}>
-                                취소
-                            </Button>
-                            <Button
-                                variant="contained"
-                                fullWidth
-                                onClick={submitOnClickHandler}
-                                disabled={mutation.isPending}
-                                sx={{
-                                    borderRadius: 2,
-                                    py: 1.2,
-                                    fontWeight: 900,
-                                }}>
-                                {mutation.isPending ? "게시 중..." : "게시하기"}
-                            </Button>
-                        </Stack>
-                    </Stack>
-                </Paper>
+                        mt: 0.8,
+                        color: "text.secondary",
+                        fontWeight: 600,
+                        fontSize: { xs: 13, sm: 14 },
+                    }}></Typography>
             </Box>
-        </Box>
+
+            <Paper
+                elevation={0}
+                variant="outlined"
+                sx={{
+                    borderRadius: 3,
+                    p: { xs: 2, sm: 3 },
+                    bgcolor: "white",
+                }}>
+                <Stack spacing={2}>
+                    <Box>
+                        <Typography
+                            sx={{ fontWeight: 800, mb: 0.8, fontSize: 14 }}>
+                            제목
+                        </Typography>
+                        <TextField
+                            fullWidth
+                            placeholder="제목을 입력하세요."
+                            name="title"
+                            value={form.title}
+                            onChange={onChangeHandler}
+                        />
+                    </Box>
+                    {isRoutine && (
+                        <Box>
+                            <Stack spacing={1.2}>
+                                <Stack
+                                    direction="row"
+                                    alignItems="baseline"
+                                    justifyContent="space-between">
+                                    <Typography
+                                        sx={{
+                                            fontWeight: 900,
+                                            fontSize: 14,
+                                        }}>
+                                        운동 부위
+                                    </Typography>
+                                    <Typography
+                                        sx={{
+                                            fontSize: 12,
+                                            fontWeight: 700,
+                                            color: "text.secondary",
+                                        }}>
+                                        복수 선택 가능
+                                    </Typography>
+                                </Stack>
+
+                                <Box
+                                    sx={{
+                                        display: "flex",
+                                        flexWrap: "wrap",
+                                        gap: 1,
+                                    }}>
+                                    {EXERCISE_TAGS.map((tag) => {
+                                        const tagId = idx + 1;
+                                        const selected =
+                                            selectedTagIds.includes(tag.label);
+                                        return (
+                                            <ToggleButton
+                                                key={tag.label}
+                                                value={tag.label}
+                                                selected={selected}
+                                                onChange={() =>
+                                                    toggleTag(tag.label)
+                                                }
+                                                sx={{}}>
+                                                {tag.label}
+                                            </ToggleButton>
+                                        );
+                                    })}
+                                </Box>
+                            </Stack>
+                        </Box>
+                    )}
+                    <Box>
+                        <Typography
+                            sx={{ fontWeight: 800, mb: 0.8, fontSize: 14 }}>
+                            내용
+                        </Typography>
+                        <TextField
+                            fullWidth
+                            multiline
+                            minRows={6}
+                            placeholder="내용을 입력하세요."
+                            name="content"
+                            value={form.content}
+                            onChange={onChangeHandler}
+                        />
+                    </Box>
+
+                    <Box
+                        sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            color: "text.secondary",
+                            fontSize: 12,
+                            fontWeight: 700,
+                        }}>
+                        <span>{form.content.length}자</span>
+                        <span>최소 10자 이상 작성해주세요</span>
+                    </Box>
+
+                    {/* 버튼 */}
+                    <Stack direction="row" spacing={1}>
+                        <Button
+                            variant="outlined"
+                            fullWidth
+                            onClick={cancelOnClickHandler}
+                            disabled={mutation.isPending}
+                            sx={{
+                                borderRadius: 2,
+                                py: 1.2,
+                                fontWeight: 900,
+                            }}>
+                            취소
+                        </Button>
+                        <Button
+                            variant="contained"
+                            fullWidth
+                            onClick={submitOnClickHandler}
+                            disabled={mutation.isPending}
+                            sx={{
+                                borderRadius: 2,
+                                py: 1.2,
+                                fontWeight: 900,
+                            }}>
+                            {mutation.isPending ? "게시 중..." : "게시하기"}
+                        </Button>
+                    </Stack>
+                </Stack>
+            </Paper>
+        </Container>
     );
 }
 

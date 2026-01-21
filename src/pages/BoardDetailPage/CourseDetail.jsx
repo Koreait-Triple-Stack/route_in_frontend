@@ -106,7 +106,7 @@ function CourseDetail({ boardId }) {
             </Box>
             <Box>
                 {/* 코스 정보 영역 */}
-                <Box sx={{ p: { xs: 2, sm: 2.5 } }}>
+                <Box sx={{ p: { xs: 2, sm: 2 } }}>
                     <Stack spacing={1.2}>
                         <Typography
                             variant="h6"

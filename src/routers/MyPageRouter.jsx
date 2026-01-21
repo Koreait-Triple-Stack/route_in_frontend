@@ -12,11 +12,11 @@ function MyPageRouter() {
         <>
             <Routes>
                 <Route path="/" element={<MyPage />} />
-                <Route path="/inBody" element={<InBodyPage />} />
-                <Route path="/boardList" element={<MyBoardListPage />} />
-                <Route path="/courseList" element={<CourseListPage />} />
-                <Route path="/followerList" element={<FollowerListPage />} />
-                <Route path="/followingList" element={<FollowingListPage />} />
+                <Route path="/inbody" element={<InBodyPage />} />
+                <Route path="/board" element={<MyBoardListPage />} />
+                <Route path="/course" element={<CourseListPage />} />
+                <Route path="/follower" element={<FollowerListPage />} />
+                <Route path="/following" element={<FollowingListPage />} />
             </Routes>
         </>
     );

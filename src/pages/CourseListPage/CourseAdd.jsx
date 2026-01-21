@@ -8,11 +8,12 @@ import PlaceSearchPanel from "./PlaceSearchPanel";
 import CourseSavePanel from "./CourseSavePanel";
 import { useCourseMap } from "../../hooks/useCourseMap";
 import { buildPayload, coordToRegionWithGeocoder } from "../../apis/course/courseMapper";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import CourseMiniBar from "./CourseMiniBar";
 
 function CourseAdd({ userId, boardId, isAdd }) {
     const { mapRef, kakaoObj, points, distanceM, map, undo, clear } = useCourseMap();
+    const queryClient = useQueryClient();
 
     const [panelOpen, setPanelOpen] = useState(false);
     const [courseName, setCourseName] = useState("");
@@ -23,7 +24,10 @@ function CourseAdd({ userId, boardId, isAdd }) {
         mutationKey: ["addCourse"],
         mutationFn: (data) => addCourse(data),
         onSuccess: (response) => {
-            // queryClient.invalidateQueries(["", ""])
+            queryClient.invalidateQueries([
+                "getCourseListByUserId",
+                userId,
+            ]);
             setCourseName("");
             clear();
             alert(response.message);

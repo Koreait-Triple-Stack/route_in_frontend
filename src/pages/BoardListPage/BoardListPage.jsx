@@ -8,8 +8,10 @@ import { getBoardListInfinite } from "../../apis/board/boardService";
 import { ClipLoader } from "react-spinners";
 import WriteDial from "./WriteDial";
 import Loading from "../../components/Loading";
+import { Paper, Typography } from "@mui/material";
 
 function BoardListPage() {
+    // 필터에 최신순, 추천순 추가해야함
     const [form, setForm] = useState({
         type: "ALL",
         region: "",
@@ -64,7 +66,7 @@ function BoardListPage() {
     if (isLoading) return <Loading />;
 
     return (
-        <Container maxWidth="sm" sx={{ padding: "20px", maxWidth: 500 }}>
+        <Container>
             <TypeBox
                 checked={checked}
                 setChecked={setChecked}
@@ -86,8 +88,23 @@ function BoardListPage() {
                     <ClipLoader />
                 </Box>
             )}
-            {!hasNextPage && <Box>마지막 페이지입니다.</Box>}
-            
+            {!hasNextPage && (
+                <Paper
+                    elevation={0}
+                    sx={{
+                        p: 3,
+                        borderRadius: 2,
+                        border: "1px dashed",
+                        borderColor: "divider",
+                        bgcolor: "background.paper",
+                        textAlign: "center",
+                    }}>
+                    <Typography sx={{ fontWeight: 800 }}>
+                        마지막 페이지 입니다
+                    </Typography>
+                </Paper>
+            )}
+
             <WriteDial />
         </Container>
     );

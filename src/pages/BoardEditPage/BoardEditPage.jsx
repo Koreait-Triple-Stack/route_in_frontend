@@ -96,20 +96,7 @@ function BoardEditPage() {
   }
 
   return (
-    <Box
-      sx={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 56,
-        display: "flex",
-        justifyContent: "center",
-        px: 2,
-        bgcolor: "background.default",
-      }}
-    >
-      <Container maxWidth="sm" sx={{ padding: "20px", maxWidth: 500 }}>
+      <Container>
         <Stack spacing={2}>
           <Box>
             <Typography sx={{ fontWeight: 800, mb: 0.8, fontSize: 14 }}>
@@ -149,7 +136,6 @@ function BoardEditPage() {
           </Box>
         </Stack>
       </Container>
-    </Box>
   );
 }
 
