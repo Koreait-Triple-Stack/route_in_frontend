@@ -37,7 +37,7 @@ export default function WsTestPage() {
     };
 
     return (
-        <Box sx={{ p: 2 }}>
+        <Box>
             <Typography variant="h5" fontWeight={900} gutterBottom>
                 WS 알림 전송 테스트 (여러 userId)
             </Typography>

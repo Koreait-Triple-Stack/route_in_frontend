@@ -1,11 +1,7 @@
-import React from "react";
-
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Stack } from "@mui/system";
-
 import ScheduleItem from "../../components/ScheduleItem";
 import { getRoutine, removeRoutine, updateRoutine } from "../../apis/routine/routineService";
-import { Paper } from "@mui/material";
 
 function RoutineList({ userId }) {
     const dbDays = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
@@ -70,7 +66,6 @@ function RoutineList({ userId }) {
     if (isLoading) return <div>로딩중...</div>;
 
     return (
-        <Paper>
             <Stack spacing={2}>
                 {dbDays.map((day) => {
                     const dayRoutines = respData.filter((r) => r.weekday.toLowerCase() === day.toLowerCase());
@@ -88,7 +83,6 @@ function RoutineList({ userId }) {
                     );
                 })}
             </Stack>
-        </Paper>
     );
 }
 

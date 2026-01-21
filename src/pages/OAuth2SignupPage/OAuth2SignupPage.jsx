@@ -117,7 +117,7 @@ const OAuth2SignupPage = () => {
     );
 
     return (
-        <Container maxWidth="xs" sx={{ py: 4 }}>
+        <Container>
             <Paper elevation={0} sx={{ p: 4, borderRadius: 4, border: "1px solid #eee" }}>
                 <Typography variant="h5" align="center" sx={{ mb: 4, fontWeight: 700 }}>
                     회원가입

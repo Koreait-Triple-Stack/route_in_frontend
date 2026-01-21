@@ -42,7 +42,7 @@ function CourseListPage() {
     if (isLoading) return <div>로딩중...</div>;
 
     return (
-        <Container maxWidth="sm" sx={{ padding: "20px", maxWidth: 500 }}>
+        <Container>
             <Stack display="flex" flexDirection="row" justifyContent="space-between" alignItems="center" spacing={1} sx={{ mb: 2 }}>
                 <Typography variant="h6" sx={{ fontWeight: "bold" }}>
                     코스 리스트 관리

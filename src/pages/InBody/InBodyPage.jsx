@@ -1,9 +1,36 @@
 import React, { useEffect, useState } from "react";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { Box, Typography, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Stack, List, ListItem, ListItemText, IconButton, Divider } from "@mui/material";
+import {
+    LineChart,
+    Line,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    Legend,
+    ResponsiveContainer,
+} from "recharts";
+import {
+    Box,
+    Typography,
+    Button,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    TextField,
+    Stack,
+    List,
+    ListItem,
+    ListItemText,
+    IconButton,
+    Divider,
+} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { addInBodyRequest, deleteInBodyRequest } from "../../apis/inBody/inBodyApi";
+import {
+    addInBodyRequest,
+    deleteInBodyRequest,
+} from "../../apis/inBody/inBodyApi";
 import { usePrincipalState } from "../../store/usePrincipalState";
 import { useQuery } from "@tanstack/react-query";
 import { Container } from "@mui/system";
@@ -12,7 +39,14 @@ import { getInBodyListByUserId } from "../../apis/inBody/inBodyService";
 const CustomizedLabel = (props) => {
     const { x, y, stroke, value } = props;
     return (
-        <text x={x} y={y} dy={20} fill={stroke} fontSize={12} textAnchor="middle" fontWeight="bold">
+        <text
+            x={x}
+            y={y}
+            dy={20}
+            fill={stroke}
+            fontSize={12}
+            textAnchor="middle"
+            fontWeight="bold">
             {value}
         </text>
     );
@@ -62,7 +96,11 @@ export default function InbodyChartWithActions() {
     };
 
     const handleAddData = () => {
-        if (!inputValues.bodyWeight || !inputValues.skeletalMuscleMass || !inputValues.bodyFatMass) {
+        if (
+            !inputValues.bodyWeight ||
+            !inputValues.skeletalMuscleMass ||
+            !inputValues.bodyFatMass
+        ) {
             alert("모든 정보를 입력해주세요.");
             return;
         }
@@ -111,110 +149,181 @@ export default function InbodyChartWithActions() {
 
     const inBodyList = response?.data || [];
 
-    const recentData = [...inBodyList].sort((a, b) => new Date(a.monthDt) - new Date(b.monthDt)).slice(-4);
+    const recentData = [...inBodyList]
+        .sort((a, b) => new Date(a.monthDt) - new Date(b.monthDt))
+        .slice(-4);
 
     return (
-        <Box
-            sx={{
-                position: "fixed",
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: `${56}px`, // ✅ 네비 높이만큼 제외
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                px: 2,
-                bgcolor: "background.default",
-            }}
-        >
-            <Container maxWidth="sm" sx={{ padding: "20px", maxWidth: 500 }}>
-                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-                    <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                        인바디 변화 기록
-                    </Typography>
-                    <Stack direction="row" spacing={1}>
-                        <Button variant="outlined" color="error" startIcon={<DeleteIcon />} onClick={handleDeleteOpen} size="small">
-                            삭제
-                        </Button>
-                        <Button variant="contained" startIcon={<AddIcon />} onClick={handleAddOpen} size="small">
-                            추가
-                        </Button>
-                    </Stack>
+        <Container>
+            <Stack
+                direction="row"
+                justifyContent="space-between"
+                alignItems="center"
+                sx={{ mb: 2 }}>
+                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                    인바디 변화 기록
+                </Typography>
+                <Stack direction="row" spacing={1}>
+                    <Button
+                        variant="outlined"
+                        color="error"
+                        startIcon={<DeleteIcon />}
+                        onClick={handleDeleteOpen}
+                        size="small">
+                        삭제
+                    </Button>
+                    <Button
+                        variant="contained"
+                        startIcon={<AddIcon />}
+                        onClick={handleAddOpen}
+                        size="small">
+                        추가
+                    </Button>
                 </Stack>
+            </Stack>
 
-                <Box sx={{ height: 350 }}>
-                    <ResponsiveContainer width="100%" height="100%">
-                        <LineChart
-                            data={recentData}
-                            margin={{
-                                top: 20,
-                                right: 30,
-                                left: 10,
-                                bottom: 20,
-                            }}
-                        >
-                            <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                            <XAxis dataKey="monthDt" padding={{ left: 30, right: 30 }} interval={0} dy={20} fontSize={13} />
-                            <YAxis hide domain={["auto", "auto"]} />
-                            <Tooltip />
-                            <Legend verticalAlign="top" height={36} />
-                            <Line type="linear" dataKey="bodyWeight" name="체중" stroke="#2196f3" strokeWidth={2} activeDot={{ r: 6 }} label={<CustomizedLabel />} />
-                            <Line type="linear" dataKey="skeletalMuscleMass" name="골격근량" stroke="#00c853" strokeWidth={2} activeDot={{ r: 6 }} label={<CustomizedLabel />} />
-                            <Line type="linear" dataKey="bodyFatMass" name="체지방량" stroke="#f44336" strokeWidth={2} activeDot={{ r: 6 }} label={<CustomizedLabel />} />
-                        </LineChart>
-                    </ResponsiveContainer>
-                </Box>
-                <Dialog open={deleteOpen} onClose={handleDeleteClose} fullWidth maxWidth="xs">
-                    <DialogTitle>인바디 정보 삭제</DialogTitle>
-                    <DialogContent dividers>
-                        {response.length === 0 ? (
-                            <Typography align="center" color="text.secondary">
-                                기록된 데이터가 없습니다.
-                            </Typography>
-                        ) : (
-                            <List>
-                                {inBodyList.map((ib) => (
-                                    <React.Fragment key={ib.inBodyId}>
-                                        <ListItem
-                                            secondaryAction={
-                                                <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteData(ib.inBodyId)}>
-                                                    <DeleteIcon color="error" />
-                                                </IconButton>
-                                            }
-                                        >
-                                            <ListItemText primary={ib.monthDt} secondary={`체중: ${ib.bodyWeight}kg / 근육: ${ib.skeletalMuscleMass}kg / 지방: ${ib.bodyFatMass}kg`} />
-                                        </ListItem>
-                                        <Divider />
-                                    </React.Fragment>
-                                ))}
-                            </List>
-                        )}
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={handleDeleteClose}>닫기</Button>
-                    </DialogActions>
-                </Dialog>
-                <Dialog open={addOpen} onClose={handleAddClose}>
-                    <DialogTitle>새로운 기록 추가</DialogTitle>
-                    <DialogContent>
-                        <Stack spacing={2} sx={{ mt: 1, minWidth: 300 }}>
-                            <TextField label="날짜" name="monthDt" type="date" value={inputValues.monthDt} onChange={handleChange} fullWidth InputLabelProps={{ shrink: true }} />
-                            <TextField label="체중 (kg)" name="bodyWeight" type="number" value={inputValues.bodyWeight} onChange={handleChange} fullWidth />
-                            <TextField label="골격근량 (kg)" name="skeletalMuscleMass" type="number" value={inputValues.skeletalMuscleMass} onChange={handleChange} fullWidth />
-                            <TextField label="체지방량 (kg)" name="bodyFatMass" type="number" value={inputValues.bodyFatMass} onChange={handleChange} fullWidth />
-                        </Stack>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={handleAddClose} color="inherit">
-                            취소
-                        </Button>
-                        <Button onClick={handleAddData} variant="contained">
-                            추가
-                        </Button>
-                    </DialogActions>
-                </Dialog>
-            </Container>
-        </Box>
+            <Box sx={{ height: 350 }}>
+                <ResponsiveContainer width="100%" height="100%">
+                    <LineChart
+                        data={recentData}
+                        margin={{
+                            top: 20,
+                            right: 30,
+                            left: 10,
+                            bottom: 20,
+                        }}>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                        <XAxis
+                            dataKey="monthDt"
+                            padding={{ left: 30, right: 30 }}
+                            interval={0}
+                            dy={20}
+                            fontSize={13}
+                        />
+                        <YAxis hide domain={["auto", "auto"]} />
+                        <Tooltip />
+                        <Legend verticalAlign="top" height={36} />
+                        <Line
+                            type="linear"
+                            dataKey="bodyWeight"
+                            name="체중"
+                            stroke="#2196f3"
+                            strokeWidth={2}
+                            activeDot={{ r: 6 }}
+                            label={<CustomizedLabel />}
+                        />
+                        <Line
+                            type="linear"
+                            dataKey="skeletalMuscleMass"
+                            name="골격근량"
+                            stroke="#00c853"
+                            strokeWidth={2}
+                            activeDot={{ r: 6 }}
+                            label={<CustomizedLabel />}
+                        />
+                        <Line
+                            type="linear"
+                            dataKey="bodyFatMass"
+                            name="체지방량"
+                            stroke="#f44336"
+                            strokeWidth={2}
+                            activeDot={{ r: 6 }}
+                            label={<CustomizedLabel />}
+                        />
+                    </LineChart>
+                </ResponsiveContainer>
+            </Box>
+            <Dialog
+                open={deleteOpen}
+                onClose={handleDeleteClose}
+                fullWidth
+                maxWidth="xs">
+                <DialogTitle>인바디 정보 삭제</DialogTitle>
+                <DialogContent dividers>
+                    {response.length === 0 ? (
+                        <Typography align="center" color="text.secondary">
+                            기록된 데이터가 없습니다.
+                        </Typography>
+                    ) : (
+                        <List>
+                            {inBodyList.map((ib) => (
+                                <React.Fragment key={ib.inBodyId}>
+                                    <ListItem
+                                        secondaryAction={
+                                            <IconButton
+                                                edge="end"
+                                                aria-label="delete"
+                                                onClick={() =>
+                                                    handleDeleteData(
+                                                        ib.inBodyId,
+                                                    )
+                                                }>
+                                                <DeleteIcon color="error" />
+                                            </IconButton>
+                                        }>
+                                        <ListItemText
+                                            primary={ib.monthDt}
+                                            secondary={`체중: ${ib.bodyWeight}kg / 근육: ${ib.skeletalMuscleMass}kg / 지방: ${ib.bodyFatMass}kg`}
+                                        />
+                                    </ListItem>
+                                    <Divider />
+                                </React.Fragment>
+                            ))}
+                        </List>
+                    )}
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleDeleteClose}>닫기</Button>
+                </DialogActions>
+            </Dialog>
+            <Dialog open={addOpen} onClose={handleAddClose}>
+                <DialogTitle>새로운 기록 추가</DialogTitle>
+                <DialogContent>
+                    <Stack spacing={2} sx={{ mt: 1, minWidth: 300 }}>
+                        <TextField
+                            label="날짜"
+                            name="monthDt"
+                            type="date"
+                            value={inputValues.monthDt}
+                            onChange={handleChange}
+                            fullWidth
+                            InputLabelProps={{ shrink: true }}
+                        />
+                        <TextField
+                            label="체중 (kg)"
+                            name="bodyWeight"
+                            type="number"
+                            value={inputValues.bodyWeight}
+                            onChange={handleChange}
+                            fullWidth
+                        />
+                        <TextField
+                            label="골격근량 (kg)"
+                            name="skeletalMuscleMass"
+                            type="number"
+                            value={inputValues.skeletalMuscleMass}
+                            onChange={handleChange}
+                            fullWidth
+                        />
+                        <TextField
+                            label="체지방량 (kg)"
+                            name="bodyFatMass"
+                            type="number"
+                            value={inputValues.bodyFatMass}
+                            onChange={handleChange}
+                            fullWidth
+                        />
+                    </Stack>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleAddClose} color="inherit">
+                        취소
+                    </Button>
+                    <Button onClick={handleAddData} variant="contained">
+                        추가
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </Container>
     );
 }

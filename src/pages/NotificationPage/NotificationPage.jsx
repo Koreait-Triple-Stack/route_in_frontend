@@ -1,7 +1,7 @@
 import IconButton from "@mui/material/IconButton";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-import { Box, Stack } from "@mui/system";
+import { Box, Container, Stack } from "@mui/system";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import DeleteButtonModal from "./DeleteButtonModal";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -65,15 +65,7 @@ function NotificationPage() {
     if (error) return <Box>{error.message}</Box>;
 
     return (
-        <Box
-            sx={{
-                width: "100%",
-                height: "100%",
-                display: "flex",
-                flexDirection: "column",
-                bgcolor: "background.default",
-                position: "relative",
-            }}>
+        <Container>
             {/* 헤더 */}
             <Box
                 sx={{
@@ -190,7 +182,7 @@ function NotificationPage() {
 
             {/* 전체 삭제 fixed */}
             <DeleteButtonModal />
-        </Box>
+        </Container>
     );
 }
 
