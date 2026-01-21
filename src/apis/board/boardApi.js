@@ -39,3 +39,7 @@ export const plusRecommendRequest = async (data) => {
 export const minusRecommendRequest = async (data) => {
     return instance.post("/board/recommend/minus", data);
 };
+
+export const getRecommendListByBoardIdRequest = async (boardId) => {
+    return instance.get(`/board/recommend/${boardId}`);
+};

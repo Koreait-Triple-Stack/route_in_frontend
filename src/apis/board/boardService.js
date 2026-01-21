@@ -8,6 +8,7 @@ import {
     removeBoardRequest,
     updateBoardRequest,
     getBoardInfiniteRequest,
+    getRecommendListByBoardIdRequest,
 } from "./boardApi";
 
 export const addBoard = async (data) => {
@@ -34,7 +35,7 @@ export const getBoardList = async () => {
     return result.data;
 };
 
-export const getBoardListInfinite = async ({pageParam, queryKey}) => {
+export const getBoardListInfinite = async ({ pageParam, queryKey }) => {
     const [_key, params] = queryKey;
 
     const requestData = {
@@ -66,6 +67,12 @@ export const plusRecommend = async (data) => {
 
 export const minusRecommend = async (data) => {
     const result = await minusRecommendRequest(data);
+    if (result.data.status !== "success") throw new Error(result.data.message);
+    return result.data;
+};
+
+export const getRecommendListByBoardId = async (boarId) => {
+    const result = await getRecommendListByBoardIdRequest(boarId);
     if (result.data.status !== "success") throw new Error(result.data.message);
     return result.data;
 };

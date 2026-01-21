@@ -33,7 +33,7 @@ function PostCard({ post }) {
                         alignItems: "center",
                     }}
                 >
-                    <Chip label={post.type} size="small" />
+                    <Chip label={post.type === "COURSE" ? "러닝코스" : "운동루틴"} size="small" />
                     <Typography variant="caption" color="text.secondary">
                         {post.createDt}
                     </Typography>

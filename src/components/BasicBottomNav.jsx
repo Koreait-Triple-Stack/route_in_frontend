@@ -6,7 +6,6 @@ import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined
 import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
 import FilterFramesOutlinedIcon from "@mui/icons-material/FilterFramesOutlined";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useNotificationStore } from "../store/useNotificationStore";
 import { Badge } from "@mui/material";
 import { countUnreadNotificationByUserId } from "../apis/notification/notificationService";
 import { usePrincipalState } from "../store/usePrincipalState";
@@ -16,14 +15,11 @@ function BasicBottomNav() {
     const location = useLocation();
     const navigate = useNavigate();
     const { principal } = usePrincipalState();
-    const unread = useNotificationStore((s) => s.unreadCount());
     const { data: response } = useQuery({
         queryFn: () => countUnreadNotificationByUserId(principal.userId),
         queryKey: ["countUnreadNotificationByUserId", principal?.userId],
         staleTime: 30000,
     });
-
-    console.log(response)
 
     const value = location.pathname;
 
@@ -35,9 +31,8 @@ function BasicBottomNav() {
                 left: "50%",
                 transform: "translateX(-50%)",
                 width: "100%",
-                // maxWidth: 600, // Container sm에 맞춰 조절 (sm이 600px)
                 height: 56,
-                zIndex: (theme) => theme.zIndex.appBar, // 위로 올리기
+                zIndex: (theme) => theme.zIndex.appBar,
                 pb: "env(safe-area-inset-bottom)",
             }}
             elevation={3}>
