@@ -28,9 +28,9 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { usePrincipalState } from "../../store/usePrincipalState";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Container } from "@mui/system";
-import { getInBodyListByUserId } from "../../apis/inBody/inBodyService";
+import { addInBody, deleteInBody, getInBodyListByUserId } from "../../apis/inBody/inBodyService";
 
 const CustomizedLabel = (props) => {
     const { x, y, stroke, value } = props;
@@ -52,6 +52,7 @@ export default function InbodyChartWithActions() {
     const { principal } = usePrincipalState();
     const [addOpen, setAddOpen] = useState(false);
     const [deleteOpen, setDeleteOpen] = useState(false);
+    const queryClient = useQueryClient();
 
     const [inputValues, setInputValues] = useState({
         bodyWeight: "",

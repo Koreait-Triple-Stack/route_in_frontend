@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Stack } from "@mui/system";
 import ScheduleItem from "../../components/ScheduleItem";
-import { getRoutine, removeRoutine, updateRoutine } from "../../apis/routine/routineService";
+import { changeChecked, getRoutine, removeRoutine, updateRoutine } from "../../apis/routine/routineService";
 
 function RoutineList({ userId }) {
     const dbDays = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
