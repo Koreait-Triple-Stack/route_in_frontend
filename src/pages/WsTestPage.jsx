@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import {
     Box,
     Button,
@@ -7,13 +7,10 @@ import {
     TextField,
     Typography,
 } from "@mui/material";
-import { usePrincipalState } from "../store/usePrincipalState";
 import { useMutation } from "@tanstack/react-query";
 import { addNotification } from "../apis/notification/notificationService";
 
 export default function WsTestPage() {
-    const { principal } = usePrincipalState();
-
     const [userIdsText, setUserIdsText] = useState("22,23");
     const [message, setMessage] = useState("새 알림 테스트입니다!");
     const [path, setPath] = useState("/notification"); // 예: 알림 눌렀을 때 이동할 경로
