@@ -29,7 +29,7 @@ function CourseEdit({ course, userId, boardId, isEditing }) {
         mutationKey: ["updateCourse"],
         mutationFn: (data) => updateCourse(data),
         onSuccess: (response) => {
-            // queryClient.invalidateQueries(["", ""])
+            queryClient.invalidateQueries(["getCourseListByUserId", userId])
             setCourseName("");
             clear();
             alert(response.message);

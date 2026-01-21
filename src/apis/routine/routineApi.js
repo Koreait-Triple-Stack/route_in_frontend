@@ -20,5 +20,9 @@ export const removeRoutineRequest = async (data) => {
 };
 
 export const deleteRoutineByRoutineIdRequest = async (routineId) => {
-    return await instance.get(`/routine/delete/${routineId}`);
+    return await instance.post(`/routine/delete/${routineId}`);
+};
+
+export const changeCheckedRequest = async (routineId) => {
+    return await instance.post("/routine/change/checked", routineId);
 };
