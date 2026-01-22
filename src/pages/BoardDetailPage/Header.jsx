@@ -1,9 +1,9 @@
 import {
     Avatar,
-    Chip,
     IconButton,
     Menu,
     MenuItem,
+    ToggleButton,
     Typography,
 } from "@mui/material";
 import { Box, Stack } from "@mui/system";
@@ -13,9 +13,8 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { usePrincipalState } from "../../store/usePrincipalState";
 import {
+    changeRecommend,
     getRecommendListByBoardId,
-    minusRecommend,
-    plusRecommend,
     removeBoard,
 } from "../../apis/board/boardService";
 import { useNavigate } from "react-router-dom";
@@ -44,41 +43,22 @@ function Header({ boardData, setOpenCopy }) {
         }
     }, [recommendList]);
 
-    const plusRecommendedMutation = useMutation({
-        mutationKey: ["plusRecommend", boardData?.boardId],
-        mutationFn: (data) => plusRecommend(data),
+    const changeRecommendMutation = useMutation({
+        mutationFn: () =>
+            changeRecommend({
+                userId: principal?.userId,
+                boardId: boardData?.boardId,
+                isRecommended: !!recommended,
+            }),
         onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: ["getRecommendListByBoardId", boardData.boardId],
             });
         },
         onError: (error) => {
-            show(error?.message ?? "추천 실패", "error");
+            show(error?.message ?? "실패", "error");
         },
     });
-
-    const minusRecommendedMutation = useMutation({
-        mutationKey: ["minusRecommend", boardData?.boardId],
-        mutationFn: (data) => minusRecommend(data),
-        onSuccess: () => {
-            queryClient.invalidateQueries({
-                queryKey: ["getRecommendListByBoardId", boardData.boardId],
-            });
-        },
-        onError: (error) => {
-            show(error?.message ?? "취소 실패", "error");
-        },
-    });
-
-    const onClickRecommend = () => {
-        const payload = {
-            userId: principal.userId,
-            boardId: boardData.boardId,
-        };
-        if (recommended) {
-            minusRecommendedMutation.mutate(payload);
-        } else plusRecommendedMutation.mutate(payload);
-    };
 
     const isOwner = useMemo(() => {
         return (
@@ -117,7 +97,7 @@ function Header({ boardData, setOpenCopy }) {
         removeMutation.mutate({
             userId: principal.userId,
             boardId: boardData?.boardId,
-            tags:[],
+            tags: [],
         });
     };
 
@@ -125,7 +105,7 @@ function Header({ boardData, setOpenCopy }) {
         closeMenu();
         if (!principal.userId) return alert("로그인이 필요합니다.");
         if (!isOwner) return alert("수정 권한이 없습니다.");
-        navigate(`/board/edit`, { state : {boardData : boardData} });
+        navigate(`/board/edit`, { state: { boardData: boardData } });
     };
 
     return (
@@ -146,37 +126,29 @@ function Header({ boardData, setOpenCopy }) {
 
                 <Stack direction="row" alignItems="center" spacing={0.8}>
                     {/* 추천수 pill */}
-                    <Chip
-                        icon={<ThumbUpAltIcon sx={{ fontSize: 18 }} />}
-                        label={recommendList?.data?.length ?? 0}
-                        onClick={onClickRecommend}
-                        clickable
-                        size="medium"
-                        variant={recommended ? "filled" : "outlined"}
+                    <ToggleButton
+                        value="recommend"
+                        selected={recommended}
+                        onChange={() => changeRecommendMutation.mutate()}
                         sx={{
+                            borderRadius: "999px",
+                            px: 1,
+                            py: 0.6,
                             fontWeight: 900,
-                            p: 0.5,
-
-                            // ✅ 핵심: 항상 border 1px 유지
-                            border: "1px solid",
-                            borderColor: recommended
-                                ? "transparent"
-                                : "divider",
-
-                            "& .MuiChip-label": {
-                                fontWeight: 900,
+                            minWidth: 64, // ✅ 고정폭
+                            display: "flex",
+                            gap: 0.3,
+                        }}>
+                        <ThumbUpAltIcon sx={{ fontSize: 18 }} />
+                        <Box
+                            sx={{
                                 fontSize: 13,
                                 minWidth: 25,
-                            },
-
-                            opacity:
-                                !boardData ||
-                                plusRecommendedMutation.isPending ||
-                                minusRecommendedMutation.isPending
-                                    ? 0.6
-                                    : 1,
-                        }}
-                    />
+                                textAlign: "center",
+                            }}>
+                            {recommendList?.data?.length ?? 0}
+                        </Box>
+                    </ToggleButton>
 
                     {/* 점 3개 */}
                     <IconButton

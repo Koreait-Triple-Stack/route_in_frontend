@@ -14,6 +14,7 @@ function BoardListPage() {
     // 필터에 최신순, 추천순 추가해야함
     const [form, setForm] = useState({
         type: "ALL",
+        sort: "LATEST",
         region: "",
         distance: 0,
         parts: [],
