@@ -23,7 +23,7 @@ function BoardWritePage() {
         title: "",
         content: "",
         course: null,
-        routine: null,
+        routines: [],
         parts: [],
     });
 
@@ -32,6 +32,17 @@ function BoardWritePage() {
             ...prev, course: course,
         }))
     }
+
+    const setRoutine = (day, localRoutine) => {
+        setForm((prev) => {
+            const otherRoutines = prev.routines.filter(r => r.weekday !== day);
+            
+            return {
+                ...prev,
+                routines: [...otherRoutines, ...localRoutine]
+            };
+        });
+    };
 
     const onChangeHandler = (e) => {
         const { name, value } = e.target;
@@ -75,7 +86,7 @@ function BoardWritePage() {
                     : [form.course.region, form.course.distanceM],
             type,
             course: form.course,
-            routine: form.routine,
+            routines: form.routines,
         };
         mutation.mutate(payload);
     };
@@ -127,7 +138,7 @@ function BoardWritePage() {
                         />
                     </Box>
                     {type === "ROUTINE" ? (
-                        <RoutineParts form={form} setForm={setForm}/>
+                        <RoutineParts form={form} setForm={setForm} setRoutine={setRoutine}/>
                     ) : (
                         <CourseDetail
                             course={form.course}
