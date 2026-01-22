@@ -1,19 +1,14 @@
 import { useCourseMap } from "../../hooks/useCourseMap";
 import { useEffect, useState } from "react";
-import { Divider, Paper, Typography } from "@mui/material";
+import { Button, Divider, Paper, Typography } from "@mui/material";
 import { Box, Stack } from "@mui/system";
-import { useQuery } from "@tanstack/react-query";
-import { getCourseByBoardId } from "../../apis/course/courseService";
-import Loading from "../../components/Loading";
-import ErrorComponent from "../../components/ErrorComponent";
+import CourseEdit from "./CourseEdit";
 
 function DetailRow({ label, value, valueColor }) {
     return (
         <Box
             sx={{
-                width: "100%",
                 display: "flex",
-                justifyContent: "space-between",
                 alignItems: "center",
                 py: 0.8,
             }}>
@@ -23,34 +18,22 @@ function DetailRow({ label, value, valueColor }) {
 
             <Typography
                 variant="body1"
-                sx={{ fontWeight: 600, color: valueColor ?? "text.primary" }}>
+                sx={{
+                    fontWeight: 600,
+                    color: valueColor ?? "text.primary",
+                    px: 5,
+                }}>
                 {valueColor ? value / 1000 + "km" : value}
             </Typography>
         </Box>
     );
 }
 
-function CourseDetail({ boardId }) {
+function CourseDetail({ course, setCourse }) {
+    const [isEditing, setIsEditing] = useState(false);
     const { mapRef, map, kakaoObj, setPoints } = useCourseMap({
         enableClickAdd: false,
     });
-    
-    const {
-        data: courseResp,
-        isLoading,
-        error,
-    } = useQuery({
-        queryKey: ["getCourseByBoardId", boardId],
-        queryFn: () => getCourseByBoardId(boardId),
-        enabled: !!boardId && boardId > 0,
-    });
-    const [course, setCourse] = useState(null);
-
-    useEffect(() => {
-        if (courseResp) {
-            setCourse(courseResp?.data)
-        }
-    }, [courseResp, isLoading])
 
     useEffect(() => {
         if (!kakaoObj || !map || !course) return;
@@ -83,18 +66,17 @@ function CourseDetail({ boardId }) {
         );
     }, [course]);
 
-    if (isLoading) return <Loading />
-    if (error) return <ErrorComponent />
-
     return (
         <Paper
             elevation={0}
             sx={{
-                borderRadius: 0,
-                overflow: "hidden",
+                borderRadius: 2,
+                overflow: "hidden", // 카드 안에서 지도/영역 깔끔하게 자르기
                 bgcolor: "#F3F8FF",
+                border: "1px solid",
                 borderColor: "divider",
                 width: "100%",
+                maxWidth: { xs: "100%", sm: 520 },
                 mx: { xs: 0, sm: "auto" },
             }}>
             {/* 지도 영역 */}
@@ -102,9 +84,10 @@ function CourseDetail({ boardId }) {
                 sx={{
                     position: "relative",
                     width: "100%",
-                    height: "clamp(220px, 35vh, 280px)",
+                    height: "clamp(220px, 35vh, 280px)", // 높이 필수
                     bgcolor: "grey.200",
                 }}>
+                {/* 여기 ref에 카카오맵이 렌더됨 */}
                 <Box
                     ref={mapRef}
                     sx={{
@@ -115,7 +98,7 @@ function CourseDetail({ boardId }) {
             </Box>
             <Box>
                 {/* 코스 정보 영역 */}
-                <Box sx={{ p: { xs: 2, sm: 2 } }}>
+                <Box sx={{ p: { xs: 2, sm: 2.5 } }}>
                     <Stack spacing={1.2}>
                         <Typography
                             variant="h6"
@@ -129,26 +112,43 @@ function CourseDetail({ boardId }) {
 
                         <Divider />
                     </Stack>
-                    <Box
-                        sx={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                        }}>
-                        <DetailRow
-                            label="거리"
-                            value={course?.distanceM ?? 0}
-                            valueColor="primary.main"
-                        />
-                    </Box>
-                    <Box
-                        sx={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                        }}>
-                        <DetailRow label="지역" value={course?.region ?? "-"} />
+                    <Box display="flex" justifyContent="space-between" alignItems="center">
+                        <Stack spacing={1.2}>
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                }}>
+                                <DetailRow
+                                    label="거리"
+                                    value={course?.distanceM ?? 0}
+                                    valueColor="primary.main"
+                                />
+                            </Box>
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                }}>
+                                <DetailRow
+                                    label="지역"
+                                    value={course?.region ?? "-"}
+                                />
+                            </Box>
+                        </Stack>
+                        <Button onClick={() => setIsEditing(true)}>수정</Button>
                     </Box>
                 </Box>
             </Box>
+            {isEditing && (
+                <Box>
+                    <CourseEdit
+                        course={course}
+                        setCourse={setCourse}
+                        isEditing={() => setIsEditing(false)}
+                    />
+                </Box>
+            )}
         </Paper>
     );
 }

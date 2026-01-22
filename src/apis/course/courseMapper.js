@@ -1,3 +1,5 @@
+const round6 = (v) => Math.round(v * 1e6) / 1e6;
+
 export const buildPayload = ({
     userId,
     boardId,
@@ -11,8 +13,8 @@ export const buildPayload = ({
         boardId,
         courseName,
         distanceM,
-        centerLat: (points[0].lat + points[points.length - 1].lat) / 2,
-        centerLng: (points[0].lng + points[points.length - 1].lng) / 2,
+        centerLat: round6((points[0].lat + points[points.length - 1].lat) / 2),
+        centerLng: round6((points[0].lng + points[points.length - 1].lng) / 2),
         region,
         points: (points ?? []).map((p, idx) => ({
             seq: idx + 1,
@@ -52,8 +54,8 @@ export const buildUpdatePayload = ({
     boardId,
     courseName,
     distanceM,
-    centerLat: (points[0].lat + points[points.length - 1].lat) / 2,
-    centerLng: (points[0].lng + points[points.length - 1].lng) / 2,
+    centerLat: round6((points[0].lat + points[points.length - 1].lat) / 2),
+    centerLng: round6((points[0].lng + points[points.length - 1].lng) / 2),
     region,
     points: (points ?? []).map((p, idx) => ({
         seq: idx + 1,

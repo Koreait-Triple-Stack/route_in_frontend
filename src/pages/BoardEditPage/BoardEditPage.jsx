@@ -113,7 +113,6 @@ function BoardEditPage() {
       boardId: boardData.boardId,
       title,
       content,
-
       tags: isRoutine ? form.tags : [],
       type: typeUpper,
     };
