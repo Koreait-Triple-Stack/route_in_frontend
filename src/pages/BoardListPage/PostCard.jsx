@@ -73,11 +73,18 @@ function PostCard({ board }) {
                     </Typography>
                 </Stack>
 
-                <Stack direction="row" spacing={1} flexWrap="wrap">
-                    {board.tags.map((m, i) => (
-                        <Chip key={i} label={m} size="small" />
-                    ))}
-                </Stack>
+                {board.type === "ROUTINE" ? (
+                    <Stack direction="row" spacing={1} flexWrap="wrap">
+                        {board.tags.map((m, i) => (
+                            <Chip key={i} label={m} size="small" />
+                        ))}
+                    </Stack>
+                ) : (
+                    <Stack direction="row" spacing={1} flexWrap="wrap">
+                        <Chip label={board.tags[0]} size="small" />
+                        <Chip label={`${board.tags[1] / 1000} km`} size="small" />
+                    </Stack>
+                )}
             </Stack>
         </Paper>
     );

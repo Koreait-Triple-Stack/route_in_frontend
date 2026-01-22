@@ -20,6 +20,7 @@ import { useToastStore } from "../../store/useToastStore";
 import Loading from "../../components/Loading";
 import ErrorComponent from "../../components/ErrorComponent";
 import { usePrincipalState } from "../../store/usePrincipalState";
+import DialogComponent from "../../components/DialogComponent";
 
 function BoardDetailPage() {
     const { principal } = usePrincipalState();
@@ -64,6 +65,11 @@ function BoardDetailPage() {
         setBoardData(boardResp.data);
     }, [boardResp]);
 
+    const copyOnClickHandler = () => {
+        copyMutation.mutate();
+        setOpenCopy(false);
+    };
+
     if (isLoading) return <Loading />;
     if (error) return <ErrorComponent error={error} />;
 
@@ -96,47 +102,17 @@ function BoardDetailPage() {
                 <Box sx={{ p: 2.2 }}>{boardData.content}</Box>
             </Paper>
 
-            <Dialog
+            <DialogComponent
                 open={openCopy}
-                onClose={() => setOpenCopy(false)}
-                fullWidth
-                maxWidth="xs"
-                PaperProps={{
-                    sx: { borderRadius: 3, p: 0.5 },
-                }}>
-                <DialogTitle sx={{ fontWeight: 900 }}>저장</DialogTitle>
-
-                <DialogContent sx={{ pt: 1 }}>
-                    <Typography
-                        sx={{ color: "text.secondary", lineHeight: 1.5 }}>
-                        {boardData.type === "COURSE"
-                            ? "러닝 코스 리스트"
-                            : "운동 루틴"}
-                        에 저장할까요?
-                    </Typography>
-                </DialogContent>
-
-                <DialogActions sx={{ p: 2, gap: 1 }}>
-                    <Button
-                        fullWidth
-                        variant="outlined"
-                        onClick={() => setOpenCopy(false)}
-                        sx={{ borderRadius: 2, py: 1.1, fontWeight: 800 }}>
-                        취소
-                    </Button>
-
-                    <Button
-                        fullWidth
-                        variant="contained"
-                        onClick={() => {
-                            copyMutation.mutate();
-                            setOpenCopy(false);
-                        }}
-                        sx={{ borderRadius: 2, py: 1.1, fontWeight: 900 }}>
-                        저장
-                    </Button>
-                </DialogActions>
-            </Dialog>
+                setOpen={setOpenCopy}
+                title={"저장"}
+                content={`${
+                    boardData.type === "COURSE"
+                        ? "러닝 코스 리스트"
+                        : "운동 루틴"
+                    }에 저장할까요?`}
+                onClick={copyOnClickHandler}
+            />
         </Container>
     );
 }

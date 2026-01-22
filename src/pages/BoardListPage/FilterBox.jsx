@@ -12,6 +12,7 @@ function FilterBox({ form, setForm, setTags }) {
         setTags([])
         setForm({
             type: "ALL",
+            sort: "LATEST",
             region: "",
             distance: 0,
             parts: [],
@@ -98,6 +99,7 @@ function FilterBox({ form, setForm, setTags }) {
                             {EXERCISE_PARTS.map((part) => (
                                 <ToggleButton
                                     key={part}
+                                    size="small"
                                     name="parts"
                                     value={part}
                                     selected={form.parts.includes(part)}

@@ -11,7 +11,6 @@ import Loading from "../../components/Loading";
 import { Paper, Typography } from "@mui/material";
 
 function BoardListPage() {
-    // 필터에 최신순, 추천순 추가해야함
     const [form, setForm] = useState({
         type: "ALL",
         sort: "LATEST",
@@ -26,7 +25,7 @@ function BoardListPage() {
         useInfiniteQuery({
             queryKey: [
                 "getBoardListInfinite",
-                { type: form.type, tags: tags, limit: 5 },
+                { type: form.type, sort: form.sort, tags: tags, limit: 5 },
             ],
             queryFn: getBoardListInfinite,
             initialPageParam: null,
@@ -35,6 +34,13 @@ function BoardListPage() {
                 const d = lastPage.data;
 
                 if (!d.hasNext) return undefined;
+
+                if (form.sort === "RECOMMEND") {
+                    return {
+                        cursorRecommendCnt: d.nextCursorRecommendCnt,
+                        cursorBoardId: d.nextCursorBoardId,
+                    };
+                }
 
                 return {
                     cursorCreateDt: d.nextCursorCreateDt,
