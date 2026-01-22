@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Box, Container, Stack } from "@mui/system";
 import { usePrincipalState } from "../../store/usePrincipalState";
-import { deleteCourse, getCourseListByUserId } from "../../apis/course/courseService";
+import { changeCourseFavorite, deleteCourse, getCourseListByUserId } from "../../apis/course/courseService";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, Divider, Typography } from "@mui/material";
 import CourseDetail from "./CourseDetail";
@@ -27,8 +27,20 @@ function CourseListPage() {
         onError: () => setCourseList([]),
     });
 
+    const changeMutation = useMutation({
+        mutationFn: changeCourseFavorite,
+        onSuccess: () => queryClient.invalidateQueries(["getCourseListByUserId", principal?.userId]),
+    });
+
     const handleDelete = (course) => {
         deleteMutation.mutate(course.courseId);
+    };
+
+    const handleChecked = (course) => {
+        changeMutation.mutate({
+            courseId: course?.courseId,
+            userId: principal?.userId,
+        });
     };
 
     const handleAdd = () => {
@@ -47,7 +59,9 @@ function CourseListPage() {
                 <Typography variant="h6" sx={{ fontWeight: "bold" }}>
                     코스 리스트 관리
                 </Typography>
-                <Button variant="contained" onClick={handleAdd}>추가</Button>
+                <Button variant="contained" onClick={handleAdd}>
+                    추가
+                </Button>
             </Stack>
 
             <Divider sx={{ mb: 3 }} />
@@ -60,7 +74,7 @@ function CourseListPage() {
 
             <Stack spacing={2}>
                 {courseList?.length > 0 ? (
-                    courseList?.map((course) => <CourseDetail key={course.courseId} course={course} onDelete={handleDelete} />)
+                    courseList?.map((course) => <CourseDetail key={course.courseId} course={course} onDelete={handleDelete} onChecked={handleChecked} checked={course.favorite ? false : true} />)
                 ) : (
                     <Box sx={{ py: 10, textAlign: "center" }}>
                         <Typography color="text.secondary">코스 리스트가 없습니다.</Typography>

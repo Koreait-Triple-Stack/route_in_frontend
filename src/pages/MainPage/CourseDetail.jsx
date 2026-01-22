@@ -86,9 +86,9 @@ function CourseDetail({ course }) {
                 border: "1px solid",
                 borderColor: "divider",
                 width: "100%",
-                maxWidth: { xs: "100%", sm: 520 },
                 mx: { xs: 0, sm: "auto" },
             }}
+            key={course.courseId}
         >
             {/* 지도 영역 */}
             <Box

@@ -8,10 +8,10 @@ export const updateRoutineRequest = async (data) => {
     return await instance.post("/routine/update", data);
 };
 
-export const getRoutineRequest = async (userId) => {
+export const getRoutineRequest = async (userId, boardId) => {
     return await instance.post("/routine/get", {
         userId: userId,
-        boardId: null 
+        boardId: boardId 
     });
 };
 

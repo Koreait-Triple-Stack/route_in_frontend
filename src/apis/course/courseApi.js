@@ -17,7 +17,11 @@ export const getCourseFavoriteByUserIdRequest = async (userId) => {
 };
 
 export const updateCourseRequest = async (data) => {
-    return await instance.post(`/course/update`, data);
+    return await instance.post("/course/update", data);
+};
+
+export const changeCourseFavoriteRequest = async (courseId) => {
+    return await instance.post("/course/change/favorite", courseId);
 };
 
 export const deleteCourseRequest = async (courseId) => {
