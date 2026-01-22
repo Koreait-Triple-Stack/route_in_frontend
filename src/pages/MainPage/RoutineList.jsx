@@ -1,11 +1,7 @@
-import React from "react";
-
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Stack } from "@mui/system";
-
 import ScheduleItem from "../../components/ScheduleItem";
-import { getRoutine, removeRoutine, updateRoutine } from "../../apis/routine/routineService";
-import { Paper } from "@mui/material";
+import { changeChecked, getRoutine, removeRoutine, updateRoutine } from "../../apis/routine/routineService";
 
 function RoutineList({ userId }) {
     const dbDays = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
@@ -33,11 +29,17 @@ function RoutineList({ userId }) {
     const updateMutation = useMutation({
         mutationFn: updateRoutine,
         onSuccess: () => queryClient.invalidateQueries(["getRoutine", userId]),
+        onError: (error) => {
+            alert(error.message);
+        },
     });
 
     const resetMutation = useMutation({
         mutationFn: removeRoutine,
         onSuccess: () => queryClient.invalidateQueries(["getRoutine", userId]),
+        onError: (error) => {
+            alert(error.message);
+        },
     });
 
     const handleReset = (day) => {
@@ -46,13 +48,6 @@ function RoutineList({ userId }) {
             weekday: day,
         };
         resetMutation.mutate(data);
-    };
-
-    const handleToggle = (routine) => {
-        updateMutation.mutate({
-            ...routine,
-            checked: routine.checked ? 0 : 1,
-        });
     };
 
     const handleSave = (localRoutines, dayRoutines) => {
@@ -70,25 +65,22 @@ function RoutineList({ userId }) {
     if (isLoading) return <div>로딩중...</div>;
 
     return (
-        <Paper>
-            <Stack spacing={2}>
-                {dbDays.map((day) => {
-                    const dayRoutines = respData.filter((r) => r.weekday.toLowerCase() === day.toLowerCase());
-                    return (
-                        <ScheduleItem
-                            key={day}
-                            day={dayMap[day]}
-                            dayEng={day}
-                            routines={dayRoutines}
-                            active={dayRoutines.length > 0}
-                            onToggle={handleToggle}
-                            onReset={() => handleReset(day)}
-                            onSave={(localRoutines) => handleSave(localRoutines, dayRoutines)}
-                        />
-                    );
-                })}
-            </Stack>
-        </Paper>
+        <Stack spacing={2}>
+            {dbDays.map((day) => {
+                const dayRoutines = respData.filter((r) => r.weekday.toLowerCase() === day.toLowerCase());
+                return (
+                    <ScheduleItem
+                        key={day}
+                        day={dayMap[day]}
+                        dayEng={day}
+                        routines={dayRoutines}
+                        active={dayRoutines.length > 0}
+                        onReset={() => handleReset(day)}
+                        onSave={(localRoutines) => handleSave(localRoutines, dayRoutines)}
+                    />
+                );
+            })}
+        </Stack>
     );
 }
 

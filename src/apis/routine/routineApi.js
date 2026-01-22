@@ -24,5 +24,5 @@ export const deleteRoutineByRoutineIdRequest = async (routineId) => {
 };
 
 export const changeCheckedRequest = async (routineId) => {
-    return await instance.post("/routine/change/checked", routineId);
+    return await instance.post(`/routine/change/checked/${routineId}`);
 };
