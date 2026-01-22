@@ -127,7 +127,7 @@ function BoardWritePage() {
                         />
                     </Box>
                     {type === "ROUTINE" ? (
-                        <RoutineParts form={form} />
+                        <RoutineParts form={form} setForm={setForm}/>
                     ) : (
                         <CourseDetail
                             course={form.course}

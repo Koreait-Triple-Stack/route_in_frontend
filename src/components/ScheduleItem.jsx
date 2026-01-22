@@ -2,13 +2,24 @@ import React, { useState, useEffect } from "react";
 import { Typography, Box, Paper, Button, TextField, Chip, Stack, IconButton } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { usePrincipalState } from "../store/usePrincipalState";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { changeChecked } from "../apis/routine/routineService";
 
-const ScheduleItem = ({ dayEng, day, routines, active, onReset, onSave, onToggle }) => {
+const ScheduleItem = ({ dayEng, day, routines, active, onReset, onSave }) => {
     const {principal} = usePrincipalState();
     const [isEditing, setIsEditing] = useState(false);
+    const queryClient = useQueryClient();
     
     const [localRoutines, setLocalRoutines] = useState([]);
     const [inputText, setInputText] = useState("");
+
+    const checkedMutation = useMutation({
+        mutationFn: (routineId) => changeChecked(routineId),
+        onSuccess: () => queryClient.invalidateQueries(["getRoutine", principal?.userId]),
+        onError: (error) => {
+            alert(error.message);
+        },
+    });
 
     useEffect(() => {
         if (isEditing && routines) {
@@ -103,7 +114,7 @@ const ScheduleItem = ({ dayEng, day, routines, active, onReset, onSave, onToggle
                                     <Chip
                                         key={index}
                                         label={act.exercise}
-                                        onClick={() => onToggle && onToggle(act)}
+                                        onClick={() =>  checkedMutation.mutate(act.routineId)}
                                         sx={{
                                             cursor: "pointer",
                                             textDecoration: act.checked ? "line-through" : "none",

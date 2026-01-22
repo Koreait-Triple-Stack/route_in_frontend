@@ -4,7 +4,7 @@ import {
     addRoutineRequest,
     removeRoutineRequest,
     deleteRoutineByRoutineIdRequest,
-    changeCheckedRequest
+    changeCheckedRequest,
 } from "./routineApi";
 
 export const addRoutine = async (data) => {
