@@ -161,9 +161,9 @@ export function useCourseMap({
 
     // 3) points 변경 -> 출발/도착 마커+라벨, 폴리라인, 거리 갱신
     useEffect(() => {
-        if (!kakaoObj || !map) return;
+        if (!kakaoObj || !map || !points) return;
 
-        if (points.length === 0) {
+        if (points?.length === 0) {
             setDistanceM(0);
             clearMapObjects();
             return;
