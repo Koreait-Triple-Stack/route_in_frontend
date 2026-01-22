@@ -11,16 +11,18 @@ import {
     Typography,
 } from "@mui/material";
 import { useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Container } from "@mui/system";
-import { getBoardByBoardId } from "../../apis/board/boardService";
+import { copyPayload, getBoardByBoardId } from "../../apis/board/boardService";
 import Header from "./Header";
 import CourseDetail from "./CourseDetail";
 import { useToastStore } from "../../store/useToastStore";
 import Loading from "../../components/Loading";
 import ErrorComponent from "../../components/ErrorComponent";
+import { usePrincipalState } from "../../store/usePrincipalState";
 
 function BoardDetailPage() {
+    const { principal } = usePrincipalState();
     const { show } = useToastStore();
     const { boardId: boardIdParam } = useParams();
     const boardId = Number(boardIdParam);
@@ -39,21 +41,28 @@ function BoardDetailPage() {
     } = useQuery({
         queryKey: ["getBoardByBoardId", boardId],
         queryFn: () => getBoardByBoardId(boardId),
-        enabled: boardId > 0,
+        enabled: !!boardId && boardId > 0,
+    });
+
+    const copyMutation = useMutation({
+        mutationFn: () =>
+            copyPayload({
+                userId: principal?.userId,
+                boardId: boardId,
+                type: boardData?.type,
+            }),
+        onSuccess: (res) => {
+            show(res.message, "success");
+        },
+        onError: (res) => {
+            show(res.message, "error");
+        },
     });
 
     useEffect(() => {
         if (!boardResp) return;
         setBoardData(boardResp.data);
     }, [boardResp]);
-
-    const copyHandler = () => {
-        // closeMenu();
-        // 러닝 코스, 운동루틴 저장 버튼
-        // boardId, userId,type으로 요청을 보내서 boardId로 db에서 course를 찾은 다음
-        // boardId = null, userId = userId로 해서 db에 저장
-        show("저장 완료", "error");
-    };
 
     if (isLoading) return <Loading />;
     if (error) return <ErrorComponent error={error} />;
@@ -86,6 +95,7 @@ function BoardDetailPage() {
 
                 <Box sx={{ p: 2.2 }}>{boardData.content}</Box>
             </Paper>
+
             <Dialog
                 open={openCopy}
                 onClose={() => setOpenCopy(false)}
@@ -119,7 +129,7 @@ function BoardDetailPage() {
                         fullWidth
                         variant="contained"
                         onClick={() => {
-                            copyHandler();
+                            copyMutation.mutate();
                             setOpenCopy(false);
                         }}
                         sx={{ borderRadius: 2, py: 1.1, fontWeight: 900 }}>

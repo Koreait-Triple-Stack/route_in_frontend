@@ -32,18 +32,14 @@ export const getBoardListByUserIdRequest = async (userId) => {
 //     return instance.post("/board/search", data);
 // };
 
-export const plusRecommendRequest = async (data) => {
-    return instance.post("/board/recommend/plus", data);
-};
-
-export const minusRecommendRequest = async (data) => {
-    return instance.post("/board/recommend/minus", data);
+export const changeRecommendRequest = async (data) => {
+    return instance.post("/board/change/recommend", data);
 };
 
 export const getRecommendListByBoardIdRequest = async (boardId) => {
     return instance.get(`/board/recommend/${boardId}`);
 };
 
-export const copyCourseRequest = async (data) => {
+export const copyPayloadRequest = async (data) => {
     return instance.post(`/board/copy/payload`, data);
 };

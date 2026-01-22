@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import { useCourseMap } from "../../hooks/useCourseMap";
 import { useEffect, useState } from "react";
 import { buildUpdatePayload, coordToRegionWithGeocoder } from "../../apis/course/courseMapper";
@@ -12,8 +11,7 @@ import PlaceSearchPanel from "./PlaceSearchPanel";
 import CourseSavePanel from "./CourseSavePanel";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-function CourseEdit({ course, userId, boardId, isEditing }) {
-    const navigate = useNavigate();
+function CourseEdit({ course, userId, isEditing }) {
 
     const { mapRef, kakaoObj, points, setPoints, distanceM, map, undo, clear } = useCourseMap();
 
@@ -117,7 +115,7 @@ function CourseEdit({ course, userId, boardId, isEditing }) {
                 zIndex: 1400,
             }}
         >
-            <Container sx={{ position: "relative" }}>
+            <Container disableGutters sx={{ position: "relative" }}>
                 {/* 지도 */}
                 <Box ref={mapRef} sx={{ width: "100%", height: "100%", zIndex: 10, overflow: "hidden" }} />
 

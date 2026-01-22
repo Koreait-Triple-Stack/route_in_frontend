@@ -67,7 +67,7 @@ function CourseAdd({ userId, boardId, isAdd }) {
                 zIndex: 1400,
             }}
         >
-            <Container sx={{ position: "relative" }}>
+            <Container disableGutters sx={{ position: "relative" }}>
                 {/* 지도 */}
                 <Box ref={mapRef} sx={{ width: "100%", height: "100%", zIndex: 10, overflow: "hidden" }} />
 
