@@ -11,19 +11,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import { usePrincipalState } from "../../store/usePrincipalState";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { addBoard } from "../../apis/board/boardService";
-
+import { EXERCISE_PARTS } from "../../constants/exerciseParts";
 function BoardWritePage() {
   const navigate = useNavigate();
-  const [selectedTags, setSelectedTags] = useState([]);
-  const EXERCISE_TAGS = [
-    { label: "가슴" },
-    { label: "등" },
-    { label: "하체" },
-    { label: "어깨" },
-    { label: "팔" },
-    { label: "복근" },
-    { label: "유산소" },
-  ];
+
   const { principal } = usePrincipalState();
   const userId = principal?.userId;
 
@@ -49,6 +40,17 @@ function BoardWritePage() {
       [name]: value,
     }));
   };
+
+  // 토글 버튼
+  const toggleTag = (part) => {
+    setForm((prev) => {
+      const nextTags = prev.tags.includes(part)
+        ? prev.tags.filter((t) => t !== part)
+        : [...prev.tags, part];
+
+      return { ...prev, tags: nextTags };
+    });
+  };
   // 게시물 추가
   const mutation = useMutation({
     mutationKey: ["addBoard"],
@@ -64,16 +66,6 @@ function BoardWritePage() {
       alert(error);
     },
   });
-
-  // 토글 버튼
-  const toggleTag = (tagId) => {
-    setForm((prev) => {
-      const nextTags = prev.tags.includes(tagId)
-        ? prev.tags.filter((id) => id !== tagId)
-        : [...prev.tags, tagId];
-      return { ...prev, tags: nextTags };
-    });
-  };
 
   const submitOnClickHandler = () => {
     if (!isRoutine && !isCourse) return alert("잘못된 접근입니다.");
@@ -190,17 +182,17 @@ function BoardWritePage() {
                     gap: 1,
                   }}
                 >
-                  {EXERCISE_TAGS.map((tag) => {
-                    const selected = selectedTags.includes(tag.label);
+                  {EXERCISE_PARTS.map((part) => {
+                    const selected = form.tags.includes(part);
                     return (
                       <ToggleButton
-                        key={tag.label}
-                        value={tag.label}
+                        key={part}
+                        value={part}
                         selected={selected}
-                        onChange={() => toggleTag(tag.label)}
+                        onClick={() => toggleTag(part)}
                         sx={{}}
                       >
-                        {tag.label}
+                        {part}
                       </ToggleButton>
                     );
                   })}
@@ -270,5 +262,4 @@ function BoardWritePage() {
     </Container>
   );
 }
-
 export default BoardWritePage;
