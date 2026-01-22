@@ -82,7 +82,7 @@ function PostCard({ board }) {
                 ) : (
                     <Stack direction="row" spacing={1} flexWrap="wrap">
                         <Chip label={board.tags[0]} size="small" />
-                        <Chip label={`${board.tags[1] / 1000} km`} size="small" />
+                        <Chip label={`${Math.round((board.tags[1] ?? 0) / 100) / 10} km`} size="small" />
                     </Stack>
                 )}
             </Stack>

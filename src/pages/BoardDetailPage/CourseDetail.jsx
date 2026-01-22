@@ -31,10 +31,11 @@ function DetailRow({ label, value, valueColor }) {
 }
 
 function CourseDetail({ boardId }) {
+    const boardIdNum = Number(boardId);
     const { mapRef, map, kakaoObj, setPoints } = useCourseMap({
         enableClickAdd: false,
     });
-    
+
     const {
         data: courseResp,
         isLoading,
@@ -42,15 +43,15 @@ function CourseDetail({ boardId }) {
     } = useQuery({
         queryKey: ["getCourseByBoardId", boardId],
         queryFn: () => getCourseByBoardId(boardId),
-        enabled: !!boardId && boardId > 0,
+        enabled: boardId > 0,
     });
     const [course, setCourse] = useState(null);
 
     useEffect(() => {
         if (courseResp) {
-            setCourse(courseResp?.data)
+            setCourse(courseResp?.data);
         }
-    }, [courseResp, isLoading])
+    }, [courseResp, isLoading]);
 
     useEffect(() => {
         if (!kakaoObj || !map || !course) return;
@@ -83,8 +84,8 @@ function CourseDetail({ boardId }) {
         );
     }, [course]);
 
-    if (isLoading) return <Loading />
-    if (error) return <ErrorComponent />
+    if (isLoading) return <Loading />;
+    if (error) return <ErrorComponent />;
 
     return (
         <Paper

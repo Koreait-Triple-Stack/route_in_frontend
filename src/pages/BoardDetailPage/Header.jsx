@@ -22,7 +22,7 @@ import { useToastStore } from "../../store/useToastStore";
 import UserAvatarLink from "../../components/UserAvatarLink";
 
 
-function Header({ boardData, setOpenCopy }) {
+function Header({ boardData, setOpenCopy, boardId }) {
   const { show } = useToastStore();
   const { principal } = usePrincipalState();
   const navigate = useNavigate();
@@ -31,8 +31,8 @@ function Header({ boardData, setOpenCopy }) {
   const [recommended, setRecommended] = useState(false);
   const closeMenu = () => setAnchorEl(null);
   const { data: recommendList } = useQuery({
-    queryFn: () => getRecommendListByBoardId(boardData.boardId),
-    queryKey: ["getRecommendListByBoardId", boardData?.boardId],
+    queryFn: () => getRecommendListByBoardId(boardId),
+    queryKey: ["getRecommendListByBoardId", boardId],
   });
 
   useEffect(() => {
@@ -49,12 +49,12 @@ function Header({ boardData, setOpenCopy }) {
     mutationFn: () =>
       changeRecommend({
         userId: principal?.userId,
-        boardId: boardData?.boardId,
+        boardId: boardId,
         isRecommended: !!recommended,
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["getRecommendListByBoardId", boardData.boardId],
+        queryKey: ["getRecommendListByBoardId", boardId],
       });
     },
     onError: (error) => {
@@ -72,7 +72,7 @@ function Header({ boardData, setOpenCopy }) {
 
   // 삭제
   const removeMutation = useMutation({
-    mutationKey: ["removeBoard", boardData?.boardId],
+    mutationKey: ["removeBoard", boardId],
     mutationFn: removeBoard,
     onSuccess: (response) => {
       show(response.message, "success");
@@ -81,7 +81,7 @@ function Header({ boardData, setOpenCopy }) {
         queryKey: ["getBoardListInfinite"],
       });
       queryClient.removeQueries({
-        queryKey: ["getBoardByBoardId", boardData?.boardId],
+        queryKey: ["getBoardByBoardId", boardId],
       });
       navigate("/board");
     },
@@ -98,7 +98,7 @@ function Header({ boardData, setOpenCopy }) {
 
     removeMutation.mutate({
       userId: principal.userId,
-      boardId: boardData?.boardId,
+      boardId: boardId,
       tags: [],
     });
   };
