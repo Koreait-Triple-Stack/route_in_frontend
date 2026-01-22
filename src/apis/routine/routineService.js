@@ -3,7 +3,8 @@ import {
     getRoutineRequest,
     addRoutineRequest,
     removeRoutineRequest,
-    deleteRoutineByRoutineIdRequest
+    deleteRoutineByRoutineIdRequest,
+    changeCheckedRequest
 } from "./routineApi";
 
 export const addRoutine = async (data) => {
@@ -32,6 +33,12 @@ export const removeRoutine = async (data) => {
 
 export const deleteRoutineByRoutineId = async (routineId) => {
     const result = await deleteRoutineByRoutineIdRequest(routineId);
+    if (result.data.status !== "success") throw new Error(result.data.message)
+    return result.data;
+};
+
+export const changeChecked = async (routineId) => {
+    const result = await changeCheckedRequest(routineId);
     if (result.data.status !== "success") throw new Error(result.data.message)
     return result.data;
 };

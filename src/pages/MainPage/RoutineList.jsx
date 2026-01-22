@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Stack } from "@mui/system";
 import ScheduleItem from "../../components/ScheduleItem";
-import { getRoutine, removeRoutine, updateRoutine } from "../../apis/routine/routineService";
+import { changeChecked, getRoutine, removeRoutine, updateRoutine } from "../../apis/routine/routineService";
 
 function RoutineList({ userId }) {
     const dbDays = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
@@ -29,12 +29,26 @@ function RoutineList({ userId }) {
     const updateMutation = useMutation({
         mutationFn: updateRoutine,
         onSuccess: () => queryClient.invalidateQueries(["getRoutine", userId]),
+        onError: (error) => {
+            alert(error.message);
+        },
     });
 
     const resetMutation = useMutation({
         mutationFn: removeRoutine,
         onSuccess: () => queryClient.invalidateQueries(["getRoutine", userId]),
+        onError: (error) => {
+            alert(error.message);
+        },
     });
+
+    const checkedMutation = useMutation({
+        mutationFn: changeChecked,
+        onSuccess: () => queryClient.invalidateQueries(["getRoutine", userId]),
+        onError: (error) => {
+            alert(error.message);
+        },
+    })
 
     const handleReset = (day) => {
         const data = {
@@ -45,9 +59,8 @@ function RoutineList({ userId }) {
     };
 
     const handleToggle = (routine) => {
-        updateMutation.mutate({
-            ...routine,
-            checked: routine.checked ? 0 : 1,
+        checkedMutation.mutate({
+            routineId: routine.routineId
         });
     };
 

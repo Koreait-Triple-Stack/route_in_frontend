@@ -27,14 +27,10 @@ import {
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
-import {
-    addInBodyRequest,
-    deleteInBodyRequest,
-} from "../../apis/inBody/inBodyApi";
 import { usePrincipalState } from "../../store/usePrincipalState";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Container } from "@mui/system";
-import { getInBodyListByUserId } from "../../apis/inBody/inBodyService";
+import { addInBody, deleteInBody, getInBodyListByUserId } from "../../apis/inBody/inBodyService";
 
 const CustomizedLabel = (props) => {
     const { x, y, stroke, value } = props;
@@ -56,6 +52,7 @@ export default function InbodyChartWithActions() {
     const { principal } = usePrincipalState();
     const [addOpen, setAddOpen] = useState(false);
     const [deleteOpen, setDeleteOpen] = useState(false);
+    const queryClient = useQueryClient();
 
     const [inputValues, setInputValues] = useState({
         bodyWeight: "",
@@ -68,11 +65,35 @@ export default function InbodyChartWithActions() {
         data: response,
         error,
         isLoading,
-        refetch,
     } = useQuery({
         queryFn: () => getInBodyListByUserId(principal.userId),
         queryKey: ["getInBodyListByUserId", principal.userId],
         staleTime: 30000,
+    });
+
+    const addMutation = useMutation({
+        mutationFn: addInBody,
+        onSuccess: () => {
+            queryClient.invalidateQueries(["getInBodyListByUserId", principal.userId])
+            alert("추가되었습니다.");
+            handleAddClose();
+        },
+        onError: (error) => {
+            alert(error.message);
+        },
+    });
+
+    const deleteMutation = useMutation({
+        mutationFn: deleteInBody,
+        onSuccess: () => {
+            queryClient.invalidateQueries(["getInBodyListByUserId", principal.userId])
+            alert("삭제되었습니다.");
+            handleAddClose();
+            handleDeleteClose();
+        },
+        onError: (error) => {
+            alert(error.message);
+        },
     });
 
     const handleAddOpen = () => setAddOpen(true);
@@ -96,53 +117,33 @@ export default function InbodyChartWithActions() {
     };
 
     const handleAddData = () => {
-        if (
-            !inputValues.bodyWeight ||
-            !inputValues.skeletalMuscleMass ||
-            !inputValues.bodyFatMass
-        ) {
+        if (!inputValues.bodyWeight || !inputValues.skeletalMuscleMass || !inputValues.bodyFatMass) {
             alert("모든 정보를 입력해주세요.");
             return;
         }
 
-        addInBodyRequest({
+        const data = {
             userId: principal?.userId,
             bodyWeight: inputValues.bodyWeight,
             skeletalMuscleMass: inputValues.skeletalMuscleMass,
             bodyFatMass: inputValues.bodyFatMass,
             monthDt: inputValues.monthDt,
-        })
-            .then((response) => {
-                if (response.status === "success") {
-                    alert("추가되었습니다.");
-                    handleAddClose();
-                    refetch();
-                } else {
-                    alert(response.message);
-                }
-            })
-            .catch(() => alert("오류가 발생했습니다."));
+        }
+
+        addMutation.mutate(data)
     };
 
     const handleDeleteData = (inBodyId) => {
         if (!window.confirm("정말 삭제하시겠습니까?")) return;
 
-        deleteInBodyRequest({
+        const data = {
             inBodyId: inBodyId,
             userId: principal?.userId,
-        })
-            .then((response) => {
-                if (response.status === "success") {
-                    alert("삭제되었습니다.");
-                    handleAddClose();
-                    handleDeleteClose();
-                    refetch();
-                } else {
-                    alert(response.message);
-                }
-            })
-            .catch(() => alert("오류가 발생했습니다."));
+        }
+
+        deleteMutation.mutate(data)
     };
+
 
     if (isLoading) return <div>로딩중</div>;
     if (error) return <div>error.message</div>;
