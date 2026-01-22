@@ -31,7 +31,7 @@ function BoardWritePage() {
     title: "",
     content: "",
     tags: [],
-  });       
+  });
 
   const onChangeHandler = (e) => {
     const { name, value } = e.target;
@@ -190,7 +190,13 @@ function BoardWritePage() {
                         value={part}
                         selected={selected}
                         onClick={() => toggleTag(part)}
-                        sx={{}}
+                        sx={{
+                          borderRadius: 999,
+                          px: 1.5,
+                          py: 0.7,
+                          fontWeight: 800,
+                          fontSize: 13,
+                        }}
                       >
                         {part}
                       </ToggleButton>
