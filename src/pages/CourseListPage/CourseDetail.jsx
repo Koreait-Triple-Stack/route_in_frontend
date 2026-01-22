@@ -1,8 +1,10 @@
 import { useCourseMap } from "../../hooks/useCourseMap";
 import { useEffect, useState } from "react";
-import { Button, Divider, Paper, Typography } from "@mui/material";
+import { Button, Checkbox, Chip, Divider, Paper, Typography } from "@mui/material";
 import { Box, Stack } from "@mui/system";
 import CourseEdit from "./CourseEdit";
+import StarBorderIcon from "@mui/icons-material/StarBorder";
+import StarIcon from "@mui/icons-material/Star";
 
 function DetailRow({ label, value, valueColor }) {
     return (
@@ -24,7 +26,7 @@ function DetailRow({ label, value, valueColor }) {
     );
 }
 
-function CourseDetail({ course, onDelete }) {
+function CourseDetail({ course, onDelete, onChecked, checked }) {
     const [isEditing, setIsEditing] = useState(false);
     const { mapRef, map, kakaoObj, setPoints } = useCourseMap({
         enableClickAdd: false,
@@ -66,6 +68,10 @@ function CourseDetail({ course, onDelete }) {
     const deleteClick = () => {
         onDelete(course);
     };
+
+    const ckeckedClick = () => {
+        onChecked(course)
+    }
 
     if (!course) {
         return (
@@ -117,7 +123,7 @@ function CourseDetail({ course, onDelete }) {
             <Box>
                 {/* 코스 정보 영역 */}
                 <Box sx={{ p: { xs: 2, sm: 2.5 } }}>
-                    <Stack spacing={1.2}>
+                    <Stack direction="row" justifyContent="space-between">
                         <Typography
                             variant="h6"
                             sx={{
@@ -128,9 +134,31 @@ function CourseDetail({ course, onDelete }) {
                         >
                             {course.courseName}
                         </Typography>
-
-                        <Divider />
+                        {checked ? (
+                            <Button
+                                onClick={ckeckedClick}
+                                sx={{
+                                    "&.Mui-checked": {
+                                        color: "#fffbfb",
+                                    },
+                                }}
+                            >
+                                <StarBorderIcon />
+                            </Button>
+                        ) : (
+                            <Button
+                                onClick={ckeckedClick}
+                                sx={{
+                                    "&.Mui-checked": {
+                                        color: "#f34452",
+                                    },
+                                }}
+                            >
+                                <StarIcon />
+                            </Button>
+                        )}
                     </Stack>
+                    <Divider />
                     <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                         <DetailRow label="거리" value={course.distanceM} valueColor="primary.main" />
                         <Button onClick={() => setIsEditing(true)}>수정</Button>

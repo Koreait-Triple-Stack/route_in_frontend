@@ -1,7 +1,11 @@
+import React from "react";
+
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Stack } from "@mui/system";
+
 import ScheduleItem from "../../components/ScheduleItem";
-import { changeChecked, getRoutine, removeRoutine, updateRoutine } from "../../apis/routine/routineService";
+import { getRoutine, removeRoutine, updateRoutine } from "../../apis/routine/routineService";
+import { Paper } from "@mui/material";
 
 function RoutineList({ userId }) {
     const dbDays = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
@@ -29,26 +33,12 @@ function RoutineList({ userId }) {
     const updateMutation = useMutation({
         mutationFn: updateRoutine,
         onSuccess: () => queryClient.invalidateQueries(["getRoutine", userId]),
-        onError: (error) => {
-            alert(error.message);
-        },
     });
 
     const resetMutation = useMutation({
         mutationFn: removeRoutine,
         onSuccess: () => queryClient.invalidateQueries(["getRoutine", userId]),
-        onError: (error) => {
-            alert(error.message);
-        },
     });
-
-    const checkedMutation = useMutation({
-        mutationFn: changeChecked,
-        onSuccess: () => queryClient.invalidateQueries(["getRoutine", userId]),
-        onError: (error) => {
-            alert(error.message);
-        },
-    })
 
     const handleReset = (day) => {
         const data = {
@@ -59,8 +49,9 @@ function RoutineList({ userId }) {
     };
 
     const handleToggle = (routine) => {
-        checkedMutation.mutate({
-            routineId: routine.routineId
+        updateMutation.mutate({
+            ...routine,
+            checked: routine.checked ? 0 : 1,
         });
     };
 
@@ -79,6 +70,7 @@ function RoutineList({ userId }) {
     if (isLoading) return <div>로딩중...</div>;
 
     return (
+        <Paper>
             <Stack spacing={2}>
                 {dbDays.map((day) => {
                     const dayRoutines = respData.filter((r) => r.weekday.toLowerCase() === day.toLowerCase());
@@ -96,6 +88,7 @@ function RoutineList({ userId }) {
                     );
                 })}
             </Stack>
+        </Paper>
     );
 }
 

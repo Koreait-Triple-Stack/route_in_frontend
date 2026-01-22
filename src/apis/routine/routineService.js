@@ -19,8 +19,8 @@ export const updateRoutine = async (data) => {
     return result.data;
 };
 
-export const getRoutine = async (userId) => {
-    const result = await getRoutineRequest(userId);
+export const getRoutine = async (userId, boardId) => {
+    const result = await getRoutineRequest(userId, boardId);
     if (result.data.status !== "success") throw new Error(result.data.message)
     return result.data;
 };
