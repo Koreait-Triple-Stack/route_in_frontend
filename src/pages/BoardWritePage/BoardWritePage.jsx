@@ -31,7 +31,7 @@ function BoardWritePage() {
     title: "",
     content: "",
     tags: [],
-  });
+  });       
 
   const onChangeHandler = (e) => {
     const { name, value } = e.target;
