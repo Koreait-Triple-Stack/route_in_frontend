@@ -63,7 +63,7 @@ function BoardDetailPage() {
         setOpenCopy(false);
     };
 
-    if (isLoading) return <Loading />;
+    if (isLoading || !boardId) return <Loading />;
     if (error) return <ErrorComponent error={error} />;
 
     return (
@@ -78,11 +78,11 @@ function BoardDetailPage() {
                 }}
             >
                 {/* 상단 헤더 */}
-                <Header boardData={boardData} openCopy={openCopy} setOpenCopy={setOpenCopy} />
+                <Header boardData={boardData} setOpenCopy={setOpenCopy} boardId={boardId} />
 
                 <Divider />
                 {boardData.type === "COURSE" ? (
-                    <CourseDetail boardId={boardData.boardId} />
+                    <CourseDetail boardId={boardId} />
                 ) : (
                     <>
                         <Stack direction="row" spacing={2} px={2} py={1}>
@@ -99,7 +99,7 @@ function BoardDetailPage() {
                             ))}
                         </Stack>
                         <Divider />
-                        <RoutineList boardId={boardData.boardId} />
+                        <RoutineList boardId={boardId} />
                     </>
                 )}
 

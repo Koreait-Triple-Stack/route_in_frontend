@@ -10,7 +10,7 @@ import {
 
 export const addCourse = async (data) => {
     const result = await addCourseRequest(data);
-    if (result.data.status !== "success") throw new Error(result.data.message)
+    if (result.data.status !== "success") throw new Error(result.data.message);
     return result.data;
 };
 

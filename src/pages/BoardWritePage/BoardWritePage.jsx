@@ -151,18 +151,6 @@ function BoardWritePage() {
                         />
                     </Box>
 
-                    <Box
-                        sx={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            color: "text.secondary",
-                            fontSize: 12,
-                            fontWeight: 700,
-                        }}>
-                        <span>{form.content.length}자</span>
-                        <span>최소 10자 이상 작성해주세요</span>
-                    </Box>
-
                     {/* 버튼 */}
                     <Stack direction="row" spacing={1}>
                         <Button

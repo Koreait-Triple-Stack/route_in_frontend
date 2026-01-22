@@ -4,10 +4,10 @@ import { buildUpdatePayload, coordToRegionWithGeocoder } from "../../apis/course
 import { Box, Container, Stack } from "@mui/system";
 import { useKakaoPlaceSearch } from "../../hooks/useKakaoPlaceSearch";
 import { Divider, Paper } from "@mui/material";
-import CourseSavePanel from "./CourseSavePanel";
 import CourseMiniBar from "../../components/Course/CourseMiniBar";
 import CoursePanel from "../../components/Course/CoursePanel";
 import PlaceSearchPanel from "../../components/Course/PlaceSearchPanel";
+import CourseSavePanel from "../../components/Course/CourseSavePanel";
 
 function CourseEdit({ course, setCourse, isEditing }) {
     const { mapRef, kakaoObj, points, setPoints, distanceM, map, undo, clear } = useCourseMap();
