@@ -2,10 +2,7 @@ import { useCourseMap } from "../../hooks/useCourseMap";
 import { useEffect, useState } from "react";
 import { Divider, Paper, Typography } from "@mui/material";
 import { Box, Stack } from "@mui/system";
-import { useQuery } from "@tanstack/react-query";
-import { getCourseByBoardId } from "../../apis/course/courseService";
 import Loading from "../../components/Loading";
-import ErrorComponent from "../../components/ErrorComponent";
 
 function DetailRow({ label, value, valueColor }) {
     return (
@@ -30,28 +27,10 @@ function DetailRow({ label, value, valueColor }) {
     );
 }
 
-function CourseDetail({ boardId }) {
-    const boardIdNum = Number(boardId);
+function CourseDetail({ course }) {
     const { mapRef, map, kakaoObj, setPoints } = useCourseMap({
         enableClickAdd: false,
     });
-
-    const {
-        data: courseResp,
-        isLoading,
-        error,
-    } = useQuery({
-        queryKey: ["getCourseByBoardId", boardId],
-        queryFn: () => getCourseByBoardId(boardId),
-        enabled: boardId > 0,
-    });
-    const [course, setCourse] = useState(null);
-
-    useEffect(() => {
-        if (courseResp) {
-            setCourse(courseResp?.data);
-        }
-    }, [courseResp, isLoading]);
 
     useEffect(() => {
         if (!kakaoObj || !map || !course) return;
@@ -84,8 +63,7 @@ function CourseDetail({ boardId }) {
         );
     }, [course]);
 
-    if (isLoading) return <Loading />;
-    if (error) return <ErrorComponent />;
+    if (!course) return <Loading />;
 
     return (
         <Paper
