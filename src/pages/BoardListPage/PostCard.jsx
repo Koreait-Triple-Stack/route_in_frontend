@@ -3,6 +3,7 @@ import { Box, Stack } from "@mui/system";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import FavoriteIcon from "@mui/icons-material/Favorite";
+import { timeAgo } from "../../apis/utils/time";
 
 function PostCard({ board }) {
     const year = new Date().getFullYear();
@@ -76,7 +77,7 @@ function PostCard({ board }) {
                         />
                     </Stack>
                     <Typography variant="caption" color="text.secondary">
-                        {board.createDt.split("T")[0]}
+                        {timeAgo(board.createDt)}
                     </Typography>
                 </Box>
 

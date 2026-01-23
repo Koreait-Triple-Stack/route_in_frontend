@@ -217,7 +217,8 @@ function Header({ boardData, setOpenCopy, boardId }) {
                             color: "text.secondary",
                             fontSize: 12,
                         }}>
-                        {boardData?.createDt?.split("T")[0] ?? "-"}
+                        {boardData?.createDt?.split("T")[0].replaceAll("-", ".")}{". "}
+                        {boardData?.createDt?.split("T")[1].slice(0, 5)}
                     </Typography>
                 </Stack>
             </Stack>
