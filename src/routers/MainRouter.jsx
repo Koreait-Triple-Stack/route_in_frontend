@@ -14,6 +14,8 @@ import NotFoundPage from "../pages/NotFoundPage/NotFoundPage";
 import WsTestPage from "../pages/WsTestPage";
 import { useQuery } from "@tanstack/react-query";
 import UserDetailPage from "../pages/UserDetailPage/UserDetailPage";
+import FollowingListPage from "../pages/FollowUserListPage/FollowingListPage";
+import FollowerListPage from "../pages/FollowUserListPage/FollowerListPage";
 
 const RootRoute = () => {
   const { isLoggedIn } = usePrincipalState();
@@ -57,6 +59,22 @@ function MainRouter() {
             element={
               <ProtectedRouter>
                 <UserDetailPage />
+              </ProtectedRouter>
+            }
+          />
+          <Route
+            path="/user/:userId/followers"
+            element={
+              <ProtectedRouter>
+                <FollowerListPage />
+              </ProtectedRouter>
+            }
+          />
+          <Route
+            path="/user/:userId/followings"
+            element={
+              <ProtectedRouter>
+                <FollowingListPage />
               </ProtectedRouter>
             }
           />

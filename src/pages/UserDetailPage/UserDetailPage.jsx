@@ -1,6 +1,7 @@
+// src/pages/UserDetailPage/UserDetailPage.jsx
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import {
     Avatar,
     Box,
@@ -14,36 +15,36 @@ import {
 
 import { getUserByUserId } from "../../apis/account/accountService";
 import { getBoardListByUserId } from "../../apis/board/boardService";
+import {
+    getFollowerUserList,
+    getFollowingUserList,
+} from "../../apis/follow/followService";
+
 import { usePrincipalState } from "../../store/usePrincipalState";
+import UserProfileHeader from "./UserProfileHeader";
 
 import Loading from "../../components/Loading";
 import ErrorComponent from "../../components/ErrorComponent";
-
-import FollowStats from "../Mypage/FollowStats";
 import PostCard from "../BoardListPage/PostCard";
-
-import { getFollowStatus, changeFollow } from "../../apis/follow/followService";
 
 export default function UserDetailPage() {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
-
+  
     const { userId: userIdParam } = useParams();
     const profileUserId = Number(userIdParam);
 
     const { principal } = usePrincipalState();
     const myUserId = Number(principal?.userId);
 
+    // userId 유효성 검사 + 자기 자신 여부 판단
     const isValidProfileUserId =
         Number.isFinite(profileUserId) && profileUserId > 0;
-    const isMe =
-        Number.isFinite(myUserId) && myUserId > 0 && myUserId === profileUserId;
+    const isValidMyUserId = Number.isFinite(myUserId) && myUserId > 0;
 
-    const enabledFollow =
-        Number.isFinite(myUserId) &&
-        myUserId > 0 &&
-        isValidProfileUserId &&
-        !isMe;
+    const isMe =
+        isValidMyUserId && isValidProfileUserId && myUserId === profileUserId;
+    const enabledFollow = isValidMyUserId && isValidProfileUserId && !isMe;
 
     if (!isValidProfileUserId) {
         return (
@@ -55,10 +56,11 @@ export default function UserDetailPage() {
         );
     }
 
-    //유저 정보
+    // 유저 정보
     const {
         data: userResp,
         isLoading: isUserLoading,
+        isError: isUserError,
         error: userError,
     } = useQuery({
         queryKey: ["getUserByUserId", profileUserId],
@@ -67,10 +69,11 @@ export default function UserDetailPage() {
         staleTime: 30000,
     });
 
-    //  유저 게시글
+    // 유저 게시글
     const {
         data: boardResp,
         isLoading: isBoardLoading,
+        isError: isBoardError,
         error: boardError,
     } = useQuery({
         queryKey: ["getBoardListByUserId", profileUserId],
@@ -79,180 +82,74 @@ export default function UserDetailPage() {
         staleTime: 30000,
     });
 
-    // 팔로우 상태 조회
-    const { data: followStatusResp, isLoading: isFollowStatusLoading } =
-        useQuery({
-            queryKey: ["getFollowStatus", myUserId, profileUserId],
-            queryFn: () =>
-                getFollowStatus({
-                    followerUserId: myUserId,
-                    followingUserId: profileUserId,
-                }),
-            enabled: enabledFollow,
-            staleTime: 10_000,
-        });
-
-    const isFollowing = !!followStatusResp?.data;
-
-    // 팔로우 토글 mutation
-    const changeFollowMutation = useMutation({
-        mutationFn: () =>
-            changeFollow({
-                followerUserId: myUserId,
-                followingUserId: profileUserId,
-                isFollowing,
-            }),
-        onSuccess: () => {
-            queryClient.invalidateQueries({
-                queryKey: ["getFollowStatus", myUserId, profileUserId],
-            });
-            queryClient.invalidateQueries({
-                queryKey: ["getUserByUserId", profileUserId],
-            });
-            queryClient.invalidateQueries({
-                queryKey: ["getUserByUserId", myUserId],
-            });
-        },
+    // 팔로워/팔로잉 리스트 (숫자를 리스트 길이로 맞춰서 불일치 방지)
+    const { data: followerListResp } = useQuery({
+        queryKey: ["getFollowerUserList", profileUserId],
+        queryFn: () => getFollowerUserList(profileUserId),
+        enabled: isValidProfileUserId,
+        staleTime: 30000,
     });
 
+    const { data: followingListResp } = useQuery({
+        queryKey: ["getFollowingUserList", profileUserId],
+        queryFn: () => getFollowingUserList(profileUserId),
+        enabled: isValidProfileUserId,
+        staleTime: 30000,
+    });
+
+    // 팔로워 응답 파싱
+    const followerRaw = followerListResp?.data ?? followerListResp;
+    const followerPayload = followerRaw?.data ?? followerRaw;
+    const followerList = Array.isArray(followerPayload) ? followerPayload : [];
+
+    // 팔로잉 응답 파싱
+    const followingRaw = followingListResp?.data ?? followingListResp;
+    const followingPayload = followingRaw?.data ?? followingRaw;
+    const followingList = Array.isArray(followingPayload)
+        ? followingPayload
+        : [];
+
     if (isUserLoading) return <Loading />;
-    if (userError) return <ErrorComponent error={userError} />;
+    if (isUserError) return <ErrorComponent error={userError} />;
 
+    // 유저 정보 후처리(주소/프로필 이미지/게시판 배열 추출)
     const user = userResp?.data;
-
     const baseAddress = user?.address?.baseAddress ?? "";
     const [city = "", district = ""] = baseAddress.split(" ");
-
     const profileSrc = user?.profileImageUrl ?? user?.profileImg ?? null;
-
     const boardsRaw =
         boardResp?.data?.boardRespDtoList ?? boardResp?.data ?? [];
     const userBoards = Array.isArray(boardsRaw) ? boardsRaw : [];
 
     return (
-        <Container>
+        <Container maxWidth="sm" sx={{ py: 2 }}>
             <Paper
                 variant="outlined"
-                sx={{
-                    position: "relative",
-                    width: "100%",
-                    bgcolor: "background.paper",
-                    overflow: "hidden",
-                    border: "1px solid",
-                    borderColor: "divider",
-                    borderRadius: 3,
-                    boxShadow: "0 6px 20px rgba(0,0,0,0.06)",
-                }}>
+                sx={{ borderRadius: 3, overflow: "hidden", bgcolor: "white" }}
+            >
                 {/* Title */}
-                <Box sx={{ px: 2 }}>
-                    <Typography
-                        sx={{
-                            bgcolor: "transparent",
-                            py: 3,
-                            px: 1,
-                            fontSize: 14,
-                            fontWeight: 700,
-                            color: "text.primary",
-                        }}>
+                <Box sx={{ px: 2, pt: 2 }}>
+                    <Typography sx={{ fontWeight: 900, fontSize: 18 }}>
                         유저 프로필
                     </Typography>
                 </Box>
 
-                <Divider />
-
-                {/* Profile */}
-                <Box
-                    sx={{
-                        px: 2,
-                        py: 2,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        gap: 1.5,
-                    }}>
-                    <Box
-                        sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 1.5,
-                            minWidth: 0,
-                        }}>
-                        <Avatar
-                            sx={{
-                                width: 72,
-                                height: 72,
-                                bgcolor: "grey.200", // ✅ 로딩 중 배경
-                                "& img": { objectFit: "cover" },
-                            }}
-                            src={user?.profileImg}
-                        />
-
-                        <Box
-                            sx={{
-                                minWidth: 0,
-                                display: "flex",
-                                flexDirection: "column",
-                                gap: 0.3,
-                            }}>
-                            <Typography
-                                sx={{
-                                    fontSize: 22,
-                                    fontWeight: 800,
-                                    lineHeight: 1.1,
-                                }}>
-                                {user?.username ?? "-"}
-                            </Typography>
-
-                            <Typography
-                                sx={{
-                                    fontSize: 13,
-                                    color: "text.secondary",
-                                    whiteSpace: "nowrap",
-                                    overflow: "hidden",
-                                    textOverflow: "ellipsis",
-                                }}>
-                                {user?.gender ?? "-"} • {city} {district}
-                            </Typography>
-
-                            <Typography
-                                sx={{ fontSize: 12, color: "text.secondary" }}>
-                                {user?.height ?? "-"}cm / {user?.weight ?? "-"}
-                                kg
-                            </Typography>
-                        </Box>
-                    </Box>
-
-                    {enabledFollow && (
-                        <Button
-                            variant={isFollowing ? "outlined" : "contained"}
-                            disabled={
-                                isFollowStatusLoading ||
-                                changeFollowMutation.isPending
-                            }
-                            onClick={() => changeFollowMutation.mutate()}
-                            sx={{
-                                borderRadius: 2,
-                                fontWeight: 900,
-                                whiteSpace: "nowrap",
-                            }}>
-                            {isFollowStatusLoading
-                                ? "로딩..."
-                                : isFollowing
-                                  ? "팔로잉 취소"
-                                  : "팔로우"}
-                        </Button>
-                    )}
-                </Box>
-
-                {/* Follow stats */}
-                <FollowStats
-                    followingCnt={user?.followingCnt ?? 0}
-                    followerCnt={user?.followerCnt ?? 0}
+                {/* Header (프로필 + 팔로우 버튼 + 팔로워/팔로잉 통계) */}
+                <UserProfileHeader
+                    user={user}
+                    profileSrc={profileSrc}
+                    city={city}
+                    district={district}
+                    myUserId={myUserId}
+                    profileUserId={profileUserId}
+                    enabledFollow={enabledFollow}
+                    followerCnt={followerList.length}
+                    followingCnt={followingList.length}
                     onFollower={() =>
-                        navigate(`/user/${profileUserId}/following`)
+                        navigate(`/user/${profileUserId}/followers`)
                     }
                     onFollowing={() =>
-                        navigate(`/user/${profileUserId}/follower`)
+                        navigate(`/user/${profileUserId}/followings`)
                     }
                 />
 
@@ -268,7 +165,7 @@ export default function UserDetailPage() {
                         <Typography sx={{ color: "text.secondary", py: 1 }}>
                             로딩중...
                         </Typography>
-                    ) : boardError ? (
+                    ) : isBoardError ? (
                         <Typography sx={{ color: "error.main", py: 1 }}>
                             게시글을 불러오지 못했습니다.
                         </Typography>
