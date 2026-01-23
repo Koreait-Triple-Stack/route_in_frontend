@@ -13,6 +13,7 @@ import { usePrincipalState } from "../../store/usePrincipalState";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Loading from "../../components/Loading";
+import { timeAgo } from "../../apis/utils/time";
 
 function NotificationPage() {
     const { principal } = usePrincipalState();
@@ -135,7 +136,7 @@ function NotificationPage() {
                                             display: "block",
                                             mt: 0.6,
                                         }}>
-                                        {n.timeText}
+                                        {timeAgo(n.createDt)}
                                     </Typography>
                                 </Box>
 

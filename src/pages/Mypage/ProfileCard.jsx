@@ -68,8 +68,8 @@ export default function ProfileCard({
                     id="profile"
                     sx={{
                         bgcolor: "transparent",
-                        py: 1.5,
-                        px: 2,
+                        py: 1.3,
+                        px: 3,
                         fontSize: 14,
                         fontWeight: 700,
                         color: "text.primary",
