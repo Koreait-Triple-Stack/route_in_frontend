@@ -23,11 +23,7 @@ function UserAvatarLink({
     <Avatar
       src={src ?? undefined}
       alt={alt}
-      onClick={(e) => {
-        if (stopPropagation) e.stopPropagation();
-        if (disabled || !userId) return;
-        navigate(`/user/${userId}`);
-      }}
+      onClick={handleClick}
       sx={{
         width: size,
         height: size,

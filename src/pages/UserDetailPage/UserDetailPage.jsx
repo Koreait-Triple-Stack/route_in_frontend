@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Box,
   Button,
@@ -13,6 +13,7 @@ import {
 
 import { getUserByUserId } from "../../apis/account/accountService";
 import { getBoardListByUserId } from "../../apis/board/boardService";
+import { usePrincipalState } from "../../store/usePrincipalState";
 
 import Loading from "../../components/Loading";
 import ErrorComponent from "../../components/ErrorComponent";
@@ -20,13 +21,27 @@ import ErrorComponent from "../../components/ErrorComponent";
 import FollowStats from "../Mypage/FollowStats";
 import PostCard from "../BoardListPage/PostCard";
 
+import { getFollowStatus, changeFollow } from "../../apis/follow/followService";
+
 export default function UserDetailPage() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
   const { userId: userIdParam } = useParams();
-  const userId = Number(userIdParam);
+  const profileUserId = Number(userIdParam);
 
+  const { principal } = usePrincipalState();
+  const myUserId = Number(principal?.userId);
 
-  if (!userId || userId <= 0) {
+  const isValidProfileUserId =
+    Number.isFinite(profileUserId) && profileUserId > 0;
+  const isMe =
+    Number.isFinite(myUserId) && myUserId > 0 && myUserId === profileUserId;
+
+  const enabledFollow =
+    Number.isFinite(myUserId) && myUserId > 0 && isValidProfileUserId && !isMe;
+
+  if (!isValidProfileUserId) {
     return (
       <Box sx={{ p: 2 }}>
         <Typography sx={{ fontWeight: 900 }}>
@@ -36,58 +51,71 @@ export default function UserDetailPage() {
     );
   }
 
- 
+  //유저 정보
   const {
     data: userResp,
     isLoading: isUserLoading,
     error: userError,
   } = useQuery({
-    queryKey: ["getUserByUserId", userId],
-    queryFn: () => getUserByUserId(userId),
-    enabled: userId > 0,
-    staleTime: 30_000,
+    queryKey: ["getUserByUserId", profileUserId],
+    queryFn: () => getUserByUserId(profileUserId),
+    enabled: isValidProfileUserId,
+    staleTime: 30000,
   });
- // 유저가 작성한 게시글
+
+  //  유저 게시글
   const {
     data: boardResp,
     isLoading: isBoardLoading,
     error: boardError,
   } = useQuery({
-    queryKey: ["getBoardListByUserId", userId],
-    queryFn: () => getBoardListByUserId(userId),
-    enabled: userId > 0,
-    staleTime: 30_000,
+    queryKey: ["getBoardListByUserId", profileUserId],
+    queryFn: () => getBoardListByUserId(profileUserId),
+    enabled: isValidProfileUserId,
+    staleTime: 30000,
   });
 
-  const user = userResp?.data;
+  // 팔로우 상태 조회
+  const { data: followStatusResp, isLoading: isFollowStatusLoading } = useQuery(
+    {
+      queryKey: ["getFollowStatus", myUserId, profileUserId],
+      queryFn: () =>
+        getFollowStatus({
+          followerUserId: myUserId,
+          followingUserId: profileUserId,
+        }),
+      enabled: enabledFollow,
+      staleTime: 10_000,
+    },
+  );
 
+  const isFollowing = !!followStatusResp?.data;
 
-  const [followerCnt, setFollowerCnt] = useState(0);
-  const [isFollowed, setIsFollowed] = useState(false);
+  // 팔로우 토글 mutation
+  const changeFollowMutation = useMutation({
+    mutationFn: () =>
+      changeFollow({
+        followerUserId: myUserId,
+        followingUserId: profileUserId,
+        isFollowing,
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["getFollowStatus", myUserId, profileUserId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["getUserByUserId", profileUserId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["getUserByUserId", myUserId],
+      });
+    },
+  });
 
-  // userId 바뀌면 리셋
-  useEffect(() => {
-    setFollowerCnt(0);
-    setIsFollowed(false);
-  }, [userId]);
-
-  // user 로드되면 초기값 세팅
-  useEffect(() => {
-    if (!user) return;
-    setFollowerCnt(Number(user?.followerCnt ?? 0));
-    setIsFollowed(false); // 서버의 "내가 팔로우 중인지" 값이 없으니 일단 false로
-  }, [user]);
-
-  const onToggleFollow = () => {
-    setIsFollowed((prev) => {
-      setFollowerCnt((c) => (prev ? Math.max(0, c - 1) : c + 1));
-      return !prev;
-    });
-  };
-
-  // --- Derived values ---
   if (isUserLoading) return <Loading />;
   if (userError) return <ErrorComponent error={userError} />;
+
+  const user = userResp?.data;
 
   const baseAddress = user?.address?.baseAddress ?? "";
   const [city = "", district = ""] = baseAddress.split(" ");
@@ -97,7 +125,6 @@ export default function UserDetailPage() {
   const boardsRaw = boardResp?.data?.boardRespDtoList ?? boardResp?.data ?? [];
   const userBoards = Array.isArray(boardsRaw) ? boardsRaw : [];
 
- 
   return (
     <Container maxWidth="sm" sx={{ py: 2 }}>
       <Paper
@@ -167,7 +194,9 @@ export default function UserDetailPage() {
                 gap: 0.3,
               }}
             >
-              <Typography sx={{ fontSize: 22, fontWeight: 800, lineHeight: 1.1 }}>
+              <Typography
+                sx={{ fontSize: 22, fontWeight: 800, lineHeight: 1.1 }}
+              >
                 {user?.username ?? "-"}
               </Typography>
 
@@ -189,24 +218,28 @@ export default function UserDetailPage() {
             </Box>
           </Box>
 
-         
-          <Button
-            variant={isFollowed ? "outlined" : "contained"}
-            onClick={onToggleFollow}
-            sx={{ borderRadius: 2, fontWeight: 900 }}
-          >
-            {isFollowed ? "팔로워 취소" : "팔로워"}
-          </Button>
+          {enabledFollow && (
+            <Button
+              variant={isFollowing ? "outlined" : "contained"}
+              disabled={isFollowStatusLoading || changeFollowMutation.isPending}
+              onClick={() => changeFollowMutation.mutate()}
+              sx={{ borderRadius: 2, fontWeight: 900, whiteSpace: "nowrap" }}
+            >
+              {isFollowStatusLoading
+                ? "로딩..."
+                : isFollowing
+                  ? "팔로잉 취소"
+                  : "팔로우"}
+            </Button>
+          )}
         </Box>
 
         {/* Follow stats */}
         <FollowStats
-          followerCnt={followerCnt}
           followingCnt={user?.followingCnt ?? 0}
-          onFollower={() => navigate("/mypage/follower", { state: { userId } })}
-          onFollowing={() =>
-            navigate("/mypage/following", { state: { userId } })
-          }
+          followerCnt={user?.followerCnt ?? 0}
+          onFollower={() => navigate(`/user/${profileUserId}/following`)}
+          onFollowing={() => navigate(`/user/${profileUserId}/follower`)}
         />
 
         <Divider />
