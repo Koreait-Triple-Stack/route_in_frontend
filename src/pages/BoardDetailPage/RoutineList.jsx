@@ -49,7 +49,7 @@ function RoutineList({ routines }) {
                                     alignItems: "flex-start",
                                     gap: 2,
                                 }}>
-                                <Box width={50} pt={1}>
+                                <Box width={50}>
                                     <Typography
                                         variant="body1"
                                         fontWeight="bold"
@@ -76,7 +76,11 @@ function RoutineList({ routines }) {
                                                         key={index}
                                                         label={routine.exercise}
                                                         variant="caption"
-                                                        color="text.secondary"
+                                                        sx={{
+                                                            bgcolor:
+                                                                "primary.main",
+                                                            color: "white",
+                                                        }}
                                                     />
                                                 ),
                                             )}

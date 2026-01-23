@@ -96,11 +96,6 @@ function BoardDetailPage() {
                                 <Chip
                                     key={index}
                                     label={tag}
-                                    sx={{
-                                        bgcolor: "primary.main",
-                                        color: "white",
-                                    }}
-                                    size="small"
                                 />
                             ))}
                         </Stack>

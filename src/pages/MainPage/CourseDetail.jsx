@@ -1,7 +1,12 @@
 import { useCourseMap } from "../../hooks/useCourseMap";
 import { useEffect } from "react";
-import { Divider, Paper, Typography } from "@mui/material";
+import { Button, Divider, Paper, Typography } from "@mui/material";
 import { Box, Stack } from "@mui/system";
+import Loading from "../../components/Loading";
+import { useQuery } from "@tanstack/react-query";
+import { usePrincipalState } from "../../store/usePrincipalState";
+import { getCourseFavoriteByUserId } from "../../apis/course/courseService";
+import ErrorComponent from "../../components/ErrorComponent";
 
 function DetailRow({ label, value, valueColor }) {
     return (
@@ -10,23 +15,38 @@ function DetailRow({ label, value, valueColor }) {
                 display: "flex",
                 alignItems: "center",
                 py: 0.8,
-            }}
-        >
+            }}>
             <Typography variant="body1" sx={{ color: "text.secondary" }}>
                 {label}
             </Typography>
 
-            <Typography variant="body1" sx={{ fontWeight: 600, color: valueColor ?? "text.primary", px: 5 }}>
+            <Typography
+                variant="body1"
+                sx={{
+                    fontWeight: 600,
+                    color: valueColor ?? "text.primary",
+                    px: 5,
+                }}>
                 {valueColor ? value / 1000 + "km" : value}
             </Typography>
         </Box>
     );
 }
 
-function CourseDetail({ course }) {
+function CourseDetail() {
+    const { principal } = usePrincipalState();
     const { mapRef, map, kakaoObj, setPoints } = useCourseMap({
         enableClickAdd: false,
     });
+
+    const { data: response, isLoading, error } = useQuery({
+        queryKey: ["getCourseFavoriteByUserId", principal?.userId],
+        queryFn: () => getCourseFavoriteByUserId(principal?.userId),
+        staleTime: 30000,
+        enabled: !!principal?.userId,
+    });
+
+    const course = response?.data || {};
 
     useEffect(() => {
         if (!kakaoObj || !map || !course) return;
@@ -53,28 +73,48 @@ function CourseDetail({ course }) {
     }, [map, kakaoObj]);
 
     useEffect(() => {
-        setPoints(
-            course?.points.map((point) => ({
-                lat: Number(point.lat),
-                lng: Number(point.lng),
-            })),
-        );
+        if (course) {
+            setPoints(
+                course?.points?.map((point) => ({
+                    lat: Number(point.lat),
+                    lng: Number(point.lng),
+                })),
+            );
+        }
     }, [course]);
 
-    if (!course) {
+    if (isLoading) return <Loading />;
+    if (error) return <ErrorComponent error={error} />
+
+    if (!response?.data)
         return (
-            <Box
+            <Paper
+                elevation={0}
                 sx={{
-                    width: "100vw",
-                    height: "100vh",
-                    display: "grid",
-                    placeItems: "center",
-                }}
-            >
-                로딩중...
-            </Box>
+                    p: 3,
+                    borderRadius: 2,
+                    border: "1px dashed",
+                    borderColor: "divider",
+                    bgcolor: "background.paper",
+                    textAlign: "center",
+                }}>
+                <Stack spacing={0.5}>
+                    <Typography sx={{ fontWeight: 800 }}>
+                        즐겨찾기한 러닝 코스가 없어요
+                    </Typography>
+                    <Typography
+                        variant="body2"
+                        sx={{ color: "text.secondary", mt: 0.5 }}>
+                        러닝 코스를 즐겨찾기하면 여기에 표시됩니다.
+                    </Typography>
+                    <Button
+                        variant="contained"
+                        onClick={() => navigate("/mypage/course")}>
+                        내 러닝 코스 관리로 이동
+                    </Button>
+                </Stack>
+            </Paper>
         );
-    }
 
     return (
         <Paper
@@ -88,8 +128,7 @@ function CourseDetail({ course }) {
                 width: "100%",
                 mx: { xs: 0, sm: "auto" },
             }}
-            key={course.courseId}
-        >
+            key={course.courseId}>
             {/* 지도 영역 */}
             <Box
                 sx={{
@@ -97,8 +136,7 @@ function CourseDetail({ course }) {
                     width: "100%",
                     height: "clamp(220px, 35vh, 280px)", // 높이 필수
                     bgcolor: "grey.200",
-                }}
-            >
+                }}>
                 {/* 여기 ref에 카카오맵이 렌더됨 */}
                 <Box
                     ref={mapRef}
@@ -118,17 +156,28 @@ function CourseDetail({ course }) {
                                 fontWeight: 800,
                                 lineHeight: 1.2,
                                 wordBreak: "keep-all",
-                            }}
-                        >
+                            }}>
                             {course.courseName}
                         </Typography>
 
                         <Divider />
                     </Stack>
-                    <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                        <DetailRow label="거리" value={course.distanceM} valueColor="primary.main" />
+                    <Box
+                        sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                        }}>
+                        <DetailRow
+                            label="거리"
+                            value={course.distanceM}
+                            valueColor="primary.main"
+                        />
                     </Box>
-                    <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                    <Box
+                        sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                        }}>
                         <DetailRow label="지역" value={course.region} />
                     </Box>
                 </Box>
