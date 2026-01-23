@@ -1,116 +1,100 @@
-import React from "react";
-import { Box, Typography } from "@mui/material";
+import { Avatar, Box, Typography } from "@mui/material";
 import FollowButton from "../../components/FollowButton";
 import FollowStats from "../Mypage/FollowStats";
+import { usePrincipalState } from "../../store/usePrincipalState";
 
 export default function UserProfileHeader({
-  user,
-  profileSrc,
-  city,
-  district,
-  myUserId,
-  profileUserId,
-  enabledFollow,
-  followerCnt,
-  followingCnt,
-  onFollower,
-  onFollowing,
+    user,
+    enabledFollow,
+    onFollower,
+    onFollowing,
 }) {
-  return (
-    <>
-      {/* Profile */}
-      <Box
-        sx={{
-          px: 2,
-          py: 2,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: 1.5,
-        }}
-      >
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: 1.5,
-            minWidth: 0,
-          }}
-        >
-          <Box
-            sx={{
-              width: 72,
-              height: 72,
-              borderRadius: "50%",
-              border: "1px solid",
-              borderColor: "divider",
-              bgcolor: "grey.100",
-              overflow: "hidden",
-              flexShrink: 0,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            {profileSrc ? (
-              <Box
-                component="img"
-                src={profileSrc}
-                alt="profile"
-                sx={{ width: "100%", height: "100%", objectFit: "cover" }}
-              />
-            ) : (
-              <Typography sx={{ fontWeight: 800, color: "text.secondary" }}>
-                profile
-              </Typography>
-            )}
-          </Box>
+    const { principal } = usePrincipalState();
 
-          <Box
-            sx={{
-              minWidth: 0,
-              display: "flex",
-              flexDirection: "column",
-              gap: 0.3,
-            }}
-          >
-            <Typography sx={{ fontSize: 22, fontWeight: 800, lineHeight: 1.1 }}>
-              {user?.username ?? "-"}
-            </Typography>
+    const baseAddress = user?.address?.baseAddress ?? "";
+    const [city = "", district = ""] = baseAddress.split(" ");
 
-            <Typography
-              sx={{
-                fontSize: 13,
-                color: "text.secondary",
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-              }}
-            >
-              {user?.gender ?? "-"} • {city} {district}
-            </Typography>
+    return (
+        <>
+            <Box
+                sx={{
+                    px: 2,
+                    py: 2,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: 1.5,
+                }}>
+                <Box
+                    sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1.5,
+                        minWidth: 0,
+                    }}>
+                    <Avatar
+                        src={user?.profileImg}
+                        alt="profileImg"
+                        sx={{
+                            width: 72,
+                            height: 72,
+                            bgcolor: "grey.200", // ✅ 로딩 중 배경
+                            "& img": { objectFit: "cover" },
+                        }}
+                    />
 
-            <Typography sx={{ fontSize: 12, color: "text.secondary" }}>
-              {user?.height ?? "-"}cm / {user?.weight ?? "-"}kg
-            </Typography>
-          </Box>
-        </Box>
+                    <Box
+                        sx={{
+                            minWidth: 0,
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: 0.3,
+                        }}>
+                        <Typography
+                            sx={{
+                                fontSize: 22,
+                                fontWeight: 800,
+                                lineHeight: 1.1,
+                            }}>
+                            {user?.username ?? "-"}
+                        </Typography>
 
-        <FollowButton
-          followerUserId={myUserId}
-          followingUserId={profileUserId}
-          enabled={enabledFollow}
-          sx={{ borderRadius: 2, fontWeight: 900, whiteSpace: "nowrap" }}
-        />
-      </Box>
+                        <Typography
+                            sx={{
+                                fontSize: 13,
+                                color: "text.secondary",
+                                whiteSpace: "nowrap",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                            }}>
+                            {user?.gender ?? "-"} • {city} {district}
+                        </Typography>
 
-      {/* Follow stats */}
-      <FollowStats
-        followingCnt={followingCnt}
-        followerCnt={followerCnt}
-        onFollower={onFollower}
-        onFollowing={onFollowing}
-      />
-    </>
-  );
+                        <Typography
+                            sx={{ fontSize: 12, color: "text.secondary" }}>
+                            {user?.height ?? "-"}cm / {user?.weight ?? "-"}kg
+                        </Typography>
+                    </Box>
+                </Box>
+
+                <FollowButton
+                    followerUserId={principal?.userId}
+                    followingUserId={user?.userId}
+                    enabled={enabledFollow}
+                    sx={{
+                        borderRadius: 2,
+                        fontWeight: 900,
+                        whiteSpace: "nowrap",
+                    }}
+                />
+            </Box>
+
+            <FollowStats
+                followingCnt={user?.followingCnt}
+                followerCnt={user?.followerCnt}
+                onFollower={onFollower}
+                onFollowing={onFollowing}
+            />
+        </>
+    );
 }

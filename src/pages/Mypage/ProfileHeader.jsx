@@ -15,7 +15,6 @@ import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { changeProfileImg } from "../../apis/account/accountService";
 import CameraAltOutlinedIcon from "@mui/icons-material/CameraAltOutlined";
 import DialogComponent from "../../components/DialogComponent";
-import Loading from "../../components/Loading";
 import { storage } from "../../apis/config/firebaseConfig";
 import { v4 as uuid } from "uuid";
 
