@@ -1,15 +1,17 @@
-import React, { useState, useEffect } from "react";
-import { Container, Stack, Typography, Box, IconButton, Divider } from "@mui/material";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { useNavigate } from "react-router-dom";
-import PostCard from "../../pages/MyBoardListPage/PostCard"; 
-import { usePrincipalState } from "../../store/usePrincipalState"; 
+import {
+    Container,
+    Stack,
+    Typography,
+    Box,
+    Divider,
+} from "@mui/material";
+import { usePrincipalState } from "../../store/usePrincipalState";
 import { getBoardListByUserId } from "../../apis/board/boardService";
 import { useQuery } from "@tanstack/react-query";
+import PostCard from "../BoardListPage/PostCard";
 
 function MyBoardListPage() {
-    const navigate = useNavigate();
-    const { principal } = usePrincipalState(); 
+    const { principal } = usePrincipalState();
 
     const { data: response, isLoading } = useQuery({
         queryKey: ["getBoardListByUserId", principal?.userId],
@@ -24,7 +26,11 @@ function MyBoardListPage() {
 
     return (
         <Container>
-            <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
+            <Stack
+                direction="row"
+                alignItems="center"
+                spacing={1}
+                sx={{ mb: 2 }}>
                 <Typography variant="h6" sx={{ fontWeight: "bold" }}>
                     작성한 게시물 관리
                 </Typography>
@@ -34,15 +40,14 @@ function MyBoardListPage() {
 
             <Stack spacing={2}>
                 {respData.length > 0 ? (
-                    respData.map((post) => (
-                        <PostCard
-                            key={post.boardId}
-                            post={post}
-                        />
+                    respData.map((board) => (
+                        <PostCard key={board.boardId} board={board} />
                     ))
                 ) : (
                     <Box sx={{ py: 10, textAlign: "center" }}>
-                        <Typography color="text.secondary">작성한 게시물이 없습니다.</Typography>
+                        <Typography color="text.secondary">
+                            작성한 게시물이 없습니다.
+                        </Typography>
                     </Box>
                 )}
             </Stack>

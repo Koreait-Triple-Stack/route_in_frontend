@@ -3,7 +3,9 @@ import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import {
+    Avatar,
     Box,
+    Button,
     Container,
     Divider,
     Paper,
@@ -27,7 +29,8 @@ import PostCard from "../BoardListPage/PostCard";
 
 export default function UserDetailPage() {
     const navigate = useNavigate();
-
+    const queryClient = useQueryClient();
+  
     const { userId: userIdParam } = useParams();
     const profileUserId = Number(userIdParam);
 

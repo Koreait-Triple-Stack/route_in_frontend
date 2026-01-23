@@ -1,9 +1,12 @@
 import React, { useState } from "react";
-import { Box, Typography, TextField, Button } from "@mui/material";
-import { changeBodyInfoRequest } from "../../apis/account/accountApi";
-import OverlayWrapper from "./OverlayWrapper";
+import { TextField, Button, DialogActions, Dialog, DialogTitle, DialogContent } from "@mui/material";
+import { changeBodyInfo } from "../../apis/account/accountService";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useToastStore } from "../../store/useToastStore";
 
 const BodyInfoForm = ({ userId, onClose }) => {
+    const queryClient = useQueryClient();
+    const { show } = useToastStore();
     const [bodyInfo, setBodyInfo] = useState({
         height: "",
         weight: "",
@@ -17,42 +20,25 @@ const BodyInfoForm = ({ userId, onClose }) => {
         }));
     };
 
-    const handleSubmit = () => {
-        if (!bodyInfo.height || !bodyInfo.weight) {
-            alert("모든 항목을 입력해주세요.");
-            return;
-        }
-
-        if (!confirm("신체정보를 변경하시겠습니까?")) return;
-
-        changeBodyInfoRequest({
+    const updateMutation = useMutation({
+        mutationFn: (bodyInfo) => changeBodyInfo({
             userId: userId,
-            height: Number(bodyInfo.height),
-            weight: Number(bodyInfo.weight),
-        })
-            .then((response) => {
-                if (response.status === "success") {
-                    alert(response.message);
-                    onClose();
-                } else {
-                    alert(response.message);
-                }
-            })
-            .catch(() => {
-                alert("문제가 발생했습니다. 다시 시도해주세요.");
-            });
-    };
+            ...bodyInfo
+        }),
+        onSuccess: (res) => {
+            queryClient.invalidateQueries(["getUserByUserId", userId]);
+            show(res.message, "success");
+            onClose();
+        },
+        onError: (error) => {
+            show(error.message, "error");
+        },
+    });
 
     return (
-        <OverlayWrapper title="키/몸무게 변경" onClose={onClose}>
-            <Box component="form" noValidate autoComplete="off" sx={{ mt: 2 }}>
-                <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{ mb: 2 }}>
-                    새로운 신체정보를 입력해주세요.
-                </Typography>
-
+        <Dialog open={true} onClose={onClose} fullWidth maxWidth="xs">
+            <DialogTitle>키/몸무게 변경</DialogTitle>
+            <DialogContent>
                 <TextField
                     fullWidth
                     name="height"
@@ -74,17 +60,18 @@ const BodyInfoForm = ({ userId, onClose }) => {
                     placeholder="숫자만 입력해주세요."
                     sx={{ mb: 3 }}
                 />
-
+            </DialogContent>
+            <DialogActions>
                 <Button
                     variant="contained"
                     fullWidth
                     size="large"
-                    onClick={handleSubmit}
+                    onClick={() => updateMutation.mutate(bodyInfo)}
                     disabled={!bodyInfo.height || !bodyInfo.weight}>
                     변경 완료
                 </Button>
-            </Box>
-        </OverlayWrapper>
+            </DialogActions>
+        </Dialog>
     );
 };
 

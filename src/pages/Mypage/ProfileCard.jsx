@@ -1,5 +1,4 @@
 import {
-    Box,
     Collapse,
     Divider,
     List,
@@ -29,7 +28,6 @@ export default function ProfileCard({
     onNavigate,
     onSetActiveView,
     onLogout,
-    renderOverlayContent,
 }) {
     const itemSx = {
         px: 2,
@@ -43,8 +41,8 @@ export default function ProfileCard({
 
     const subItemSx = {
         ...itemSx,
-        pl: 4, // ✅ 들여쓰기만
-        bgcolor: "transparent", // ✅ 회색 제거
+        pl: 4, 
+        bgcolor: "transparent", 
         "&:hover": { bgcolor: "action.hover" },
     };
 
@@ -68,8 +66,8 @@ export default function ProfileCard({
                     id="profile"
                     sx={{
                         bgcolor: "transparent",
-                        py: 1.5,
-                        px: 2,
+                        py: 1.3,
+                        px: 3,
                         fontSize: 14,
                         fontWeight: 700,
                         color: "text.primary",
@@ -79,7 +77,6 @@ export default function ProfileCard({
                     마이 프로필
                 </ListSubheader>
             }>
-            {renderOverlayContent?.()}
 
             <ProfileHeader user={user} />
 

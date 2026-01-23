@@ -1,63 +1,74 @@
-import React, { useState } from 'react';
-import { Box, Typography, TextField, Button } from "@mui/material";
-import { changeUsernameRequest } from "../../apis/account/accountApi"; 
-import OverlayWrapper from './OverlayWrapper';
+import React, { useState } from "react";
+import { TextField, Button, Dialog, DialogTitle, DialogContent, DialogActions, InputAdornment } from "@mui/material";
+import { useToastStore } from "../../store/useToastStore";
+import { changeUsername, isDuplicatedUsername } from "../../apis/account/accountService";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const UsernameForm = ({ userId, onClose }) => {
+    const queryClient = useQueryClient();
+    const { show } = useToastStore();
     const [username, setUsername] = useState("");
+    const [isDuplicated, setIsDuplicated] = useState(false);
+    const [finalName, setFinalName] = useState("")
 
     const handleChange = (e) => {
         setUsername(e.target.value);
+        if (isDuplicated) {
+            setIsDuplicated(false);
+        }
     };
 
-    const handleSubmit = () => {
-        if (!confirm("username을 변경하시겠습니까?")) return;
+    const updateMutation = useMutation({
+        mutationFn: (username) => changeUsername({ userId: userId, username: username }),
+        onSuccess: (res) => {
+            queryClient.invalidateQueries(["getUserByUserId", userId]);
+            show(res.message, "success");
+            onClose();
+        },
+        onError: (error) => {
+            show(error.message, "error");
+        },
+    });
 
-        changeUsernameRequest({
-            userId: userId,
-            username: username,
-        })
-        .then((response) => {
-            if (response.status === "success") {
-                alert(response.message);
-                onClose(); 
-            } else {
-                alert(response.message);
-            }
-        })
-        .catch(() => {
-            alert("문제가 발생했습니다. 다시 시도해주세요.");
-        });
+    const duplicatedHandler = async () => {
+        const response = await isDuplicatedUsername(username);
+        if (response?.data) {
+            show("이미 있는 닉네임입니다.", "error");
+        } else {
+            setIsDuplicated(true);
+            setFinalName(username);
+        }
     };
 
     return (
-        <OverlayWrapper title="닉네임 변경" onClose={onClose}>
-            <Box component="form" noValidate autoComplete="off" sx={{ mt: 2 }}>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                    새로운 닉네임을 입력해주세요.
-                </Typography>
-                
+        <Dialog open={true} onClose={onClose} fullWidth maxWidth="xs">
+            <DialogTitle>닉네임 변경</DialogTitle>
+
+            <DialogContent>
                 <TextField
-                    fullWidth
-                    label="새 닉네임"
-                    variant="outlined"
                     value={username}
                     onChange={handleChange}
                     placeholder="새 닉네임을 입력해주세요."
-                    sx={{ mb: 3 }}
+                    fullWidth
+                    InputProps={{
+                        endAdornment: (
+                            <InputAdornment position="end">
+                                <Button onClick={duplicatedHandler} disabled={isDuplicated}>중복확인</Button>
+                            </InputAdornment>
+                        ),
+                    }}
                 />
+            </DialogContent>
 
-                <Button 
-                    variant="contained" 
-                    fullWidth 
-                    size="large"
-                    onClick={handleSubmit}
-                    disabled={!username} 
-                >
+            <DialogActions sx={{ p: 2 }}>
+                <Button onClick={onClose} color="inherit">
+                    취소
+                </Button>
+                <Button variant="contained" onClick={() => updateMutation.mutate(username)} disabled={!isDuplicated || username !== finalName}>
                     변경 완료
                 </Button>
-            </Box>
-        </OverlayWrapper>
+            </DialogActions>
+        </Dialog>
     );
 };
 
