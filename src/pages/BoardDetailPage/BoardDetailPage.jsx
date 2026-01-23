@@ -25,6 +25,8 @@ function BoardDetailPage() {
         content: "",
         type: "",
         tags: [],
+        course: null,
+        routines: null,
     });
 
     const {
@@ -75,15 +77,19 @@ function BoardDetailPage() {
                     overflow: "hidden",
                     bgcolor: "white",
                     borderColor: "divider",
-                }}
-            >
+                }}>
                 {/* 상단 헤더 */}
-                <Header boardData={boardData} setOpenCopy={setOpenCopy} boardId={boardId} />
+                <Header
+                    boardData={boardData}
+                    setOpenCopy={setOpenCopy}
+                    boardId={boardId}
+                />
 
                 <Divider />
-                {boardData.type === "COURSE" ? (
-                    <CourseDetail boardId={boardId} />
-                ) : (
+                {boardData.type === "COURSE" && (
+                    <CourseDetail course={boardData.course} />
+                )}
+                {boardData.type === "ROUTINE" && (
                     <>
                         <Stack direction="row" spacing={2} px={2} py={1}>
                             {boardData.tags.map((tag, index) => (
@@ -99,7 +105,7 @@ function BoardDetailPage() {
                             ))}
                         </Stack>
                         <Divider />
-                        <RoutineList boardId={boardId} />
+                        <RoutineList routines={boardData.routines} />
                     </>
                 )}
 

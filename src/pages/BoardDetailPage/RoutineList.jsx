@@ -4,8 +4,16 @@ import { getRoutine } from "../../apis/routine/routineService";
 import Loading from "../../components/Loading";
 import { Chip, Paper, Typography } from "@mui/material";
 
-function RoutineList({boardId}) {
-    const dbDays = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
+function RoutineList({ routines }) {
+    const dbDays = [
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "saturday",
+        "sunday",
+    ];
     const dayMap = {
         monday: "월",
         tuesday: "화",
@@ -16,38 +24,66 @@ function RoutineList({boardId}) {
         sunday: "일",
     };
 
-    const { data: response, isLoading } = useQuery({
-        queryKey: ["getRoutine", null, boardId],
-        queryFn: () => getRoutine(null, boardId),
-        staleTime: 30000,
-        enabled: !!boardId,
-    });
-
-    const respData = response?.data || [];
-
-    if (isLoading) return <Loading />;
-
     return (
-        <Box sx={{p: 1}}>
+        <Box sx={{ p: 1 }}>
             <Stack spacing={2}>
                 {dbDays.map((day) => {
-                    const dayRoutines = respData.filter((r) => r.weekday.toLowerCase() === day.toLowerCase());
+                    const dayRoutines = routines.filter(
+                        (r) => r.weekday.toLowerCase() === day.toLowerCase(),
+                    );
                     return (
-                        <Paper key={day} variant="outlined" sx={{ p: 2, bgcolor: dayRoutines > 0 ? "#f0f7ff" : "white", borderColor: dayRoutines > 0 ? "primary.light" : "grey.300" }}>
-                            <Box sx={{ display: "flex", alignItems: "flex-start", gap: 2 }}>
+                        <Paper
+                            key={day}
+                            variant="outlined"
+                            sx={{
+                                p: 2,
+                                bgcolor: dayRoutines > 0 ? "#f0f7ff" : "white",
+                                borderColor:
+                                    dayRoutines > 0
+                                        ? "primary.light"
+                                        : "grey.300",
+                            }}>
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    alignItems: "flex-start",
+                                    gap: 2,
+                                }}>
                                 <Box width={50} pt={1}>
-                                    <Typography variant="body1" fontWeight="bold" color="text.primary">
+                                    <Typography
+                                        variant="body1"
+                                        fontWeight="bold"
+                                        color="text.primary">
                                         {dayMap[day]}
                                     </Typography>
                                 </Box>
                                 <Box sx={{ flex: 1 }}>
-                                    <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                                        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
-                                            {dayRoutines.map((routine, index) => (
-                                                <Chip key={index} label={routine.exercise} variant="caption" color="text.secondary" />
-                                            ))}
+                                    <Box
+                                        sx={{
+                                            display: "flex",
+                                            flexDirection: "column",
+                                            gap: 2,
+                                        }}>
+                                        <Box
+                                            sx={{
+                                                display: "flex",
+                                                flexWrap: "wrap",
+                                                gap: 1,
+                                            }}>
+                                            {dayRoutines.map(
+                                                (routine, index) => (
+                                                    <Chip
+                                                        key={index}
+                                                        label={routine.exercise}
+                                                        variant="caption"
+                                                        color="text.secondary"
+                                                    />
+                                                ),
+                                            )}
                                             {dayRoutines.length === 0 && (
-                                                <Typography variant="caption" color="text.secondary">
+                                                <Typography
+                                                    variant="caption"
+                                                    color="text.secondary">
                                                     등록된 운동이 없습니다.
                                                 </Typography>
                                             )}
