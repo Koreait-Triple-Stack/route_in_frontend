@@ -1,24 +1,11 @@
-import React from "react";
 import { Container, Typography, Box, Paper, Stack } from "@mui/material";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import RoutineList from "./RoutineList";
 import { usePrincipalState } from "../../store/usePrincipalState";
 import CourseDetail from "./CourseDetail";
-import { useQuery } from "@tanstack/react-query";
-import { getCourseFavoriteByUserId } from "../../apis/course/courseService";
-import Loading from "../../components/Loading";
 
 const MainPage = () => {
     const { principal } = usePrincipalState();
-
-    const { data: response, isLoading } = useQuery({
-        queryKey: ["getCourseFavoriteByUserId", principal?.userId],
-        queryFn: () => getCourseFavoriteByUserId(principal?.userId),
-        staleTime: 30000,
-        enabled: !!principal?.userId,
-    });
-
-    if (isLoading) return <Loading />;
 
     return (
         <Container>
@@ -51,7 +38,7 @@ const MainPage = () => {
 
                 <RoutineList userId={principal?.userId} />
 
-                <CourseDetail course={response?.data} />
+                <CourseDetail />
             </Stack>
         </Container>
     );
