@@ -59,7 +59,7 @@ function BoardWritePage() {
                 queryKey: ["getBoardListInfinite"],
             });
             show(res.message, "success");
-            navigate("/board");
+            navigate(`/board/detail/${res.data}`);
         },
         onError: (res) => {
             show(res.message, "error");
@@ -74,7 +74,6 @@ function BoardWritePage() {
             show("모든 항목을 입력해주세요.", "error");
             return;
         }
-        console.log(form)
 
         const payload = {
             title: form.title.trim(),
