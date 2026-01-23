@@ -48,7 +48,7 @@ function PostCard({ board }) {
                                 bgcolor:
                                     board.type === "COURSE"
                                         ? "#ff7961"
-                                        : "#757de8",
+                                        : "#2196f3",
                             }}
                         />
                         <Chip
@@ -83,7 +83,10 @@ function PostCard({ board }) {
                 <Typography fontWeight={700}>{board.title}</Typography>
 
                 <Stack direction="row" spacing={1} alignItems="center">
-                    <Avatar sx={{ width: 32, height: 32 }} />
+                    <Avatar
+                        sx={{ width: 32, height: 32 }}
+                        src={board.profileImg}
+                    />
                     <Typography variant="body2">
                         {board.username} ·{" "}
                         {Math.floor(
