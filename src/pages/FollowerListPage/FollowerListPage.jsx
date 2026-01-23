@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { usePrincipalState } from "../../store/usePrincipalState";
 import { Box, Container, Stack } from "@mui/system";
 import { Chip, Divider, Paper, Typography } from "@mui/material";
+import Loading from "../../components/Loading";
 
 function FollowerListPage() {
     const { principal } = usePrincipalState();
@@ -15,7 +16,7 @@ function FollowerListPage() {
 
     const respData = response?.data;
 
-    if (isLoading) return <div>로딩중...</div>;
+    if (isLoading) return <Loading />;
 
     return (
         <Container>
@@ -31,6 +32,7 @@ function FollowerListPage() {
                 {respData.length > 0 ? (
                     respData.map((f) => (
                         <Paper
+                            key={f.userId}
                             elevation={1}
                             sx={{
                                 p: 2,
@@ -48,7 +50,6 @@ function FollowerListPage() {
                                     transform: "scale(0.98)",
                                 },
                             }}
-                            key={f.followId}
                         >
                             <Stack spacing={1.5}>
                                 <Box

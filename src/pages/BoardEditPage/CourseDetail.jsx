@@ -1,12 +1,8 @@
 import { useCourseMap } from "../../hooks/useCourseMap";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button, Divider, Paper, Typography } from "@mui/material";
 import { Box, Stack } from "@mui/system";
-import Loading from "../../components/Loading";
-import { useQuery } from "@tanstack/react-query";
-import { usePrincipalState } from "../../store/usePrincipalState";
-import { getCourseFavoriteByUserId } from "../../apis/course/courseService";
-import ErrorComponent from "../../components/ErrorComponent";
+import CourseEdit from "./CourseEdit";
 
 function DetailRow({ label, value, valueColor }) {
     return (
@@ -33,20 +29,11 @@ function DetailRow({ label, value, valueColor }) {
     );
 }
 
-function CourseDetail() {
-    const { principal } = usePrincipalState();
+function CourseDetail({ course, setCourse }) {
+    const [isEditing, setIsEditing] = useState(false);
     const { mapRef, map, kakaoObj, setPoints } = useCourseMap({
         enableClickAdd: false,
     });
-
-    const { data: response, isLoading, error } = useQuery({
-        queryKey: ["getCourseFavoriteByUserId", principal?.userId],
-        queryFn: () => getCourseFavoriteByUserId(principal?.userId),
-        staleTime: 30000,
-        enabled: !!principal?.userId,
-    });
-
-    const course = response?.data || {};
 
     useEffect(() => {
         if (!kakaoObj || !map || !course) return;
@@ -64,8 +51,6 @@ function CourseDetail() {
 
         const onResize = () => {
             kakaoObj.maps.event.trigger(map, "resize");
-            // 필요하면 현재 경로를 화면에 맞추기:
-            // fitBoundsToCourse();
         };
 
         window.addEventListener("resize", onResize);
@@ -73,48 +58,13 @@ function CourseDetail() {
     }, [map, kakaoObj]);
 
     useEffect(() => {
-        if (course) {
-            setPoints(
-                course?.points?.map((point) => ({
-                    lat: Number(point.lat),
-                    lng: Number(point.lng),
-                })),
-            );
-        }
-    }, [course]);
-
-    if (isLoading) return <Loading />;
-    if (error) return <ErrorComponent error={error} />
-
-    if (!response?.data)
-        return (
-            <Paper
-                elevation={0}
-                sx={{
-                    p: 3,
-                    borderRadius: 2,
-                    border: "1px dashed",
-                    borderColor: "divider",
-                    bgcolor: "background.paper",
-                    textAlign: "center",
-                }}>
-                <Stack spacing={0.5}>
-                    <Typography sx={{ fontWeight: 800 }}>
-                        즐겨찾기한 러닝 코스가 없어요
-                    </Typography>
-                    <Typography
-                        variant="body2"
-                        sx={{ color: "text.secondary", mt: 0.5 }}>
-                        러닝 코스를 즐겨찾기하면 여기에 표시됩니다.
-                    </Typography>
-                    <Button
-                        variant="contained"
-                        onClick={() => navigate("/mypage/course")}>
-                        내 러닝 코스 관리로 이동
-                    </Button>
-                </Stack>
-            </Paper>
+        setPoints(
+            course?.points?.map((point) => ({
+                lat: Number(point.lat),
+                lng: Number(point.lng),
+            })),
         );
+    }, [course]);
 
     return (
         <Paper
@@ -126,9 +76,9 @@ function CourseDetail() {
                 border: "1px solid",
                 borderColor: "divider",
                 width: "100%",
+                maxWidth: { xs: "100%", sm: 520 },
                 mx: { xs: 0, sm: "auto" },
-            }}
-            key={course.courseId}>
+            }}>
             {/* 지도 영역 */}
             <Box
                 sx={{
@@ -157,31 +107,48 @@ function CourseDetail() {
                                 lineHeight: 1.2,
                                 wordBreak: "keep-all",
                             }}>
-                            {course.courseName}
+                            {course?.courseName ?? "-"}
                         </Typography>
 
                         <Divider />
                     </Stack>
-                    <Box
-                        sx={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                        }}>
-                        <DetailRow
-                            label="거리"
-                            value={course.distanceM}
-                            valueColor="primary.main"
-                        />
-                    </Box>
-                    <Box
-                        sx={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                        }}>
-                        <DetailRow label="지역" value={course.region} />
+                    <Box display="flex" justifyContent="space-between" alignItems="center">
+                        <Stack spacing={1.2}>
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                }}>
+                                <DetailRow
+                                    label="거리"
+                                    value={course?.distanceM ?? 0}
+                                    valueColor="primary.main"
+                                />
+                            </Box>
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                }}>
+                                <DetailRow
+                                    label="지역"
+                                    value={course?.region ?? "-"}
+                                />
+                            </Box>
+                        </Stack>
+                        <Button onClick={() => setIsEditing(true)}>수정</Button>
                     </Box>
                 </Box>
             </Box>
+            {isEditing && (
+                <Box>
+                    <CourseEdit
+                        course={course}
+                        setCourse={setCourse}
+                        isEditing={() => setIsEditing(false)}
+                    />
+                </Box>
+            )}
         </Paper>
     );
 }

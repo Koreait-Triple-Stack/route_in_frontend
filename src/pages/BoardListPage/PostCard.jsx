@@ -1,8 +1,9 @@
 import { Avatar, Chip, Paper, Typography } from "@mui/material";
 import { Box, Stack } from "@mui/system";
 import React from "react";
-import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import { useNavigate } from "react-router-dom";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import { timeAgo } from "../../apis/utils/time";
 
 function PostCard({ board }) {
     const year = new Date().getFullYear();
@@ -43,27 +44,50 @@ function PostCard({ board }) {
                                     : "운동루틴"
                             }
                             size="small"
+                            sx={{
+                                color: "white",
+                                bgcolor:
+                                    board.type === "COURSE"
+                                        ? "#ff7961"
+                                        : "#2196f3",
+                            }}
                         />
                         <Chip
                             size="small"
-                            icon={<ThumbUpAltIcon />}
-                            label={board.recommendCnt}
+                            icon={<FavoriteIcon />}
+                            label={`추천 ${board.recommendCnt}`}
                             sx={{
-                                px: 0.5,
-                                "& .MuiChip-icon": { fontSize: 16 },
-                                "& .MuiChip-label": { fontSize: 12, px: 1 },
+                                px: 0.8,
+                                bgcolor: "transparent",
+                                borderRadius: "999px",
+
+                                "& .MuiChip-icon": {
+                                    fontSize: 18,
+                                    color: "#ff4d4f", // 하트 색
+                                    ml: 0.5,
+                                },
+
+                                "& .MuiChip-label": {
+                                    fontSize: 13,
+                                    fontWeight: 900,
+                                    px: 1,
+                                    color: "text.primary",
+                                },
                             }}
                         />
                     </Stack>
                     <Typography variant="caption" color="text.secondary">
-                        {board.createDt.split("T")[0]}
+                        {timeAgo(board.createDt)}
                     </Typography>
                 </Box>
 
                 <Typography fontWeight={700}>{board.title}</Typography>
 
                 <Stack direction="row" spacing={1} alignItems="center">
-                    <Avatar sx={{ width: 32, height: 32 }} />
+                    <Avatar
+                        sx={{ width: 32, height: 32 }}
+                        src={board.profileImg}
+                    />
                     <Typography variant="body2">
                         {board.username} ·{" "}
                         {Math.floor(
@@ -82,7 +106,10 @@ function PostCard({ board }) {
                 ) : (
                     <Stack direction="row" spacing={1} flexWrap="wrap">
                         <Chip label={board.tags[0]} size="small" />
-                        <Chip label={`${Math.round((board.tags[1] ?? 0) / 100) / 10} km`} size="small" />
+                        <Chip
+                            label={`${Math.round((board.tags[1] ?? 0) / 100) / 10} km`}
+                            size="small"
+                        />
                     </Stack>
                 )}
             </Stack>

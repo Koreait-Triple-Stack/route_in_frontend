@@ -31,7 +31,10 @@ function DialogComponent({open, setOpen, title, content, onClick}) {
                 <Button
                     fullWidth
                     variant="contained"
-                    onClick={onClick}
+                    onClick={() => {
+                        onClick()
+                        setOpen(false);
+                    }}
                     sx={{ borderRadius: 2, py: 1.1, fontWeight: 900 }}>
                     확인
                 </Button>

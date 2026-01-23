@@ -20,6 +20,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useToastStore } from "../../store/useToastStore";
 import UserAvatarLink from "../../components/UserAvatarLink";
+import HeaderRecommend from "./HeaderRecommend";
 
 function Header({ boardData, setOpenCopy, boardId }) {
     const { show } = useToastStore();
@@ -127,29 +128,11 @@ function Header({ boardData, setOpenCopy, boardId }) {
 
                 <Stack direction="row" alignItems="center" spacing={0.8}>
                     {/* 추천수 pill */}
-                    <ToggleButton
-                        value="recommend"
-                        selected={recommended}
-                        onChange={() => changeRecommendMutation.mutate()}
-                        sx={{
-                            borderRadius: "999px",
-                            px: 1,
-                            py: 0.6,
-                            fontWeight: 900,
-                            minWidth: 64, // ✅ 고정폭
-                            display: "flex",
-                            gap: 0.3,
-                        }}>
-                        <ThumbUpAltIcon sx={{ fontSize: 18 }} />
-                        <Box
-                            sx={{
-                                fontSize: 13,
-                                minWidth: 25,
-                                textAlign: "center",
-                            }}>
-                            {recommendList?.data?.length ?? 0}
-                        </Box>
-                    </ToggleButton>
+                    <HeaderRecommend
+                        recommended={recommended}
+                        changeRecommendMutation={changeRecommendMutation}
+                        recommendList={recommendList}
+                    />
 
                     {/* 점 3개 */}
                     <IconButton
@@ -234,7 +217,8 @@ function Header({ boardData, setOpenCopy, boardId }) {
                             color: "text.secondary",
                             fontSize: 12,
                         }}>
-                        {boardData?.createDt?.split("T")[0] ?? "-"}
+                        {boardData?.createDt?.split("T")[0].replaceAll("-", ".")}{". "}
+                        {boardData?.createDt?.split("T")[1].slice(0, 5)}
                     </Typography>
                 </Stack>
             </Stack>

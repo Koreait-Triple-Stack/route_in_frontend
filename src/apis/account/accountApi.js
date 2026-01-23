@@ -23,3 +23,7 @@ export const changeAddressRequest = async (data) => {
 export const changeBodyInfoRequest = async (data) => {
     return await instance.post("/user/account/change/bodyInfo", data);
 };
+
+export const changeProfileImgRequest = async (data) => {
+    return await instance.post("/user/account/change/profileImg", data);
+};
