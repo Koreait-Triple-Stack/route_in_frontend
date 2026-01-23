@@ -31,6 +31,7 @@ import { usePrincipalState } from "../../store/usePrincipalState";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Container } from "@mui/system";
 import { addInBody, deleteInBody, getInBodyListByUserId } from "../../apis/inBody/inBodyService";
+import Loading from "../../components/Loading";
 
 const CustomizedLabel = (props) => {
     const { x, y, stroke, value } = props;
@@ -63,7 +64,6 @@ export default function InbodyChartWithActions() {
 
     const {
         data: response,
-        error,
         isLoading,
     } = useQuery({
         queryFn: () => getInBodyListByUserId(principal.userId),
@@ -145,8 +145,7 @@ export default function InbodyChartWithActions() {
     };
 
 
-    if (isLoading) return <div>로딩중</div>;
-    if (error) return <div>error.message</div>;
+    if (isLoading) return <Loading />;
 
     const inBodyList = response?.data || [];
 
@@ -183,8 +182,8 @@ export default function InbodyChartWithActions() {
                 </Stack>
             </Stack>
 
-            <Box sx={{ height: 350 }}>
-                <ResponsiveContainer width="100%" height="100%">
+            <Box>
+                <ResponsiveContainer width="100%" height="350">
                     <LineChart
                         data={recentData}
                         margin={{
