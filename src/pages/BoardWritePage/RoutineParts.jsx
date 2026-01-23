@@ -11,7 +11,6 @@ function RoutineParts({ form, setForm, setRoutine }) {
             return { ...prev, parts: nextParts };
         });
     };
-    
     const dbDays = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
     const dayMap = {
         monday: "월",
@@ -22,7 +21,7 @@ function RoutineParts({ form, setForm, setRoutine }) {
         saturday: "토",
         sunday: "일",
     };
-    
+
     return (
         <Box>
             <Stack spacing={1.2}>
@@ -75,20 +74,20 @@ function RoutineParts({ form, setForm, setRoutine }) {
                     })}
                 </Box>
                 <Stack spacing={2}>
-                        {dbDays.map((day) => {
-                            const dayRoutines = form.routines.filter((r) => r.weekday === day);
-                            return (
-                                <ScheduleItem
-                                    key={day}
-                                    dayEng={day}         
-                                    day={dayMap[day]}    
-                                    routines={dayRoutines} 
-                                    onSave={(localRoutine) => setRoutine(day, localRoutine)}
-                                    onReset={() => setRoutine(day, [])}  
-                                />
-                            );
-                        })}
-                    </Stack>
+                    {dbDays.map((day) => {
+                        const dayRoutines = form.routines.filter((r) => r.weekday === day);
+                        return (
+                            <ScheduleItem
+                                key={day}
+                                dayEng={day}
+                                day={dayMap[day]}
+                                routines={dayRoutines}
+                                onSave={(localRoutine) => setRoutine(day, localRoutine)}
+                                onReset={() => setRoutine(day, [])}
+                            />
+                        );
+                    })}
+                </Stack>
             </Stack>
         </Box>
     );
