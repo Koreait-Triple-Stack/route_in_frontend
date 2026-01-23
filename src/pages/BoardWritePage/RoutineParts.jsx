@@ -1,8 +1,9 @@
 import { Paper, ToggleButton, Typography } from "@mui/material";
 import { Box, Stack } from "@mui/system";
 import { EXERCISE_PARTS } from "../../constants/exerciseParts";
+import ScheduleItem from "./ScheduleItem";
 
-function RoutineParts({ form, setForm }) {
+function RoutineParts({ form, setForm, setRoutine }) {
     const togglePart = (part) => {
         setForm((prev) => {
             const nextParts = prev.tags?.includes(part) ? prev.parts.filter((t) => t !== part) : [...prev.parts, part];
@@ -10,6 +11,7 @@ function RoutineParts({ form, setForm }) {
             return { ...prev, parts: nextParts };
         });
     };
+    
     const dbDays = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
     const dayMap = {
         monday: "월",
@@ -20,7 +22,7 @@ function RoutineParts({ form, setForm }) {
         saturday: "토",
         sunday: "일",
     };
-
+    
     return (
         <Box>
             <Stack spacing={1.2}>
@@ -72,23 +74,21 @@ function RoutineParts({ form, setForm }) {
                         );
                     })}
                 </Box>
-                <Box sx={{ p: 1 }}>
-                    <Stack spacing={2}>
+                <Stack spacing={2}>
                         {dbDays.map((day) => {
+                            const dayRoutines = form.routines.filter((r) => r.weekday === day);
                             return (
-                                <Paper key={day} variant="outlined" sx={{ p: 2, bgcolor: "#f7f8f8", borderColor: "white" }}>
-                                    <Box sx={{ display: "flex", alignItems: "flex-start", gap: 2 }}>
-                                        <Box width={50} pt={1}>
-                                            <Typography variant="body1" fontWeight="bold" color="text.primary">
-                                                {dayMap[day]}
-                                            </Typography>
-                                        </Box>
-                                    </Box>
-                                </Paper>
+                                <ScheduleItem
+                                    key={day}
+                                    dayEng={day}         
+                                    day={dayMap[day]}    
+                                    routines={dayRoutines} 
+                                    onSave={(localRoutine) => setRoutine(day, localRoutine)}
+                                    onReset={() => setRoutine(day, [])}  
+                                />
                             );
                         })}
                     </Stack>
-                </Box>
             </Stack>
         </Box>
     );
