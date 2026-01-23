@@ -3,7 +3,8 @@ import {
     changeUsernameRequest,
     changeAddressRequest,
     changeBodyInfoRequest,
-    getPrincipalRequest
+    getPrincipalRequest,
+    isDuplicatedUsernameRequest
 } from "./accountApi";
 
 export const getPrincipal = async () => {
@@ -21,6 +22,12 @@ export const getUserByUserId = async (userId) => {
 export const changeUsername = async (data) => {
     const result = await changeUsernameRequest(data);
     if (result.data.status !== "success") throw new Error(result.data.message)
+    return result.data;
+};
+
+export const isDuplicatedUsername = async (username) => {
+    const result = await isDuplicatedUsernameRequest(username);
+    if (result.data.status !== "success") throw new Error(result.data.message);
     return result.data;
 };
 

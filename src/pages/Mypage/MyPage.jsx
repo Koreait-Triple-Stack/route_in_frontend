@@ -61,6 +61,7 @@ function MyPage() {
 
     return (
         <Container>
+            {renderOverlayContent()}
             <ProfileCard
                 user={user}
                 open={open}
@@ -68,7 +69,6 @@ function MyPage() {
                 onNavigate={navigate}
                 onSetActiveView={setActiveView}
                 onLogout={logout}
-                renderOverlayContent={renderOverlayContent}
             />
         </Container>
     );
