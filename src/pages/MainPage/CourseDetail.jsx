@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { usePrincipalState } from "../../store/usePrincipalState";
 import { getCourseFavoriteByUserId } from "../../apis/course/courseService";
 import ErrorComponent from "../../components/ErrorComponent";
+import { useNavigate } from "react-router-dom";
 
 function DetailRow({ label, value, valueColor }) {
     return (
@@ -38,6 +39,7 @@ function CourseDetail() {
     const { mapRef, map, kakaoObj, setPoints } = useCourseMap({
         enableClickAdd: false,
     });
+    const navigate = useNavigate()
 
     const { data: response, isLoading, error } = useQuery({
         queryKey: ["getCourseFavoriteByUserId", principal?.userId],

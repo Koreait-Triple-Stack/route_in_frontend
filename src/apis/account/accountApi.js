@@ -27,3 +27,7 @@ export const changeBodyInfoRequest = async (data) => {
 export const changeProfileImgRequest = async (data) => {
     return await instance.post("/user/account/change/profileImg", data);
 };
+
+export const withdrawRequest = async () => {
+    return await instance.post("/user/account/withdraw");
+};

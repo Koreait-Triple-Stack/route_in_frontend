@@ -11,12 +11,12 @@ import {
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToastStore } from "../../store/useToastStore";
 import { useRef, useState } from "react";
-import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+// import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { changeProfileImg } from "../../apis/account/accountService";
 import CameraAltOutlinedIcon from "@mui/icons-material/CameraAltOutlined";
 import DialogComponent from "../../components/DialogComponent";
-import { storage } from "../../apis/config/firebaseConfig";
-import { v4 as uuid } from "uuid";
+// import { storage } from "../../apis/config/firebaseConfig";
+// import { v4 as uuid } from "uuid";
 
 export default function ProfileHeader({ user }) {
     const { show } = useToastStore();
