@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Loading from "../../components/Loading";
 import { timeAgo } from "../../apis/utils/time";
+import { Avatar } from "@mui/material";
 
 function NotificationPage() {
     const { principal } = usePrincipalState();
@@ -114,8 +115,32 @@ function NotificationPage() {
                                     gap: 1.5,
                                     cursor: "pointer",
                                 }}>
+                                <Avatar
+                                    src={n?.profileImg}
+                                    sx={{
+                                        width: 44,
+                                        height: 44,
+                                        fontWeight: 800,
+                                        bgcolor: "grey.200",
+                                    }}>
+                                </Avatar>
                                 {/* 텍스트 */}
                                 <Box sx={{ flex: 1, minWidth: 0 }}>
+                                    {n.title && (
+                                        <Typography
+                                            variant="subtitle2"
+                                            sx={{
+                                                fontWeight: 800,
+                                                lineHeight: 1.2,
+                                                mb: 0.3,
+                                                overflow: "hidden",
+                                                textOverflow: "ellipsis",
+                                                whiteSpace: "nowrap",
+                                            }}>
+                                            {n.title}
+                                        </Typography>
+                                    )}
+
                                     <Typography
                                         variant="body2"
                                         sx={{
@@ -134,7 +159,6 @@ function NotificationPage() {
                                         sx={{
                                             color: "text.disabled",
                                             display: "block",
-                                            mt: 0.6,
                                         }}>
                                         {timeAgo(n.createDt)}
                                     </Typography>
@@ -145,9 +169,7 @@ function NotificationPage() {
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         onDeleteOne(n.notificationId);
-                                    
-                                    }
-                                    }
+                                    }}
                                     sx={{
                                         borderRadius: 2,
                                         borderColor: "divider",

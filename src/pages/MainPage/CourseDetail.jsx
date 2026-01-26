@@ -1,5 +1,5 @@
 import { useCourseMap } from "../../hooks/useCourseMap";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button, Divider, Paper, Typography } from "@mui/material";
 import { Box, Stack } from "@mui/system";
 import Loading from "../../components/Loading";
@@ -45,10 +45,14 @@ function CourseDetail() {
         queryKey: ["getCourseFavoriteByUserId", principal?.userId],
         queryFn: () => getCourseFavoriteByUserId(principal?.userId),
         staleTime: 30000,
-        enabled: !!principal?.userId,
     });
+    const [course, setCourse] = useState(null);
 
-    const course = response?.data || {};
+    useEffect(() => {
+        if (!isLoading) {
+            setCourse(response.data)
+        }
+    }, [response, isLoading])
 
     useEffect(() => {
         if (!kakaoObj || !map || !course) return;
@@ -62,19 +66,7 @@ function CourseDetail() {
     }, [kakaoObj, map, course]);
 
     useEffect(() => {
-        if (!map || !kakaoObj) return;
-
-        const onResize = () => {
-            kakaoObj.maps.event.trigger(map, "resize");
-            // 필요하면 현재 경로를 화면에 맞추기:
-            // fitBoundsToCourse();
-        };
-
-        window.addEventListener("resize", onResize);
-        return () => window.removeEventListener("resize", onResize);
-    }, [map, kakaoObj]);
-
-    useEffect(() => {
+        if (!course?.points) return;
         if (course) {
             setPoints(
                 course?.points?.map((point) => ({
@@ -83,12 +75,12 @@ function CourseDetail() {
                 })),
             );
         }
-    }, [course]);
+    }, [course, setPoints]);
 
     if (isLoading) return <Loading />;
     if (error) return <ErrorComponent error={error} />
 
-    if (!response?.data)
+    if (!course)
         return (
             <Paper
                 elevation={0}
