@@ -13,10 +13,14 @@ function ToastProvider() {
     return (
         <Snackbar
             open={open}
-            autoHideDuration={2000}
+            autoHideDuration={3500}
             onClose={handleClose}
             anchorOrigin={{ vertical: "top", horizontal: "center" }}>
-            <Alert severity={severity} variant="filled" onClose={handleClose}>
+            <Alert
+                severity={severity}
+                variant="filled"
+                onClose={handleClose}
+                >
                 {message}
             </Alert>
         </Snackbar>

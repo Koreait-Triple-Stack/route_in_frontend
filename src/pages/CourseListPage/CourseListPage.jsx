@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Box, Container, Stack } from "@mui/system";
 import { usePrincipalState } from "../../store/usePrincipalState";
-import { changeCourseFavorite, deleteCourse, getCourseListByUserId } from "../../apis/course/courseService";
+import {
+    changeCourseFavorite,
+    deleteCourse,
+    getCourseListByUserId,
+} from "../../apis/course/courseService";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, Divider, Typography } from "@mui/material";
 import CourseDetail from "./CourseDetail";
@@ -17,19 +21,70 @@ function CourseListPage() {
         queryFn: () => getCourseListByUserId(principal?.userId),
         staleTime: 30000,
         enabled: !!principal?.userId,
+        placeholderData: (prev) => prev,
     });
-
-    const [courseList, setCourseList] = useState([]);
+    const courseList = response?.data ?? [];
 
     const deleteMutation = useMutation({
         mutationFn: deleteCourse,
-        onSuccess: () => queryClient.invalidateQueries(["getCourseListByUserId", principal?.userId]),
-        onError: () => setCourseList([]),
+        onSuccess: () =>
+            queryClient.invalidateQueries([
+                "getCourseListByUserId",
+                principal?.userId,
+            ]),
     });
 
     const changeMutation = useMutation({
         mutationFn: changeCourseFavorite,
-        onSuccess: () => queryClient.invalidateQueries(["getCourseListByUserId", principal?.userId]),
+
+        onMutate: async ({ courseId }) => {
+            await queryClient.cancelQueries({
+                queryKey: ["getCourseListByUserId", principal?.userId],
+            });
+            const prev = queryClient.getQueryData([
+                "getCourseListByUserId",
+                principal?.userId,
+            ]);
+
+            queryClient.setQueryData(
+                ["getCourseListByUserId", principal?.userId],
+                (old) => {
+                    if (!old?.data) return old;
+
+                    const wasFav = old.data.find(
+                        (c) => c.courseId === courseId,
+                    )?.favorite;
+
+                    return {
+                        ...old,
+                        data: old.data.map((c) => ({
+                            ...c,
+                            favorite: wasFav ? false : c.courseId === courseId, // ✅ 이미 즐겨찾기면 해제, 아니면 그거만 true
+                        })),
+                    };
+                },
+            );
+
+            return { prev };
+        },
+
+        onError: (_e, _v, ctx) =>
+            ctx?.prev &&
+            queryClient.setQueryData(
+                ["getCourseListByUserId", principal?.userId],
+                ctx.prev,
+            ),
+
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ["getCourseListByUserId", principal?.userId],
+                refetchType: "inactive",
+            });
+            queryClient.invalidateQueries({
+                queryKey: ["getCourseFavoriteByUserId", principal?.userId],
+                refetchType: "inactive",
+            });
+        },
     });
 
     const handleDelete = (course) => {
@@ -47,15 +102,21 @@ function CourseListPage() {
         setIsAdd(true);
     };
 
-    useEffect(() => {
-        setCourseList(response?.data);
-    }, [response, isLoading]);
+    // useEffect(() => {
+    //     setCourseList(response?.data);
+    // }, [response, isLoading]);
 
     if (isLoading) return <div>로딩중...</div>;
 
     return (
         <Container>
-            <Stack display="flex" flexDirection="row" justifyContent="space-between" alignItems="center" spacing={1} sx={{ mb: 2 }}>
+            <Stack
+                display="flex"
+                flexDirection="row"
+                justifyContent="space-between"
+                alignItems="center"
+                spacing={1}
+                sx={{ mb: 2 }}>
                 <Typography variant="h6" sx={{ fontWeight: "bold" }}>
                     코스 리스트 관리
                 </Typography>
@@ -68,16 +129,29 @@ function CourseListPage() {
 
             {isAdd && (
                 <Box>
-                    <CourseAdd userId={principal?.userId} isAdd={() => setIsAdd(false)} />
+                    <CourseAdd
+                        userId={principal?.userId}
+                        isAdd={() => setIsAdd(false)}
+                    />
                 </Box>
             )}
 
             <Stack spacing={2}>
                 {courseList?.length > 0 ? (
-                    courseList?.map((course) => <CourseDetail key={course.courseId} course={course} onDelete={handleDelete} onChecked={handleChecked} checked={course.favorite ? false : true} />)
+                    courseList?.map((course) => (
+                        <CourseDetail
+                            key={course.courseId}
+                            course={course}
+                            onDelete={handleDelete}
+                            onChecked={handleChecked}
+                            checked={course.favorite}
+                        />
+                    ))
                 ) : (
                     <Box sx={{ py: 10, textAlign: "center" }}>
-                        <Typography color="text.secondary">코스 리스트가 없습니다.</Typography>
+                        <Typography color="text.secondary">
+                            코스 리스트가 없습니다.
+                        </Typography>
                     </Box>
                 )}
             </Stack>
