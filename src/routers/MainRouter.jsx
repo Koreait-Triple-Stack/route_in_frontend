@@ -16,76 +16,85 @@ import { useQuery } from "@tanstack/react-query";
 import UserDetailPage from "../pages/UserDetailPage/UserDetailPage";
 import FollowingListPage from "../pages/FollowUserListPage/FollowingListPage";
 import FollowerListPage from "../pages/FollowUserListPage/FollowerListPage";
+import ChatRouter from "./ChatRouter";
 
 const RootRoute = () => {
-  const { isLoggedIn } = usePrincipalState();
-  return isLoggedIn ? <MainPage /> : <LandingPage />;
+    const { isLoggedIn } = usePrincipalState();
+    return isLoggedIn ? <MainPage /> : <LandingPage />;
 };
 
 function MainRouter() {
-  return (
-    <>
-      <Layout>
-        <Routes>
-          <Route path="/" element={<RootRoute />} />
-          <Route path="/oauth2/*" element={<OAuth2Router />} />
+    return (
+        <>
+            <Layout>
+                <Routes>
+                    <Route path="/" element={<RootRoute />} />
+                    <Route path="/oauth2/*" element={<OAuth2Router />} />
 
-          <Route
-            path="/board/*"
-            element={
-              <ProtectedRouter>
-                <BoardRouter />
-              </ProtectedRouter>
-            }
-          />
-          <Route
-            path="/notification"
-            element={
-              <ProtectedRouter>
-                <NotificationPage />
-              </ProtectedRouter>
-            }
-          />
-          <Route
-            path="/mypage/*"
-            element={
-              <ProtectedRouter>
-                <MyPageRouter />
-              </ProtectedRouter>
-            }
-          />
-          <Route
-            path="/user/:userId"
-            element={
-              <ProtectedRouter>
-                <UserDetailPage />
-              </ProtectedRouter>
-            }
-          />
-          <Route
-            path="/user/:userId/followers"
-            element={
-              <ProtectedRouter>
-                <FollowerListPage />
-              </ProtectedRouter>
-            }
-          />
-          <Route
-            path="/user/:userId/followings"
-            element={
-              <ProtectedRouter>
-                <FollowingListPage />
-              </ProtectedRouter>
-            }
-          />
-          <Route path="/map" element={<MapView />} />
-          <Route path="/course/*" element={<CourseRouter />} />
-          <Route path="*" element={<NotFoundPage />} />
-          <Route path="/noti" element={<WsTestPage />} />
-        </Routes>
-      </Layout>
-    </>
-  );
+                    <Route
+                        path="/board/*"
+                        element={
+                            <ProtectedRouter>
+                                <BoardRouter />
+                            </ProtectedRouter>
+                        }
+                    />
+                    <Route
+                        path="/notification"
+                        element={
+                            <ProtectedRouter>
+                                <NotificationPage />
+                            </ProtectedRouter>
+                        }
+                    />
+                    <Route
+                        path="/mypage/*"
+                        element={
+                            <ProtectedRouter>
+                                <MyPageRouter />
+                            </ProtectedRouter>
+                        }
+                    />
+                    <Route
+                        path="/user/:userId"
+                        element={
+                            <ProtectedRouter>
+                                <UserDetailPage />
+                            </ProtectedRouter>
+                        }
+                    />
+                    <Route
+                        path="/user/:userId/followers"
+                        element={
+                            <ProtectedRouter>
+                                <FollowerListPage />
+                            </ProtectedRouter>
+                        }
+                    />
+                    <Route
+                        path="/user/:userId/followings"
+                        element={
+                            <ProtectedRouter>
+                                <FollowingListPage />
+                            </ProtectedRouter>
+                        }
+                    />
+                    <Route
+                        path="/chat/*"
+                        element={
+                            <ProtectedRouter>
+                                <ChatRouter />
+                            </ProtectedRouter>
+                        }
+                    />
+                    <Route path="/map" element={<MapView />} />
+                    <Route path="/course/*" element={<CourseRouter />} />
+                    <Route path="*" element={<NotFoundPage />} />
+                    <Route path="/noti" element={<WsTestPage />} />
+                </Routes>
+            </Layout>
+        </>
+    );
 }
 
 export default MainRouter;

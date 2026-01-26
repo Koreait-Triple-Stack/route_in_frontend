@@ -1,15 +1,19 @@
 import { Box, Container } from "@mui/system";
 import BasicBottomNav from "./BasicBottomNav";
+import { useLocation } from "react-router-dom";
 
 const NAV_H = 56;
 
 function Layout({ children }) {
+    const location = useLocation();
+
+    const isChatRoom = location.pathname.includes("/chat/room");
     return (
         <Box sx={{ height: "100svh" }}>
             <Container
                 maxWidth="sm"
                 disableGutters
-                sx={{ height: "100%", py: 1 }}>
+                sx={{ height: "100%", py: isChatRoom ? 0 : 1 }}>
                 <Box
                     id="app-scroll"
                     sx={{
