@@ -11,6 +11,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getUserByUserId } from "../../apis/account/accountService";
 import Loading from "../../components/Loading";
 import ProfileCard from "./ProfileCard";
+import WithdrawForm from "./WithdrawForm";
 
 function MyPage() {
     const navigate = useNavigate();
@@ -35,6 +36,7 @@ function MyPage() {
         const commonProps = {
             userId: user?.userId,
             onClose: handleCloseOverlay,
+            onLogout: logout
         };
 
         switch (activeView) {
@@ -45,13 +47,7 @@ function MyPage() {
             case "bodyInfo":
                 return <BodyInfoForm {...commonProps} />;
             case "withdraw":
-                return (
-                    <OverlayWrapper
-                        title="회원 탈퇴"
-                        onClose={handleCloseOverlay}>
-                        <Typography>정말 탈퇴하시겠습니까?</Typography>
-                    </OverlayWrapper>
-                );
+                return <WithdrawForm {...commonProps} />
             default:
                 return null;
         }
