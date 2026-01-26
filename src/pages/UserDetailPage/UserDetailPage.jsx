@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -22,30 +23,35 @@ import PostCard from "../BoardListPage/PostCard";
 export default function UserDetailPage() {
     const navigate = useNavigate();
 
-    const { userId: userIdParam } = useParams();
-    const profileUserId = Number(userIdParam);
+    const { userId } = useParams();
+    const profileUserId = Number(userId ?? 0);
 
     const { principal } = usePrincipalState();
-    const myUserId = Number(principal?.userId);
-
-    const isValidProfileUserId =
-        Number.isFinite(profileUserId) && profileUserId > 0;
-    const isValidMyUserId = Number.isFinite(myUserId) && myUserId > 0;
+    const myUserId = Number(principal?.userId ?? 0);
 
     const isMe =
-        isValidMyUserId && isValidProfileUserId && myUserId === profileUserId;
-    const enabledFollow = isValidMyUserId && isValidProfileUserId && !isMe;
+        myUserId > 0 && profileUserId > 0 && myUserId === profileUserId;
+
+    const enabledFollow =
+        myUserId > 0 && profileUserId > 0 && myUserId !== profileUserId;
+
+    // 내 페이지면 강제이동
+    useEffect(() => {
+        if (isMe) navigate("/mypage", { replace: true });
+    }, [isMe, navigate]);
+
+    if (isMe) return null;
 
     const {
         data: userResp,
-        isLoading: isUserLoading,
-        isError: isUserError,
-        error: userError,
+        isLoading,
+        isError,
+        error,
     } = useQuery({
         queryKey: ["getUserByUserId", profileUserId],
         queryFn: () => getUserByUserId(profileUserId),
-        enabled: isValidProfileUserId,
-        staleTime: 30000,
+        enabled: profileUserId > 0,
+        staleTime: 10000,
     });
 
     const {
@@ -55,18 +61,19 @@ export default function UserDetailPage() {
     } = useQuery({
         queryKey: ["getBoardListByUserId", profileUserId],
         queryFn: () => getBoardListByUserId(profileUserId),
-        enabled: isValidProfileUserId,
-        staleTime: 30000,
+        enabled: profileUserId > 0,
+        staleTime: 10000,
     });
 
-    if (isUserLoading) return <Loading />;
-    if (isUserError) return <ErrorComponent error={userError} />;
+    if (isLoading) return <Loading />;
+    if (isError) return <ErrorComponent error={Error} />;
 
     return (
         <Container>
             <Paper
                 variant="outlined"
-                sx={{ borderRadius: 3, overflow: "hidden", bgcolor: "white" }}>
+                sx={{ borderRadius: 3, overflow: "hidden", bgcolor: "white" }}
+            >
                 <Box sx={{ px: 2, py: 2 }}>
                     <Typography sx={{ fontWeight: 900, fontSize: 18 }}>
                         유저 프로필

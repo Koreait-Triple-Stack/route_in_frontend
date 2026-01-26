@@ -101,7 +101,7 @@ export default function FollowUserList({
                     <Avatar
                       src={profileSrc}
                       alt={u?.username ?? "profile"}
-                      sx={{ width: 64, height: 64 }}
+                      sx={{ width: 36, height: 36}}
                     />
                     <Box sx={{ display: "flex", flexDirection: "column" }}>
                       <Typography variant="h6">{u?.username}</Typography>
@@ -109,7 +109,7 @@ export default function FollowUserList({
                     </Box>
                   </Box>
 
-                  {/* 오른쪽: 추후 팔로우/언팔로우 버튼 같은 액션 슬롯 */}
+                  {/* 팔로우/언팔로우 버튼  */}
                   {typeof renderRight === "function" ? (
                     <Box
                       onClick={(e) => e.stopPropagation()}
