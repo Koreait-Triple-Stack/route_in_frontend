@@ -15,7 +15,7 @@ import { useState } from "react";
 import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
 const MainPage = () => {
     const { principal } = usePrincipalState();
-    const [openCalendar, setOpenCalendar] = useState(true);
+    const [openCalendar, setOpenCalendar] = useState(false);
     return (
         <Container>
             <Stack spacing={2}>
@@ -59,6 +59,7 @@ const MainPage = () => {
             <AttendanceCalendarForm
                 open={openCalendar}
                 onClose={() => setOpenCalendar(false)}
+                lockCurrentMonth
             />
         </Container>
     );

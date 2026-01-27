@@ -45,10 +45,6 @@ function MyPage() {
                 return <AddressForm {...commonProps} />;
             case "bodyInfo":
                 return <BodyInfoForm {...commonProps} />;
-            case "calendar":
-                return (
-                    <AttendanceCalendarForm open onClose={handleCloseOverlay} />
-                );
             case "withdraw":
                 return (
                     <OverlayWrapper
@@ -68,6 +64,10 @@ function MyPage() {
     return (
         <Container>
             {renderOverlayContent()}
+            <AttendanceCalendarForm
+                open={activeView === "calendar"}
+                onClose={handleCloseOverlay}
+            />
             <ProfileCard
                 user={user}
                 open={open}
