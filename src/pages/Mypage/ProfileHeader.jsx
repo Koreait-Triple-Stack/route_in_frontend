@@ -3,9 +3,7 @@ import {
     Backdrop,
     CircularProgress,
     Box,
-    Dialog,
     IconButton,
-    Modal,
     Typography,
 } from "@mui/material";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -78,7 +76,6 @@ export default function ProfileHeader({ user }) {
                     const downloadUrl = await getDownloadURL(
                         uploadTask.snapshot.ref,
                     );
-                    console.log(downloadUrl);
                     changeProfileImgMutation.mutate({
                         userId: user.userId,
                         profileImg: downloadUrl,
@@ -115,12 +112,11 @@ export default function ProfileHeader({ user }) {
                         sx={{
                             width: 72,
                             height: 72,
-                            bgcolor: "grey.200", // ✅ 로딩 중 배경
+                            bgcolor: "grey.200",
                             "& img": { objectFit: "cover" },
                         }}
                     />
 
-                    {/* 숨김 파일 input */}
                     <input
                         hidden
                         type="file"
@@ -130,7 +126,6 @@ export default function ProfileHeader({ user }) {
                     />
                 </IconButton>
 
-                {/* 카메라 아이콘 뱃지(옵션) */}
                 <Box
                     sx={{
                         position: "absolute",
@@ -144,7 +139,7 @@ export default function ProfileHeader({ user }) {
                         alignItems: "center",
                         justifyContent: "center",
                         border: "1px solid #ddd",
-                        pointerEvents: "none", // 클릭은 Avatar쪽에서
+                        pointerEvents: "none",
                     }}>
                     <CameraAltOutlinedIcon
                         sx={{ fontSize: 16, color: "grey.700" }}

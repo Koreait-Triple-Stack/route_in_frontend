@@ -44,19 +44,7 @@ function CourseDetail({ course, onDelete, onChecked, checked }) {
     }, [kakaoObj, map, course]);
 
     useEffect(() => {
-        if (!map || !kakaoObj) return;
-
-        const onResize = () => {
-            kakaoObj.maps.event.trigger(map, "resize");
-            // 필요하면 현재 경로를 화면에 맞추기:
-            // fitBoundsToCourse();
-        };
-
-        window.addEventListener("resize", onResize);
-        return () => window.removeEventListener("resize", onResize);
-    }, [map, kakaoObj]);
-
-    useEffect(() => {
+        if (!course?.points) return;
         setPoints(
             course?.points.map((point) => ({
                 lat: Number(point.lat),
@@ -134,7 +122,7 @@ function CourseDetail({ course, onDelete, onChecked, checked }) {
                         >
                             {course.courseName}
                         </Typography>
-                        {checked ? (
+                        {!checked ? (
                             <Button
                                 onClick={ckeckedClick}
                                 sx={{

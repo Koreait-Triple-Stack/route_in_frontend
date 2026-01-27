@@ -43,14 +43,19 @@ function BasicBottomNav() {
                 }}
                 showLabels>
                 <BottomNavigationAction
-                    label="홈"
-                    value="/"
-                    icon={<HomeOutlinedIcon />}
-                />
-                <BottomNavigationAction
                     label="게시판"
                     value="/board"
                     icon={<FilterFramesOutlinedIcon />}
+                />
+                <BottomNavigationAction
+                    label="채팅"
+                    value="/chat"
+                    icon={<FilterFramesOutlinedIcon />}
+                />
+                <BottomNavigationAction
+                    label="홈"
+                    value="/"
+                    icon={<HomeOutlinedIcon />}
                 />
                 <BottomNavigationAction
                     label="알림"

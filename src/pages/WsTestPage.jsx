@@ -11,8 +11,9 @@ import { useMutation } from "@tanstack/react-query";
 import { addNotification } from "../apis/notification/notificationService";
 
 export default function WsTestPage() {
-    const [userIdsText, setUserIdsText] = useState("22,23");
+    const [userIdsText, setUserIdsText] = useState("25");
     const [message, setMessage] = useState("새 알림 테스트입니다!");
+    const [title, setTitle] = useState("타이틀");
     const [path, setPath] = useState("/notification"); // 예: 알림 눌렀을 때 이동할 경로
     const mutation = useMutation({
         mutationFn: (data) => addNotification(data),
@@ -32,7 +33,7 @@ export default function WsTestPage() {
         if (!path.trim()) return alert("path를 입력하세요.");
 
         mutation.mutate({
-            userIds, message, path
+            userIds, title, message, path
         })
     };
 
@@ -60,6 +61,15 @@ export default function WsTestPage() {
                     />
 
                     <TextField
+                        label="title"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                        size="small"
+                        multiline
+                        minRows={2}
+                    />
+
+                    <TextField
                         label="message"
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
@@ -76,9 +86,7 @@ export default function WsTestPage() {
                         size="small"
                     />
 
-                    <Button
-                        variant="contained"
-                        onClick={send}>
+                    <Button variant="contained" onClick={send}>
                         {/* {sending ? "전송중..." : "여러명에게 알림 전송"} */}
                         여러명에게 알림 전송
                     </Button>

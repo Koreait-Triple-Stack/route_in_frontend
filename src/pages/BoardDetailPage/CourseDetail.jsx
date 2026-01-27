@@ -44,17 +44,7 @@ function CourseDetail({ course }) {
     }, [kakaoObj, map, course]);
 
     useEffect(() => {
-        if (!map || !kakaoObj) return;
-
-        const onResize = () => {
-            kakaoObj.maps.event.trigger(map, "resize");
-        };
-
-        window.addEventListener("resize", onResize);
-        return () => window.removeEventListener("resize", onResize);
-    }, [map, kakaoObj]);
-
-    useEffect(() => {
+        if (!course?.points) return;
         setPoints(
             course?.points?.map((point) => ({
                 lat: Number(point.lat),

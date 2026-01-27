@@ -12,6 +12,7 @@ import ErrorComponent from "../../components/ErrorComponent";
 import { usePrincipalState } from "../../store/usePrincipalState";
 import RoutineList from "./RoutineList";
 import DialogComponent from "../../components/DialogComponent";
+import CommentSection from "./CommentSection";
 
 function BoardDetailPage() {
     const { principal } = usePrincipalState();
@@ -108,6 +109,8 @@ function BoardDetailPage() {
 
                 <Box sx={{ p: 2.2 }}>{boardData.content}</Box>
             </Paper>
+
+            <CommentSection boardId={boardId} />
 
             <DialogComponent
                 open={openCopy}
