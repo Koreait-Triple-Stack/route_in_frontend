@@ -72,7 +72,7 @@ function ChatList({contextMenu, setContextMenu, setSelectedChatId}) {
                         onClick={() => handleChatClick(chat.id)}
                         // ✅ 여기에 우클릭/꾹누르기 이벤트 연결
                         onContextMenu={(e) => handleContextMenu(e, chat.id)}
-                        sx={{ px: 2.5, py: 1.5 }}
+                        sx={{ pl: 0, py: 1.5 }}
                     >
                         <ListItemAvatar sx={{ minWidth: 0, margin: 0 }}>
                             <Avatar alt={chat.name} src={chat.avatar} sx={{ width: 50, height: 50, border: "1px solid #f0f0f0" }} />

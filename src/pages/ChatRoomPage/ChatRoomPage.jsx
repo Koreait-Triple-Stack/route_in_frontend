@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Box, Typography, TextField, IconButton, Stack, AppBar, Toolbar } from "@mui/material";
+import { Box, Typography, TextField, IconButton, Stack, AppBar, Toolbar, Drawer, Divider, Button, List, ListItem, ListItemAvatar, Avatar, ListItemText } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import MenuIcon from "@mui/icons-material/Menu";
 import SendIcon from "@mui/icons-material/Send";
 import { useNavigate } from "react-router-dom";
-import { Container } from "@mui/system";
+import { Container, Grid } from "@mui/system";
 import MenuDrawer from "./MenuDrawer";
 import MessageBubble from "./MessageBubble";
 
@@ -60,6 +60,8 @@ function ChatRoomPage() {
                     bgcolor: "#b2c7da", // ✅ 카카오톡 기본 배경색
                     display: "flex",
                     flexDirection: "column",
+                    position: "relative",
+                    overflow: "hidden",
                 }}
             >
                 {/* 🟦 상단 헤더 */}
@@ -79,6 +81,7 @@ function ChatRoomPage() {
                     </Toolbar>
                 </AppBar>
 
+                <MenuDrawer setIsMenu={setIsMenu} isMenu={isMenu} INITIAL_MESSAGES={INITIAL_MESSAGES} />
                 <MessageBubble scrollRef={scrollRef} messages={messages} />
 
                 {/* ⌨️ 하단 입력창 */}
@@ -130,7 +133,6 @@ function ChatRoomPage() {
                         <SendIcon />
                     </IconButton>
                 </Box>
-                <MenuDrawer setIsMenu={setIsMenu} isMenu={isMenu} INITIAL_MESSAGES={INITIAL_MESSAGES} />
             </Box>
         </Container>
     );

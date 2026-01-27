@@ -6,6 +6,7 @@ import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import { usePrincipalState } from '../../store/usePrincipalState';
 import CommentInput from './CommentInput';
 import { useComment } from '../../hooks/useComment'; 
+import UserAvatarLink from '../../components/UserAvatarLink';
 
 const formatDate = (dateString) => {
     if (!dateString) return "";
@@ -47,37 +48,45 @@ function CommentItem({ comment, boardId, isReply = false }) {
 
     return (
         <>
-            <Box sx={{ 
-                py: 2, px: 2, pl: isReply ? 5 : 2, 
-                bgcolor: isReply ? '#f8f9fa' : 'white', 
-                borderBottom: '1px solid #f1f1f1' 
-            }}>
+            <Box
+                sx={{
+                    py: 2,
+                    px: 2,
+                    pl: isReply ? 5 : 2,
+                    bgcolor: isReply ? "#f8f9fa" : "white",
+                    borderBottom: "1px solid #f1f1f1",
+                }}
+            >
                 <Stack direction="row" alignItems="center" spacing={1.5} mb={1}>
-                    {isReply && <SubdirectoryArrowRightIcon sx={{ color: '#bbb', fontSize: 20 }} />}
-                    <Avatar src={comment.profileImg} sx={{ width: 28, height: 28 }} alt={comment.username} />
+                    {isReply && <SubdirectoryArrowRightIcon sx={{ color: "#bbb", fontSize: 20 }} />}
+                    <UserAvatarLink userId={comment?.userId} src={comment?.profileImg} size={36} />
                     <Stack>
-                        <Typography variant="subtitle2" sx={{ fontWeight: 'bold', fontSize: '0.9rem' }}>{comment.username}</Typography>
-                        <Typography variant="caption" color="text.secondary">{formatDate(comment.createDt)}</Typography>
+                        <Typography variant="subtitle2" sx={{ fontWeight: "bold", fontSize: "0.9rem" }}>
+                            {comment.username}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                            {formatDate(comment.createDt)}
+                        </Typography>
                     </Stack>
                     <Box flexGrow={1} />
-                    
+
                     {principal?.userId === comment.userId && (
                         <IconButton size="small" onClick={handleDelete}>
-                            <DeleteIcon fontSize="small" sx={{ color: '#ddd', '&:hover': { color: '#ff5252' } }} />
+                            <DeleteIcon fontSize="small" sx={{ color: "#ddd", "&:hover": { color: "#ff5252" } }} />
                         </IconButton>
                     )}
                 </Stack>
 
-                <Typography variant="body2" sx={{ ml: isReply ? 4 : 0, mb: 1, whiteSpace: 'pre-wrap', lineHeight: 1.6, color: '#333' }}>
+                <Typography variant="body2" sx={{ ml: isReply ? 4 : 0, mb: 1, whiteSpace: "pre-wrap", lineHeight: 1.6, color: "#333" }}>
                     {comment.content}
                 </Typography>
 
                 {!isReply && (
                     <Box sx={{ ml: 0 }}>
-                        <Button 
-                            startIcon={<ChatBubbleOutlineIcon sx={{ fontSize: '1rem !important' }} />}
+                        <Button
+                            startIcon={<ChatBubbleOutlineIcon sx={{ fontSize: "1rem !important" }} />}
                             size="small"
-                            sx={{ color: '#888', fontSize: '0.8rem', minWidth: 0, p: 0.5 }}
+                            sx={{ color: "#888", fontSize: "0.8rem", minWidth: 0, p: 0.5 }}
                             onClick={() => setShowReplyInput(!showReplyInput)}
                         >
                             답글
@@ -87,12 +96,8 @@ function CommentItem({ comment, boardId, isReply = false }) {
             </Box>
 
             {showReplyInput && (
-                <Box sx={{ pl: 5, pr: 2, bgcolor: '#f8f9fa' }}>
-                    <CommentInput 
-                        placeholder={`@${comment.username}님에게 답글 남기기`}
-                        onSubmit={handleReplySubmit}
-                        onCancel={() => setShowReplyInput(false)}
-                    />
+                <Box sx={{ pl: 5, pr: 2, bgcolor: "#f8f9fa" }}>
+                    <CommentInput placeholder={`@${comment.username}님에게 답글 남기기`} onSubmit={handleReplySubmit} onCancel={() => setShowReplyInput(false)} />
                 </Box>
             )}
         </>

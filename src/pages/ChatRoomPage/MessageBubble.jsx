@@ -9,11 +9,14 @@ const MessageBubbleComponent = ({ message }) => {
 
     return (
         <Box
+            id="app-scroll"
             sx={{
                 display: "flex",
                 flexDirection: isMe ? "row-reverse" : "row", // 내꺼면 오른쪽, 남이면 왼쪽
                 alignItems: "flex-start",
                 mb: 2,
+                width: "100%",
+                height: "100%",
             }}
         >
             {/* 상대방일 경우 프로필 사진 표시 */}
