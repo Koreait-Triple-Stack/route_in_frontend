@@ -1,23 +1,49 @@
 import React, { use, useState } from "react";
-import { Box, ListItemText, Typography, IconButton, AppBar, Toolbar, Menu, MenuItem, Divider, TextField, Button, Dialog, DialogContent, DialogTitle, DialogActions } from "@mui/material";
+import {
+    Box,
+    ListItemText,
+    Typography,
+    IconButton,
+    AppBar,
+    Toolbar,
+    Menu,
+    MenuItem,
+    Divider,
+    TextField,
+    Button,
+    Dialog,
+    DialogContent,
+    DialogTitle,
+    DialogActions,
+    Collapse,
+    List,
+    ListItemButton,
+    ListItemIcon,
+    Drawer,
+} from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import SettingsIcon from "@mui/icons-material/Settings";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import { Stack } from "@mui/system";
 import ChatList from "./ChatList";
 import CloseIcon from "@mui/icons-material/Close";
+import ExpandLess from "@mui/icons-material/ExpandLess";
+import ExpandMore from "@mui/icons-material/ExpandMore";
 
 import { getFollowerUserList, getFollowingUserList } from "../../apis/follow/followService";
-import { usePrincipalState } from "../../store/usePrincipalState";
 import FollowUserList from "./FollowUserList";
+import { useNavigate } from "react-router-dom";
+import { usePrincipalState } from "../../store/usePrincipalState";
 
 function ChatListPage() {
     const { principal } = usePrincipalState();
+    const navigate = useNavigate();
     const [contextMenu, setContextMenu] = useState(null);
     const [selectedChatId, setSelectedChatId] = useState(null);
     const [searchInputValue, setSearchInputValue] = useState("");
     const [isSearch, setIsSearch] = useState(false);
     const [isNewChat, setIsNewChat] = useState(false);
+    const [isSetting, setIsSetting] = useState(false);
     const [isFollow, setIsFollow] = useState("");
 
     const handleLeaveChat = () => {
@@ -32,6 +58,8 @@ function ChatListPage() {
         setContextMenu(null);
         setSelectedChatId(null);
     };
+
+    const handleAddChatRoom = () => {};
 
     return (
         <Box sx={{ width: "100%", height: "100%", bgcolor: "#fff", display: "flex", flexDirection: "column" }}>
@@ -51,14 +79,37 @@ function ChatListPage() {
                             <ChatBubbleOutlineIcon onClick={() => setIsNewChat(true)} />
                         </IconButton>
                         <IconButton size="large" sx={{ color: "#000" }}>
-                            <SettingsIcon />
+                            <SettingsIcon onClick={() => setIsSetting(!isSetting)} />
+                            {isSetting ? <ExpandLess /> : <ExpandMore />}
                         </IconButton>
+                        <Drawer
+                            anchor="top"
+                            open={isSetting}
+                            onClose={() => setIsSetting(false)}
+                            variant="persistent"
+                            sx={{
+                                "& .MuiDrawer-root": {
+                                    position: "absolute",
+                                    zIndex: 1300,
+                                    right: 0,
+                                    top: 0,
+                                    height: "100%",
+                                },
+                                "& .MuiDrawer-paper": {
+                                    position: "absolute",
+                                    width: "80%",
+                                    height: "100%",
+                                    boxSizing: "border-box",
+                                    borderLeft: "1px solid #ddd",
+                                },
+                            }}
+                        ></Drawer>
                     </Box>
                 </Toolbar>
             </AppBar>
 
             {isSearch && (
-                <Box display="flex" alignContent="space-between" alignItems="center" sx={{ width: "94%", height: "6%", pl: 3 }}>
+                <Box display="flex" alignContent="space-between" alignItems="center" sx={{ width: "94%", height: "8%", pl: 3 }}>
                     <Stack
                         direction="row"
                         alignItems="center"
@@ -97,13 +148,7 @@ function ChatListPage() {
                     },
                 }}
             >
-                <DialogTitle>
-                    대화상대 선택
-                    <Stack direction="row" spacing={2}>
-                        <Button onClick={() => setIsFollow("follwer")}>팔로우 목록</Button>
-                        <Button onClick={() => setIsFollow("follwing")}>팔로잉 목록</Button>
-                    </Stack>
-                </DialogTitle>
+                <DialogTitle>대화상대 선택</DialogTitle>
                 <DialogContent>
                     <Stack
                         direction="row"
@@ -115,7 +160,7 @@ function ChatListPage() {
                             borderRadius: 12,
                             width: "100%",
                             height: "8%",
-                            mb: 2
+                            mb: 2,
                         }}
                     >
                         <SearchIcon />
@@ -128,6 +173,14 @@ function ChatListPage() {
                             sx={{ mb: 0.5, ml: 1, width: "90%" }}
                         />
                     </Stack>
+                    <Stack direction="row" alignItems="center" alignContent="space-around" sx={{ mb: 2 }}>
+                        <Button fullWidth onClick={() => setIsFollow("follwer")}>
+                            팔로우 목록
+                        </Button>
+                        <Button fullWidth onClick={() => setIsFollow("follwing")}>
+                            팔로워 목록
+                        </Button>
+                    </Stack>
                     {isFollow === "follwer" ? (
                         <FollowUserList queryKeyPrefix={"getFollowerUserList"} queryFn={getFollowerUserList} emptyText="팔로워가 없습니다." mode={"followers"} />
                     ) : (
@@ -138,11 +191,11 @@ function ChatListPage() {
                 </DialogContent>
                 <DialogActions sx={{ p: 2 }}>
                     <Stack direction="row" spacing={2}>
-                        <Button variant="contained" fullWidth size="large">
-                            확인
-                        </Button>
                         <Button variant="outlined" fullWidth size="large" onClick={() => setIsNewChat(false)}>
                             취소
+                        </Button>
+                        <Button variant="contained" fullWidth size="large" onClick={() => navigate("/chat/room")}>
+                            확인
                         </Button>
                     </Stack>
                 </DialogActions>

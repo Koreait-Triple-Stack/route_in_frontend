@@ -1,16 +1,22 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { usePrincipalState } from "../../store/usePrincipalState";
 import Loading from "../../components/Loading";
 import ErrorComponent from "../../components/ErrorComponent";
 import { useQuery } from "@tanstack/react-query";
 import { Box, Container, Stack } from "@mui/system";
-import { Avatar, Paper, Typography } from "@mui/material";
+import { Avatar, Paper, Typography, Checkbox } from "@mui/material";
+
+// 아이콘 import
+import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 function FollowUserList({ queryKeyPrefix, queryFn, emptyText = "목록이 없습니다.", mode }) {
     const navigate = useNavigate();
     const { principal } = usePrincipalState();
     const { userId: userIdParam } = useParams();
+
+    const [selectedIds, setSelectedIds] = useState([]);
 
     const targetUserId = useMemo(() => {
         const p = Number(userIdParam);
@@ -31,9 +37,20 @@ function FollowUserList({ queryKeyPrefix, queryFn, emptyText = "목록이 없습
         gcTime: 10 * 60000,
     });
 
+    const handleToggle = (id) => {
+        setSelectedIds((prev) => {
+            if (prev.includes(id)) {
+                return prev.filter((i) => i !== id);
+            } else {
+                return [...prev, id];
+            }
+        });
+    };
+
     const raw = response?.data ?? response;
     const payload = raw?.data ?? raw;
     const list = Array.isArray(payload) ? payload : [];
+
     if (isLoading) return <Loading />;
     if (isError) return <ErrorComponent error={error} />;
 
@@ -41,22 +58,23 @@ function FollowUserList({ queryKeyPrefix, queryFn, emptyText = "목록이 없습
         <Container>
             <Stack spacing={2}>
                 {list.length > 0 ? (
-                    list.map((u) => {
+                    list.map((u, idx) => {
                         const profileSrc = u?.profileImageUrl ?? u?.profileImg ?? u?.profileUrl ?? undefined;
+                        const isSelected = selectedIds.includes(u?.userId);
 
                         return (
                             <Paper
                                 key={u?.userId ?? `${mode}-${idx}`}
                                 elevation={1}
                                 onClick={() => {
-                                    if (!u?.userId) return;
-                                    navigate(`/chat/room`);
+                                    if (u?.userId) handleToggle(u.userId);
                                 }}
                                 sx={{
                                     p: 2,
                                     borderRadius: 3,
                                     cursor: u?.userId ? "pointer" : "default",
                                     transition: "all 0.2s ease",
+                                    backgroundColor: isSelected ? "rgba(0, 0, 0, 0.04)" : "#fff",
                                     "&:hover": {
                                         backgroundColor: "action.hover",
                                         boxShadow: 4,
@@ -81,7 +99,33 @@ function FollowUserList({ queryKeyPrefix, queryFn, emptyText = "목록이 없습
                                             <Typography variant="h6">{u?.username}</Typography>
                                         </Box>
                                     </Box>
-                                    
+
+                                    {/* 오른쪽: 카카오톡 스타일 체크박스 */}
+                                    <Checkbox
+                                        checked={isSelected}
+                                        sx={{ pointerEvents: "none" }}
+                                        icon={<RadioButtonUncheckedIcon sx={{ color: "#ddd", fontSize: "1.5rem" }} />}
+                                        checkedIcon={
+                                            <Box
+                                                sx={{
+                                                    backgroundColor: "#7a7676",
+                                                    borderRadius: "50%",
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    justifyContent: "center",
+                                                    width: "1.5rem",
+                                                    height: "1.5rem",
+                                                }}
+                                            >
+                                                <CheckCircleIcon
+                                                    sx={{
+                                                        color: "#a9dba9",
+                                                        fontSize: "1.5rem",
+                                                    }}
+                                                />
+                                            </Box>
+                                        }
+                                    />
                                 </Box>
                             </Paper>
                         );
