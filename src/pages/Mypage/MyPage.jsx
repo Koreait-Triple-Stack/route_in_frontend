@@ -11,6 +11,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getUserByUserId } from "../../apis/account/accountService";
 import Loading from "../../components/Loading";
 import ProfileCard from "./ProfileCard";
+import AttendanceCalendarForm from "../../components/Calendar/AttendanceCalendarForm";
 import WithdrawForm from "./WithdrawForm";
 
 function MyPage() {
@@ -58,6 +59,10 @@ function MyPage() {
     return (
         <Container>
             {renderOverlayContent()}
+            <AttendanceCalendarForm
+                open={activeView === "calendar"}
+                onClose={handleCloseOverlay}
+            />
             <ProfileCard
                 user={user}
                 open={open}
