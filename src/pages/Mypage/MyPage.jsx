@@ -11,6 +11,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getUserByUserId } from "../../apis/account/accountService";
 import Loading from "../../components/Loading";
 import ProfileCard from "./ProfileCard";
+import AttendanceCalendarForm from "../../components/Calendar/AttendanceCalendarForm";
 
 function MyPage() {
     const navigate = useNavigate();
@@ -44,11 +45,16 @@ function MyPage() {
                 return <AddressForm {...commonProps} />;
             case "bodyInfo":
                 return <BodyInfoForm {...commonProps} />;
+            case "calendar":
+                return (
+                    <AttendanceCalendarForm open onClose={handleCloseOverlay} />
+                );
             case "withdraw":
                 return (
                     <OverlayWrapper
                         title="회원 탈퇴"
-                        onClose={handleCloseOverlay}>
+                        onClose={handleCloseOverlay}
+                    >
                         <Typography>정말 탈퇴하시겠습니까?</Typography>
                     </OverlayWrapper>
                 );

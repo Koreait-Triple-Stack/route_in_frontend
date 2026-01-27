@@ -1,12 +1,21 @@
-import { Container, Typography, Box, Paper, Stack } from "@mui/material";
+import {
+    Container,
+    Typography,
+    Box,
+    Paper,
+    Stack,
+    Button,
+} from "@mui/material";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import RoutineList from "./RoutineList";
 import { usePrincipalState } from "../../store/usePrincipalState";
 import CourseDetail from "./CourseDetail";
-
+import AttendanceCalendarForm from "../../components/Calendar/AttendanceCalendarForm";
+import { useState } from "react";
+import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
 const MainPage = () => {
     const { principal } = usePrincipalState();
-
+    const [openCalendar, setOpenCalendar] = useState(true);
     return (
         <Container>
             <Stack spacing={2}>
@@ -34,12 +43,23 @@ const MainPage = () => {
                     <Typography variant="subtitle1" fontWeight="bold">
                         이번 주 스케줄
                     </Typography>
+                    <Box sx={{ flexGrow: 1 }} />
+                    <Button
+                        size="small"
+                        startIcon={<CalendarTodayOutlinedIcon />}
+                        onClick={() => setOpenCalendar(true)}
+                    >
+                        이번달 출석
+                    </Button>
                 </Stack>
 
                 <RoutineList userId={principal?.userId} />
-
                 <CourseDetail />
             </Stack>
+            <AttendanceCalendarForm
+                open={openCalendar}
+                onClose={() => setOpenCalendar(false)}
+            />
         </Container>
     );
 };

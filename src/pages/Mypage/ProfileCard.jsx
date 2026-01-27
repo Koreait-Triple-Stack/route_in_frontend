@@ -20,6 +20,7 @@ import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import HeightOutlinedIcon from "@mui/icons-material/HeightOutlined";
 import PersonOffOutlinedIcon from "@mui/icons-material/PersonOffOutlined";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
+import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
 
 export default function ProfileCard({
     user,
@@ -38,11 +39,10 @@ export default function ProfileCard({
         mx: 1,
         my: 0.5,
     };
-
     const subItemSx = {
         ...itemSx,
-        pl: 4, 
-        bgcolor: "transparent", 
+        pl: 4,
+        bgcolor: "transparent",
         "&:hover": { bgcolor: "action.hover" },
     };
 
@@ -73,11 +73,12 @@ export default function ProfileCard({
                         color: "text.primary",
                         borderBottom: "1px solid",
                         borderColor: "divider",
-                    }}>
+                    }}
+                >
                     마이 프로필
                 </ListSubheader>
-            }>
-
+            }
+        >
             <ProfileHeader user={user} />
 
             <FollowStats
@@ -91,7 +92,8 @@ export default function ProfileCard({
 
             <ListItemButton
                 sx={itemSx}
-                onClick={() => onNavigate("/mypage/inbody")}>
+                onClick={() => onNavigate("/mypage/inbody")}
+            >
                 <ListItemIcon>
                     <MonitorHeartOutlinedIcon />
                 </ListItemIcon>
@@ -100,7 +102,8 @@ export default function ProfileCard({
 
             <ListItemButton
                 sx={itemSx}
-                onClick={() => onNavigate("/mypage/board")}>
+                onClick={() => onNavigate("/mypage/board")}
+            >
                 <ListItemIcon>
                     <ArticleOutlinedIcon />
                 </ListItemIcon>
@@ -109,11 +112,22 @@ export default function ProfileCard({
 
             <ListItemButton
                 sx={itemSx}
-                onClick={() => onNavigate("/mypage/course")}>
+                onClick={() => onNavigate("/mypage/course")}
+            >
                 <ListItemIcon>
                     <RouteOutlinedIcon />
                 </ListItemIcon>
                 <ListItemText primary="나만의 코스 수정" />
+            </ListItemButton>
+
+            <ListItemButton
+                sx={itemSx}
+                onClick={() => onSetActiveView("calendar")}
+            >
+                <ListItemIcon>
+                    <CalendarTodayOutlinedIcon />
+                </ListItemIcon>
+                <ListItemText primary="출석 달력" />
             </ListItemButton>
 
             <Divider sx={{ my: 1 }} />
@@ -130,7 +144,8 @@ export default function ProfileCard({
                 <List component="div" disablePadding sx={{ px: 1 }}>
                     <ListItemButton
                         sx={subItemSx}
-                        onClick={() => onSetActiveView("username")}>
+                        onClick={() => onSetActiveView("username")}
+                    >
                         <ListItemIcon>
                             <BadgeOutlinedIcon />
                         </ListItemIcon>
@@ -139,7 +154,8 @@ export default function ProfileCard({
 
                     <ListItemButton
                         sx={subItemSx}
-                        onClick={() => onSetActiveView("address")}>
+                        onClick={() => onSetActiveView("address")}
+                    >
                         <ListItemIcon>
                             <HomeOutlinedIcon />
                         </ListItemIcon>
@@ -148,7 +164,8 @@ export default function ProfileCard({
 
                     <ListItemButton
                         sx={subItemSx}
-                        onClick={() => onSetActiveView("bodyInfo")}>
+                        onClick={() => onSetActiveView("bodyInfo")}
+                    >
                         <ListItemIcon>
                             <HeightOutlinedIcon />
                         </ListItemIcon>
@@ -157,7 +174,8 @@ export default function ProfileCard({
 
                     <ListItemButton
                         sx={subItemSx}
-                        onClick={() => onSetActiveView("withdraw")}>
+                        onClick={() => onSetActiveView("withdraw")}
+                    >
                         <ListItemIcon>
                             <PersonOffOutlinedIcon />
                         </ListItemIcon>
@@ -181,7 +199,8 @@ export default function ProfileCard({
                     },
                     "&:hover": { bgcolor: "rgba(211,47,47,0.08)" },
                 }}
-                onClick={onLogout}>
+                onClick={onLogout}
+            >
                 <ListItemIcon>
                     <LogoutOutlinedIcon />
                 </ListItemIcon>
