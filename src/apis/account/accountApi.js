@@ -17,7 +17,7 @@ export const isDuplicatedUsernameRequest = async (username) => {
 };
 
 export const changeAddressRequest = async (data) => {
-    return await instance.post("/user/account/address", data);
+    return await instance.post("/user/account/change/address", data);
 };
 
 export const changeBodyInfoRequest = async (data) => {
@@ -26,6 +26,14 @@ export const changeBodyInfoRequest = async (data) => {
 
 export const changeProfileImgRequest = async (data) => {
     return await instance.post("/user/account/change/profileImg", data);
+};
+
+export const changeWeeklyRunRequest = async (data) => {
+    return await instance.post("/user/account/change/weeklyRun", data);
+};
+
+export const changeCurrentRunRequest = async (data) => {
+    return await instance.post("/user/account/change/currentRun", data);
 };
 
 export const withdrawRequest = async () => {
