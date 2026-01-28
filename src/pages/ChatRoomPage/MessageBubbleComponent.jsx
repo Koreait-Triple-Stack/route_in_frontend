@@ -1,22 +1,12 @@
 import React from "react";
 import UserAvatarLink from "../../components/UserAvatarLink";
 import { Box } from "@mui/system";
-import { Typography } from "@mui/material";
+import { Badge, Typography } from "@mui/material";
 import { usePrincipalState } from "../../store/usePrincipalState";
 
 function MessageBubbleComponent({ message }) {
     const { principal } = usePrincipalState();
-    const {
-        messageId,
-        roomId,
-        senderId,
-        type,
-        content,
-        createDt,
-        profileImg,
-        username,
-        unreadCnt,
-    } = message;
+    const { messageId, roomId, senderId, type, content, createDt, profileImg, username, unreadCnt } = message;
     const isMe = message.senderId === principal?.userId;
     const event = new Date(createDt);
     const time = event.toLocaleString("ko-KR", {
@@ -35,11 +25,10 @@ function MessageBubbleComponent({ message }) {
                 mb: 2,
                 width: "100%",
                 height: "100%",
-            }}>
+            }}
+        >
             {/* 상대방일 경우 프로필 사진 표시 */}
-            {!isMe && (
-                <UserAvatarLink userId={senderId} src={profileImg} size={48} />
-            )}
+            {!isMe && <UserAvatarLink userId={senderId} src={profileImg} size={48} />}
 
             <Box
                 sx={{
@@ -47,12 +36,11 @@ function MessageBubbleComponent({ message }) {
                     flexDirection: "column",
                     alignItems: isMe ? "flex-end" : "flex-start",
                     ml: 1,
-                }}>
+                }}
+            >
                 {/* 상대방 이름 */}
                 {!isMe && (
-                    <Typography
-                        variant="caption"
-                        sx={{ color: "#555", mb: 0.5, ml: 0.5 }}>
+                    <Typography variant="caption" sx={{ color: "#555", mb: 0.5, ml: 0.5 }}>
                         {username}
                     </Typography>
                 )}
@@ -63,37 +51,66 @@ function MessageBubbleComponent({ message }) {
                         display: "flex",
                         flexDirection: isMe ? "row-reverse" : "row", // 시간 위치 조정을 위해
                         alignItems: "flex-end", // 말풍선 하단에 시간 정렬
-                    }}>
+                    }}
+                >
                     {/* 💬 말풍선 */}
                     <Box
                         sx={{
                             bgcolor: isMe ? "#FEE500" : "#FFFFFF", // 카카오 노랑 vs 흰색
                             color: "#000",
                             p: "10px 14px",
-                            borderRadius: isMe
-                                ? "15px 0px 15px 15px"
-                                : "0px 15px 15px 15px", // 꼬리 모양 흉내
+                            borderRadius: isMe ? "15px 0px 15px 15px" : "0px 15px 15px 15px", // 꼬리 모양 흉내
                             maxWidth: "70vw", // 화면의 70%까지만 차지
                             maxHeight: "40px",
                             boxShadow: "0 1px 1px rgba(0,0,0,0.1)",
                             wordBreak: "break-word",
                             fontSize: "0.95rem",
                             lineHeight: 1.5,
-                        }}>
+                        }}
+                    >
                         {content}
                     </Box>
 
-                    {/* 🕒 시간 표시 */}
-                    <Typography
-                        variant="caption"
+                    <Box
                         sx={{
-                            color: "#555",
-                            fontSize: "0.7rem",
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "flex-end",
+                            alignItems: isMe ? "flex-end" : "flex-start",
                             mx: 0.5,
-                            minWidth: "max-content", // 줄바꿈 방지
-                        }}>
-                        {time}
-                    </Typography>
+                            height: "100%",
+                        }}
+                    >
+                        {/* 안읽은 표시 (Badge 대신 Box나 Typography로 직접 구현이 위치 잡기 더 쉽습니다) */}
+                        {unreadCnt > 0 && (
+                            <Box
+                                sx={{
+                                    color: "#fffb00",
+                                    fontSize: "0.75rem",
+                                    fontWeight: "bold",
+                                    height: "10px",
+                                    borderRadius: "50%",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                }}
+                            >
+                                {unreadCnt}
+                            </Box>
+                        )}
+
+                        {/* 시간 표시 */}
+                        <Typography
+                            variant="caption"
+                            sx={{
+                                color: "#555",
+                                fontSize: "0.7rem",
+                                minWidth: "max-content",
+                            }}
+                        >
+                            {time}
+                        </Typography>
+                    </Box>
                 </Box>
             </Box>
         </Box>

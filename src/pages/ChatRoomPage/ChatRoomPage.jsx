@@ -131,7 +131,7 @@ function ChatRoomPage() {
                             {
                                 room?.participants.find(
                                     (p) => p.userId === principal?.userId,
-                                ).title
+                                )?.title
                             }
                         </Typography>
                         <Stack direction="row">

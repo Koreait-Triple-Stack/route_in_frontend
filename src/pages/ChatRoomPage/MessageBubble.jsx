@@ -30,6 +30,7 @@ function MessageBubble({ scrollRef }) {
     const messageList =
         messageResp?.pages?.flatMap((p) => p?.data?.messageList ?? []) ?? [];
 
+    console.log(messageList)
     if (messageLoading) return <Loading />;
     if (messageError) return <ErrorComponent error={messageError} />;
 
