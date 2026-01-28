@@ -3,9 +3,11 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import RoutineList from "./RoutineList";
 import { usePrincipalState } from "../../store/usePrincipalState";
 import CourseDetail from "./CourseDetail";
+import OncePerDay from "../../hooks/OncePerDay";
+import Calendar from "../../components/Calendar";
 const MainPage = () => {
     const { principal } = usePrincipalState();
-    
+    const { open, close } = OncePerDay(principal?.userId);
     return (
         <Container>
             <Stack spacing={2}>
@@ -39,6 +41,7 @@ const MainPage = () => {
                 <RoutineList userId={principal?.userId} />
                 <CourseDetail />
             </Stack>
+            <Calendar open={open} onClose={close} lockCurrentMonth />
         </Container>
     );
 };
