@@ -7,6 +7,8 @@ import {
     isDuplicatedUsernameRequest,
     changeProfileImgRequest,
     withdrawRequest,
+    changeWeeklyRunRequest,
+    changeCurrentRunRequest,
 } from "./accountApi";
 
 export const getPrincipal = async () => {
@@ -47,6 +49,18 @@ export const changeBodyInfo = async (data) => {
 
 export const changeProfileImg = async (data) => {
     const result = await changeProfileImgRequest(data);
+    if (result.data.status !== "success") throw new Error(result.data.message);
+    return result.data;
+};
+
+export const changeWeeklyRun = async (data) => {
+    const result = await changeWeeklyRunRequest(data);
+    if (result.data.status !== "success") throw new Error(result.data.message);
+    return result.data;
+};
+
+export const changeCurrentRun = async (data) => {
+    const result = await changeCurrentRunRequest(data);
     if (result.data.status !== "success") throw new Error(result.data.message);
     return result.data;
 };

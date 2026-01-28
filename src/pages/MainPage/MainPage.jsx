@@ -1,11 +1,23 @@
-import { Container, Typography, Box, Paper, Stack } from "@mui/material";
+import { Container, Typography, Box, Paper, Stack, List, ListItemButton, ListItemText, Collapse, Button, Divider } from "@mui/material";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import RoutineList from "./RoutineList";
 import { usePrincipalState } from "../../store/usePrincipalState";
 import CourseDetail from "./CourseDetail";
+import ExpandLess from "@mui/icons-material/ExpandLess";
+import ExpandMore from "@mui/icons-material/ExpandMore";
+import { useState } from "react";
+import RunningRecord from "./RunningRecord";
+import AIRecommend from "./AIRecommend";
 const MainPage = () => {
     const { principal } = usePrincipalState();
-    
+    const [routineOpen, setRoutineOpen] = useState(false);
+    const [runningOpen, setRunningOpen] = useState(false);
+    const [AIOpen, setAIOpen] = useState(false);
+
+    const handleRoutine = () => setRoutineOpen(!routineOpen);
+    const handleRunning = () => setRunningOpen(!runningOpen);
+    const handleAI = () => setAIOpen(!AIOpen);
+
     return (
         <Container>
             <Stack spacing={2}>
@@ -36,8 +48,34 @@ const MainPage = () => {
                     <Box sx={{ flexGrow: 1 }} />
                 </Stack>
 
-                <RoutineList userId={principal?.userId} />
-                <CourseDetail />
+                <Stack spacing={2}>
+                    <Button onClick={handleAI}>
+                        <Typography>오늘의 운동 추천</Typography>
+                        {AIOpen ? <ExpandLess /> : <ExpandMore />}
+                    </Button>
+                    <Collapse in={AIOpen} timeout="auto" unmountOnExit>
+                        <AIRecommend userId={principal?.userId} />
+                    </Collapse>
+
+                    <Button onClick={handleRoutine}>
+                        <Typography>운동루틴 수정</Typography>
+                        {routineOpen ? <ExpandLess /> : <ExpandMore />}
+                    </Button>
+                    <Collapse in={routineOpen} timeout="auto" unmountOnExit>
+                        <RoutineList userId={principal?.userId} />
+                    </Collapse>
+
+                    <Button onClick={handleRunning}>
+                        <Typography>러닝기록</Typography>
+                        {runningOpen ? <ExpandLess /> : <ExpandMore />}
+                    </Button>
+                    <Collapse in={runningOpen} timeout="auto" unmountOnExit>
+                        <Stack spacing={2}>
+                            <RunningRecord userId={principal?.userId} />
+                            <CourseDetail />
+                        </Stack>
+                    </Collapse>
+                </Stack>
             </Stack>
         </Container>
     );
