@@ -26,7 +26,6 @@ function ChatRoomPage() {
     const { principal } = usePrincipalState();
     const { roomId: roomIdParam } = useParams();
     const roomId = Number(roomIdParam);
-    const token = localStorage.getItem("AcessToken");
     const {
         data: roomResp,
         isLoading: roomLoading,
@@ -34,17 +33,11 @@ function ChatRoomPage() {
     } = useQuery({
         queryKey: ["getRoomByRoomIdRequest", roomId],
         queryFn: () => getRoomByRoomIdRequest(roomId),
-        staleTime: 30000,
     });
     const room = roomResp?.data ?? {};
 
     const mutation = useMutation({
         mutationFn: addMessageRequest,
-        onSuccess: () => {
-            queryClient.invalidateQueries({
-                queryKey: ["getRoomListByUserIdRequest", principal.userId],
-            });
-        },
         onError: (resp) => {
             show(resp.message, "error");
         },
@@ -54,7 +47,6 @@ function ChatRoomPage() {
     useEffect(() => {
         if (!roomId) return;
         setActiveRoomId(Number(roomId));
-        console.log(roomId)
         return () => setActiveRoomId(null);
     }, [roomId, setActiveRoomId]);
 
@@ -89,7 +81,7 @@ function ChatRoomPage() {
                 height: "100%",
                 display: "flex",
                 flexDirection: "column",
-                backgroundColor: "black",
+                backgroundColor: "grey",
             }}>
             {/* 🟦 상단 헤더 */}
             <Box
@@ -102,8 +94,11 @@ function ChatRoomPage() {
                     px: 2,
                     py: 1.5,
                 }}>
-                <IconButton edge="start" color="inherit">
-                    <ArrowBackIcon onClick={() => navigate("/chat")} />
+                <IconButton
+                    edge="start"
+                    color="inherit"
+                    onClick={() => navigate("/chat")}>
+                    <ArrowBackIcon />
                 </IconButton>
                 <Typography
                     variant="h6"

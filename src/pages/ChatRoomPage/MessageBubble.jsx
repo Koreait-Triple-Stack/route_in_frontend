@@ -57,31 +57,6 @@ function MessageBubble({ roomId }) {
     const messageList =
         messageResp?.pages?.flatMap((p) => p?.data?.messageList ?? []) ?? [];
 
-    useNotificationWS({
-        enabled: !!token,
-        token,
-        roomId,
-        onMessage: (payload) => {
-            if (payload?.type !== "read") return;
-            if (Number(payload?.roomId) !== Number(roomId)) return;
-            if (!principal?.userId) return; // ✅ 추가
-
-            if (Number(payload?.userId) === Number(principal.userId)) return;
-
-            queryClient.invalidateQueries({
-                queryKey: [
-                    "getMessageListInfiniteRequest",
-                    { roomId, limit: 20 },
-                ],
-            });
-
-            queryClient.invalidateQueries({
-                queryKey: ["getRoomListByUserIdRequest", principal.userId],
-            });
-        },
-    });
-
-
     const handleScroll = () => {
         const el = scrollerRef.current;
         if (!el) return;

@@ -26,43 +26,96 @@ function NotificationListener() {
         setOpen(false);
     };
     const activeRoomId = useChatUiState((s) => s.activeRoomId);
-    useEffect(() => {
-        console.log("activeRoomId:", activeRoomId);
-    }, [activeRoomId]);
 
+    const onMessage = useCallback(
+        (payload) => {
+            const payloadType = payload?.type;
+            const payloadRoomId = payload?.roomId ?? payload?.data?.roomId;
 
-    const onMessage = useCallback((payload) => {
-        const payloadRoomId = payload?.roomId ?? payload?.data?.roomId;
-        console.log(activeRoomId);
-        console.log(payloadRoomId)
-        if (
-            payloadRoomId != null &&
-            activeRoomId != null &&
-            Number(payloadRoomId) === Number(activeRoomId)
-        ) {
-            return;
-        }
+            if (payloadType === "CHAT_MESSAGE") {
+                // 1) 채팅목록 갱신(방 밖에서도)
+                queryClient.invalidateQueries({
+                    queryKey: ["getRoomListByUserIdRequest", principal.userId],
+                });
 
-        const id = payload?.notificationId ?? crypto.randomUUID();
-        const title = payload?.title ?? "새 알림";
-        const message = payload?.message ?? "새 알림";
-        const path = payload?.path ?? "/notification";
-        const profileImg = payload?.profilImg ?? "";
+                // 2) 내가 그 방 보고 있으면 메시지 리스트도 갱신
+                if (
+                    payloadRoomId != null &&
+                    activeRoomId != null &&
+                    Number(payloadRoomId) === Number(activeRoomId)
+                ) {
+                    queryClient.invalidateQueries({
+                        queryKey: [
+                            "getMessageListInfiniteRequest",
+                            { roomId: Number(payloadRoomId), limit: 20 },
+                        ],
+                    });
 
-        setLastId(id);
-        setTitle(title);
-        setToastMsg(message);
-        setPath(path);
-        setProfileImg(profileImg);
-        setOpen(true);
+                    // ✅ 방 안이면 토스트는 안 띄우고 종료
+                    return;
+                }
+            }
 
-        queryClient.invalidateQueries(["countUnreadNotificationByUserId"]);
-    }, [activeRoomId]);
+            if (payloadType === "MESSAGE") {
+                if (payloadRoomId != null) {
+                    queryClient.invalidateQueries({
+                        queryKey: ["getRoomByRoomIdRequest", payloadRoomId],
+                    });
+                }
+                return;
+            }
+
+            if (payloadType === "read") {
+                if (
+                    payloadRoomId != null &&
+                    activeRoomId != null &&
+                    Number(payloadRoomId) === Number(activeRoomId)
+                ) {
+                    queryClient.invalidateQueries({
+                        queryKey: [
+                            "getMessageListInfiniteRequest",
+                            { roomId: activeRoomId, limit: 20 },
+                        ],
+                    });
+                }
+                return;
+            }
+
+            // ✅ 2) read가 아닌 이벤트만: "현재 보고 있는 방"이면 스낵바만 suppress
+            if (
+                payloadRoomId != null &&
+                activeRoomId != null &&
+                Number(payloadRoomId) === Number(activeRoomId)
+            ) {
+                return;
+            }
+
+            // --- 여기서부터는 스낵바 띄우는 일반 알림 처리 ---
+            const id = payload?.notificationId ?? crypto.randomUUID();
+            const title = payload?.title ?? "새 알림";
+            const message = payload?.message ?? "새 알림";
+            const path = payload?.path ?? "/notification";
+            const profileImg = payload?.profileImg ?? ""; // ✅ 오타 수정: profilImg -> profileImg
+
+            setLastId(id);
+            setTitle(title);
+            setToastMsg(message);
+            setPath(path);
+            setProfileImg(profileImg);
+            setOpen(true);
+
+            queryClient.invalidateQueries({
+                queryKey: ["countUnreadNotificationByUserId"],
+            });
+        },
+        [activeRoomId, principal?.userId, queryClient],
+    );
 
     useNotificationWS({
         enabled: !!token && !!principal?.userId,
         token,
         onMessage,
+        roomId: activeRoomId,
     });
 
     const goNotifications = () => {
@@ -75,14 +128,19 @@ function NotificationListener() {
             open={open}
             autoHideDuration={3500}
             onClose={close}
-            anchorOrigin={{ vertical: "top", horizontal: "center" }}>
+            anchorOrigin={{ vertical: "top", horizontal: "center" }}
+            sx={{
+                pointerEvents: "none",
+            }}>
             <Alert
                 severity="info"
                 icon={false}
                 variant="filled"
                 onClose={close}
                 sx={{
+                    pointerEvents: "auto",
                     borderRadius: 2.5,
+                    maxWidth: 320,
                     "& .MuiAlert-message": {
                         width: "100%",
                         p: 0,
@@ -121,6 +179,7 @@ function NotificationListener() {
                                 WebkitLineClamp: 2,
                                 WebkitBoxOrient: "vertical",
                                 wordBreak: "break-word",
+                                maxWidth: 220,
                             }}>
                             {toastMsg}
                         </Typography>

@@ -75,6 +75,11 @@ function BoardWritePage() {
             return;
         }
 
+        if (form.course?.region !== null) {
+            show("코스를 작성해 주세요", "error")
+            return;
+        }
+
         const payload = {
             title: form.title.trim(),
             content: form.content.trim(),
