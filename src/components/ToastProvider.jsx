@@ -8,19 +8,23 @@ function ToastProvider() {
     const handleClose = (_, reason) => {
         if (reason === "clickaway") return;
         close();
-    }
+    };
 
     return (
         <Snackbar
             open={open}
             autoHideDuration={3500}
             onClose={handleClose}
-            anchorOrigin={{ vertical: "top", horizontal: "center" }}>
+            sx={{ pointerEvents: "none" }}
+            anchorOrigin={{
+                vertical: "top",
+                horizontal: "center",
+            }}>
             <Alert
                 severity={severity}
                 variant="filled"
                 onClose={handleClose}
-                >
+                sx={{ pointerEvents: "auto", maxWidth: 320 }}>
                 {message}
             </Alert>
         </Snackbar>

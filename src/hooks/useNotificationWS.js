@@ -1,40 +1,51 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Client } from "@stomp/stompjs";
 
 export function useNotificationWS({ enabled, token, onMessage, roomId }) {
     const clientRef = useRef(null);
     const onMessageRef = useRef(onMessage);
-    const roomIdRef = useRef(roomId);
+
+    const notifSubRef = useRef(null);
     const roomSubRef = useRef(null);
+
+    const [isConnected, setIsConnected] = useState(false);
 
     useEffect(() => {
         onMessageRef.current = onMessage;
     }, [onMessage]);
 
-    useEffect(() => {
-        roomIdRef.current = roomId;
-    }, [roomId]);
-
-    const subscribeRoom = (client, rid) => {
-        // 기존 room 구독 제거
+    const unsubscribeRoom = () => {
         roomSubRef.current?.unsubscribe?.();
         roomSubRef.current = null;
+    };
+    const unsubscribeNotif = () => {
+        notifSubRef.current?.unsubscribe?.();
+        notifSubRef.current = null;
+    };
 
+    const subscribeRoom = (client, rid) => {
+        unsubscribeRoom();
         if (!rid) return;
 
         roomSubRef.current = client.subscribe(`/topic/room/${rid}`, (msg) => {
             try {
-                const payload = JSON.parse(msg.body);
-                onMessageRef.current?.(payload);
+                onMessageRef.current?.(JSON.parse(msg.body));
             } catch (e) {}
         });
     };
 
-    // ✅ 연결은 1번만
     useEffect(() => {
-        if (!enabled || !token) return;
+        if (!enabled || !token) {
+            setIsConnected(false);
+            if (clientRef.current) {
+                unsubscribeRoom();
+                unsubscribeNotif();
+                clientRef.current.deactivate();
+                clientRef.current = null;
+            }
+            return;
+        }
 
-        // 이미 활성화 중이면 재생성 금지
         if (clientRef.current?.active) return;
 
         const client = new Client({
@@ -43,16 +54,26 @@ export function useNotificationWS({ enabled, token, onMessage, roomId }) {
             reconnectDelay: 3000,
 
             onConnect: () => {
-                // 개인 알림
-                client.subscribe("/user/queue/notification", (msg) => {
-                    try {
-                        const payload = JSON.parse(msg.body);
-                        onMessageRef.current?.(payload);
-                    } catch (e) {}
-                });
+                setIsConnected(true);
 
-                // ✅ 연결되는 순간 현재 roomId로 room 구독을 “무조건” 건다
-                subscribeRoom(client, roomIdRef.current);
+                unsubscribeNotif();
+                notifSubRef.current = client.subscribe(
+                    "/user/queue/notification",
+                    (msg) => {
+                        try {
+                            onMessageRef.current?.(JSON.parse(msg.body));
+                        } catch (e) {}
+                    },
+                );
+
+                // ✅ 여기서는 roomId가 아직 null일 수도 있으니, roomId effect가 책임지게 둬도 됨
+            },
+
+            onDisconnect: () => {
+                console.log("[WS] disconnected");
+                setIsConnected(false);
+                unsubscribeRoom();
+                unsubscribeNotif();
             },
         });
 
@@ -60,19 +81,18 @@ export function useNotificationWS({ enabled, token, onMessage, roomId }) {
         clientRef.current = client;
 
         return () => {
-            roomSubRef.current?.unsubscribe?.();
-            roomSubRef.current = null;
-
+            setIsConnected(false);
+            unsubscribeRoom();
+            unsubscribeNotif();
             client.deactivate();
             clientRef.current = null;
         };
     }, [enabled, token]);
 
-    // ✅ roomId가 바뀌었고, 이미 연결되어 있으면 room 구독만 교체
+    // ✅ roomId 또는 연결 상태가 바뀌면 구독 보장
     useEffect(() => {
         const client = clientRef.current;
-        if (!client || !client.connected) return;
-
+        if (!client || !isConnected) return;
         subscribeRoom(client, roomId);
-    }, [roomId]);
+    }, [roomId, isConnected]);
 }

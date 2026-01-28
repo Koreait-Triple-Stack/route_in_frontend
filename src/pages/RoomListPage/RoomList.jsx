@@ -15,42 +15,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { timeAgo } from "../../apis/utils/time";
 
-// ✅ 더미 데이터 (채팅방 목록)
-const CHAT_ROOMS = [
-    {
-        id: 22,
-        name: "김개발",
-        lastMessage: "넵 알겠습니다 ㅎㅎ 이따 봬요!",
-        time: "오후 2:35",
-        unread: 2,
-        avatar: "",
-    },
-    {
-        id: 2,
-        name: "러닝 크루 3기",
-        lastMessage: "오늘 우천으로 인해 정기 러닝은 취소되었습니다 ㅠㅠ",
-        time: "오전 11:20",
-        unread: 15,
-        avatar: "https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=100", // 예시 이미지
-    },
-    {
-        id: 3,
-        name: "알림톡",
-        lastMessage: "회원가입을 환영합니다! 쿠폰이 도착했어요.",
-        time: "어제",
-        unread: 0,
-        avatar: null, // 없을 경우 기본 아이콘
-    },
-    {
-        id: 4,
-        name: "엄마",
-        lastMessage: "저녁 먹고 들어오니?",
-        time: "어제",
-        unread: 0,
-        avatar: "",
-    },
-];
-
 function RoomList({ roomList }) {
     const navigate = useNavigate();
     const [contextMenu, setContextMenu] = useState(null);
