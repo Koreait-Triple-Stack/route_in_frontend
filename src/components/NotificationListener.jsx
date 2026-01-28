@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { usePrincipalState } from "../store/usePrincipalState";
 import { useNotificationStore } from "../store/useNotificationStore";
@@ -6,6 +6,7 @@ import { useNotificationWS } from "../hooks/useNotificationWS";
 import { Alert, Avatar, Button, Snackbar, Typography } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { Box } from "@mui/system";
+import { useChatUiState } from "../store/useChatUiState";
 
 function NotificationListener() {
     const navigate = useNavigate();
@@ -24,37 +25,50 @@ function NotificationListener() {
         if (reason === "clickaway") return;
         setOpen(false);
     };
+    const activeRoomId = useChatUiState((s) => s.activeRoomId);
+    useEffect(() => {
+        console.log("activeRoomId:", activeRoomId);
+    }, [activeRoomId]);
 
-    const onMessage = useCallback(
-        (payload) => {
-            const id = payload?.notificationId ?? crypto.randomUUID();
-            const title = payload?.title ?? "새 알림";
-            const message = payload?.message ?? "새 알림";
-            const path = payload?.path ?? "/notification";
-            const profileImg = payload?.profilImg ?? "";
 
-            setLastId(id);
-            setTitle(title)
-            setToastMsg(message);
-            setPath(path);
-            setProfileImg(profileImg)
-            setOpen(true);
+    const onMessage = useCallback((payload) => {
+        const payloadRoomId = payload?.roomId ?? payload?.data?.roomId;
+        console.log(activeRoomId);
+        console.log(payloadRoomId)
+        if (
+            payloadRoomId != null &&
+            activeRoomId != null &&
+            Number(payloadRoomId) === Number(activeRoomId)
+        ) {
+            return;
+        }
 
-            queryClient.invalidateQueries(["countUnreadNotificationByUserId"]);
-        },
-        [],
-    );
+        const id = payload?.notificationId ?? crypto.randomUUID();
+        const title = payload?.title ?? "새 알림";
+        const message = payload?.message ?? "새 알림";
+        const path = payload?.path ?? "/notification";
+        const profileImg = payload?.profilImg ?? "";
+
+        setLastId(id);
+        setTitle(title);
+        setToastMsg(message);
+        setPath(path);
+        setProfileImg(profileImg);
+        setOpen(true);
+
+        queryClient.invalidateQueries(["countUnreadNotificationByUserId"]);
+    }, [activeRoomId]);
 
     useNotificationWS({
         enabled: !!token && !!principal?.userId,
         token,
         onMessage,
-    })
+    });
 
     const goNotifications = () => {
-        navigate(path, { state: { focusId: lastId}})
-        setOpen(false)
-    }
+        navigate(path, { state: { focusId: lastId } });
+        setOpen(false);
+    };
 
     return (
         <Snackbar

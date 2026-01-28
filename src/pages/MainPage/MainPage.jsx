@@ -8,6 +8,9 @@ import ExpandMore from "@mui/icons-material/ExpandMore";
 import { useState } from "react";
 import RunningRecord from "./RunningRecord";
 import AIRecommend from "./AIRecommend";
+import OncePerDay from "../../hooks/OncePerDay";
+import Calendar from "../../components/Calendar";
+
 const MainPage = () => {
     const { principal } = usePrincipalState();
     const [routineOpen, setRoutineOpen] = useState(false);
@@ -17,7 +20,8 @@ const MainPage = () => {
     const handleRoutine = () => setRoutineOpen(!routineOpen);
     const handleRunning = () => setRunningOpen(!runningOpen);
     const handleAI = () => setAIOpen(!AIOpen);
-
+  
+    const { open, close } = OncePerDay(principal?.userId);
     return (
         <Container>
             <Stack spacing={2}>
@@ -77,6 +81,7 @@ const MainPage = () => {
                     </Collapse>
                 </Stack>
             </Stack>
+            <Calendar open={open} onClose={close} lockCurrentMonth />
         </Container>
     );
 };

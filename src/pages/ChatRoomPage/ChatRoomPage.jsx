@@ -1,99 +1,79 @@
 import React, { useState, useEffect, useRef } from "react";
-import {
-    Box,
-    Typography,
-    TextField,
-    IconButton,
-    Stack,
-    AppBar,
-    Toolbar,
-} from "@mui/material";
+import { Box, Typography, TextField, IconButton, Stack } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import MenuIcon from "@mui/icons-material/Menu";
 import SendIcon from "@mui/icons-material/Send";
 import { useNavigate, useParams } from "react-router-dom";
-import { Container, Grid } from "@mui/system";
-import MenuDrawer from "./MenuDrawer";
 import MessageBubble from "./MessageBubble";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { usePrincipalState } from "../../store/usePrincipalState";
-import { getRoomByRoomIdRequest } from "../../apis/chat/chatApi";
+import {
+    addMessageRequest,
+    getRoomByRoomIdRequest,
+} from "../../apis/chat/chatApi";
 import Loading from "../../components/Loading";
 import ErrorComponent from "../../components/ErrorComponent";
+import { useToastStore } from "../../store/useToastStore";
+import { useNotificationWS } from "../../hooks/useNotificationWS";
+import { useChatUiState } from "../../store/useChatUiState";
 
-// ✅ 더미 데이터
-const INITIAL_MESSAGES = [
-    {
-        id: 22,
-        text: "오늘 저녁에 시간 되시나요?",
-        time: "오후 2:30",
-        isMe: false,
-        sender: "김개발",
-        profile: "",
-    },
-    {
-        id: 2,
-        text: "네! 7시쯤 괜찮을 것 같아요.",
-        time: "오후 2:31",
-        isMe: true,
-    },
-    {
-        id: 3,
-        text: "좋아요. 어디서 볼까요?",
-        time: "오후 2:32",
-        isMe: false,
-        sender: "김개발",
-        profile: "",
-    },
-    {
-        id: 4,
-        text: "강남역 근처 어떠세요? 맛집 찾아볼게요!",
-        time: "오후 2:33",
-        isMe: true,
-    },
-    {
-        id: 5,
-        text: "넵 알겠습니다 ㅎㅎ",
-        time: "오후 2:35",
-        isMe: false,
-        sender: "김개발",
-        profile: "",
-    },
-];
-
-// 🏠 2. 메인 채팅방 컴포넌트
 function ChatRoomPage() {
-    const [messages, setMessages] = useState(INITIAL_MESSAGES);
+    const { show } = useToastStore();
     const [inputValue, setInputValue] = useState("");
+    const queryClient = useQueryClient();
     const [isMenu, setIsMenu] = useState(false);
-    const scrollRef = useRef(null);
     const navigate = useNavigate();
     const { principal } = usePrincipalState();
     const { roomId: roomIdParam } = useParams();
     const roomId = Number(roomIdParam);
+    const token = localStorage.getItem("AcessToken");
     const {
         data: roomResp,
         isLoading: roomLoading,
         error: roomError,
     } = useQuery({
-        queryKey: ["getRoomByRoomIdRequest", 7],
-        queryFn: () => getRoomByRoomIdRequest(7),
+        queryKey: ["getRoomByRoomIdRequest", roomId],
+        queryFn: () => getRoomByRoomIdRequest(roomId),
         staleTime: 30000,
     });
     const room = roomResp?.data ?? {};
 
-    // 스크롤 자동 내리기
-    // useEffect(() => {
-    //     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
-    // }, [messages]);
+    const mutation = useMutation({
+        mutationFn: addMessageRequest,
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ["getRoomListByUserIdRequest", principal.userId],
+            });
+        },
+        onError: (resp) => {
+            show(resp.message, "error");
+        },
+    });
+    const setActiveRoomId = useChatUiState((s) => s.setActiveRoomId);
+
+    useEffect(() => {
+        if (!roomId) return;
+        setActiveRoomId(Number(roomId));
+        console.log(roomId)
+        return () => setActiveRoomId(null);
+    }, [roomId, setActiveRoomId]);
 
     const handleSend = () => {
         if (!inputValue.trim()) return;
+
+        mutation.mutate({
+            roomId,
+            senderId: principal.userId,
+            type: "text",
+            content: inputValue,
+        });
 
         setInputValue("");
     };
 
     const handleKeyDown = (e) => {
+        if (e.nativeEvent.isComposing) return;
+
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
             handleSend();
@@ -104,54 +84,54 @@ function ChatRoomPage() {
     if (roomError) return <ErrorComponent error={roomError} />;
 
     return (
-        <Container sx={{ height: "100%" }} disableGutters>
+        <Box
+            sx={{
+                height: "100%",
+                display: "flex",
+                flexDirection: "column",
+                backgroundColor: "black",
+            }}>
+            {/* 🟦 상단 헤더 */}
             <Box
                 sx={{
-                    width: "100%",
-                    height: "100%",
-                    bgcolor: "#b2c7da", // ✅ 카카오톡 기본 배경색
                     display: "flex",
-                    flexDirection: "column",
-                    position: "relative",
-                    overflow: "hidden",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    flexShrink: 0,
+                    alignItems: "center",
+                    px: 2,
+                    py: 1.5,
                 }}>
-                {/* 🟦 상단 헤더 */}
-                <AppBar
-                    position="static"
-                    elevation={0}
-                    sx={{ bgcolor: "transparent", pt: 1 }}>
-                    <Toolbar
-                        sx={{ justifyContent: "space-between", color: "#000" }}>
-                        <IconButton edge="start" color="inherit">
-                            <ArrowBackIcon onClick={() => navigate("/chat")} />
-                        </IconButton>
-                        <Typography
-                            variant="h6"
-                            sx={{ fontWeight: "bold", fontSize: "1.1rem" }}>
-                            {
-                                room?.participants.find(
-                                    (p) => p.userId === principal?.userId,
-                                )?.title
-                            }
-                        </Typography>
-                        <Stack direction="row">
-                            <IconButton color="inherit">
-                                <MenuIcon onClick={() => setIsMenu(true)} />
-                            </IconButton>
-                        </Stack>
-                    </Toolbar>
-                </AppBar>
+                <IconButton edge="start" color="inherit">
+                    <ArrowBackIcon onClick={() => navigate("/chat")} />
+                </IconButton>
+                <Typography
+                    variant="h6"
+                    sx={{ fontWeight: "bold", fontSize: "1.1rem" }}>
+                    {
+                        room?.participants.find(
+                            (p) => p.userId === principal?.userId,
+                        )?.title
+                    }
+                </Typography>
+                <Stack direction="row">
+                    <IconButton color="inherit" onClick={() => setIsMenu(true)}>
+                        <MenuIcon />
+                    </IconButton>
+                </Stack>
+            </Box>
 
-                {/* <MenuDrawer
+            {/* <MenuDrawer
                     setIsMenu={setIsMenu}
                     isMenu={isMenu}
-                    participants={room?.participants}
+                    participants={room?.participants} 
                 /> */}
-                <MessageBubble scrollRef={scrollRef} messages={messages} />
+            <MessageBubble roomId={roomId} />
 
-                {/* ⌨️ 하단 입력창 */}
+            <Box sx={{ flexShrink: 0 }}>
                 <Box
                     sx={{
+                        width: "100%",
                         bgcolor: "#fff",
                         p: 1.5,
                         display: "flex",
@@ -205,7 +185,7 @@ function ChatRoomPage() {
                     </IconButton>
                 </Box>
             </Box>
-        </Container>
+        </Box>
     );
 }
 

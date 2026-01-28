@@ -5,14 +5,13 @@ import { usePrincipalState } from "../../store/usePrincipalState";
 import AddressForm from "./AddressForm";
 import UsernameForm from "./UsernameForm";
 import BodyInfoForm from "./BodyInfoForm";
-import OverlayWrapper from "./OverlayWrapper";
-import { Container, Typography } from "@mui/material";
+import { Container } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { getUserByUserId } from "../../apis/account/accountService";
 import Loading from "../../components/Loading";
 import ProfileCard from "./ProfileCard";
-import AttendanceCalendarForm from "../../components/Calendar/AttendanceCalendarForm";
 import WithdrawForm from "./WithdrawForm";
+import Calendar from "../../components/Calendar";
 
 function MyPage() {
     const navigate = useNavigate();
@@ -37,7 +36,7 @@ function MyPage() {
         const commonProps = {
             userId: user?.userId,
             onClose: handleCloseOverlay,
-            onLogout: logout
+            onLogout: logout,
         };
 
         switch (activeView) {
@@ -48,7 +47,7 @@ function MyPage() {
             case "bodyInfo":
                 return <BodyInfoForm {...commonProps} />;
             case "withdraw":
-                return <WithdrawForm {...commonProps} />
+                return <WithdrawForm {...commonProps} />;
             default:
                 return null;
         }
@@ -59,9 +58,9 @@ function MyPage() {
     return (
         <Container>
             {renderOverlayContent()}
-            <AttendanceCalendarForm
+            <Calendar
                 open={activeView === "calendar"}
-                onClose={handleCloseOverlay}
+                onClose={() => setActiveView(null)}
             />
             <ProfileCard
                 user={user}
