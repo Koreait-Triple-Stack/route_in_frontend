@@ -2,6 +2,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useState, useEffect } from "react";
 import { changeCurrentRun, changeWeeklyRun, getUserByUserId } from "../../apis/account/accountService";
 import { Box, Button, Divider, Paper, Typography, Stack, TextField } from "@mui/material";
+import Loading from "../../components/Loading";
+import ErrorComponent from "../../components/ErrorComponent";
 
 function RunningRecord({ userId }) {
     const queryClient = useQueryClient();
@@ -11,7 +13,7 @@ function RunningRecord({ userId }) {
     const [currentValues, setCurrentValues] = useState(Array(7).fill(0));
     const [weeklyValues, setWeeklyValues] = useState(Array(7).fill(0));
 
-    const { data: response } = useQuery({
+    const { data: response, isLoading, error } = useQuery({
         queryKey: ["getUserByUserId", userId],
         queryFn: () => getUserByUserId(userId),
         staleTime: 30000,
@@ -58,6 +60,9 @@ function RunningRecord({ userId }) {
         if (response?.data?.weeklyRun) setWeeklyValues(response.data.weeklyRun);
         setIsEditing(false);
     };
+
+    if (isLoading) return <Loading />;
+    if (error) return <ErrorComponent error={error} />;
 
     return (
         <Paper
