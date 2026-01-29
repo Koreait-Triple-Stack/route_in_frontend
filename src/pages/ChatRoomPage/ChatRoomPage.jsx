@@ -16,15 +16,18 @@ import ErrorComponent from "../../components/ErrorComponent";
 import { useToastStore } from "../../store/useToastStore";
 import { useNotificationWS } from "../../hooks/useNotificationWS";
 import { useChatUiState } from "../../store/useChatUiState";
+import MenuDrawer from "./MenuDrawer";
+import InviteDialog from "./InviteDialog";
 
 function ChatRoomPage() {
     const { show } = useToastStore();
     const [inputValue, setInputValue] = useState("");
-    const queryClient = useQueryClient();
     const [isMenu, setIsMenu] = useState(false);
     const navigate = useNavigate();
     const { principal } = usePrincipalState();
     const { roomId: roomIdParam } = useParams();
+    const chatAreaRef = useRef();
+    const [isInvite, setIsInvite] = useState();
     const roomId = Number(roomIdParam);
     const {
         data: roomResp,
@@ -77,11 +80,14 @@ function ChatRoomPage() {
 
     return (
         <Box
+            position="relative"
+            ref={chatAreaRef}
             sx={{
                 height: "100%",
                 display: "flex",
                 flexDirection: "column",
                 backgroundColor: "grey",
+                overflow: "visible",
             }}>
             {/* 🟦 상단 헤더 */}
             <Box
@@ -116,11 +122,23 @@ function ChatRoomPage() {
                 </Stack>
             </Box>
 
-            {/* <MenuDrawer
-                    setIsMenu={setIsMenu}
-                    isMenu={isMenu}
-                    participants={room?.participants} 
-                /> */}
+            <MenuDrawer
+                chatAreaRef={chatAreaRef}
+                setIsMenu={setIsMenu}
+                isMenu={isMenu}
+                setIsInvite={setIsInvite}
+                participants={room?.participants}
+            />
+
+            <InviteDialog
+                isInvite={isInvite}
+                setIsInvite={setIsInvite}
+                setIsMenu={setIsMenu}
+                title={room.participants.map(part => part.username).join(", ")}
+                roomId={roomId}
+                participantIds={new Set(room?.participants.map(part => Number(part.userId)))}
+            />
+
             <MessageBubble roomId={roomId} />
 
             <Box sx={{ flexShrink: 0 }}>

@@ -1,46 +1,31 @@
 import {
     Avatar,
     Badge,
-    Divider,
     List,
     ListItemAvatar,
     ListItemButton,
     ListItemText,
-    Menu,
-    MenuItem,
     Typography,
 } from "@mui/material";
 import { Box, Container } from "@mui/system";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { timeAgo } from "../../apis/utils/time";
+import MenuModal from "./MenuModal";
 
 function RoomList({ roomList }) {
     const navigate = useNavigate();
     const [contextMenu, setContextMenu] = useState(null);
-    const [selectedChatId, setSelectedChatId] = useState(null);
-
-    const handleLeaveChat = () => {
-        if (window.confirm("정말 이 채팅방을 나가시겠습니까?")) {
-            console.log(selectedChatId, "번 방 나가기 처리");
-            // 여기에 나가기 API 호출 로직 추가
-        }
-        handleClose();
-    };
-    // 메뉴 닫기
-    const handleClose = () => {
-        setContextMenu(null);
-        setSelectedChatId(null);
-    };
+    const [selectedRoom, setSelectedRoom] = useState(null);
 
     const handleChatClick = (id) => {
         navigate(`/chat/room/${id}`);
     };
 
     // ✅ [핵심] 꾹 누르기(모바일) or 우클릭(PC) 핸들러
-    const handleContextMenu = (event, id) => {
+    const handleContextMenu = (event, room) => {
         event.preventDefault(); // 브라우저 기본 메뉴(복사/인쇄 등)가 안 뜨게 막음!
-        setSelectedChatId(id); // 어떤 채팅방을 눌렀는지 저장
+        setSelectedRoom(room); // 어떤 채팅방을 눌렀는지 저장
         setContextMenu(
             contextMenu === null
                 ? {
@@ -66,9 +51,8 @@ function RoomList({ roomList }) {
                             key={room.roomId}
                             alignItems="center"
                             onClick={() => handleChatClick(room.roomId)}
-                            // ✅ 여기에 우클릭/꾹누르기 이벤트 연결
                             onContextMenu={(e) =>
-                                handleContextMenu(e, room.roomId)
+                                handleContextMenu(e, room)
                             }
                             sx={{ py: 1.5, px: 0.5 }}>
                             <ListItemAvatar sx={{ minWidth: 0, margin: 0 }}>
@@ -113,7 +97,7 @@ function RoomList({ roomList }) {
                                 sx={{
                                     display: "flex",
                                     flexDirection: "column",
-                                    alignItems: "flex-end",
+                                    alignItems: "center",
                                     ml: 1,
                                     mb: 2.5,
                                     minWidth: "60px",
@@ -124,7 +108,6 @@ function RoomList({ roomList }) {
                                         color: "#999",
                                         fontSize: "0.75rem",
                                         mb: 0.5,
-                                        ml: 3,
                                     }}>
                                     {timeAgo(room.lastMessageDt)}
                                 </Typography>
@@ -137,7 +120,7 @@ function RoomList({ roomList }) {
                                                 fontSize: "0.7rem",
                                                 height: 18,
                                                 minWidth: 18,
-                                                margin: 1,
+                                                mt: 1,
                                                 bgcolor: "#fa5a5a",
                                             },
                                         }}
@@ -148,26 +131,12 @@ function RoomList({ roomList }) {
                     ))}
             </List>
 
-            <Menu
-                open={contextMenu !== null}
-                onClose={handleClose}
-                anchorReference="anchorPosition"
-                anchorPosition={
-                    contextMenu !== null
-                        ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
-                        : undefined
-                }
-                PaperProps={{
-                    style: { width: 200 },
-                }}>
-                <MenuItem onClick={handleClose}>채팅방 이름 설정</MenuItem>
-                <MenuItem onClick={handleClose}>즐겨찾기에 추가</MenuItem>
-                <MenuItem onClick={handleClose}>채팅방 알림 끄기</MenuItem>
-                <Divider />
-                <MenuItem onClick={handleLeaveChat} sx={{ color: "#d32f2f" }}>
-                    나가기
-                </MenuItem>
-            </Menu>
+            <MenuModal
+                contextMenu={contextMenu}
+                setContextMenu={setContextMenu}
+                selectedRoom={selectedRoom}
+                setSelectedRoom={setSelectedRoom}
+            />
         </Box>
     );
 }

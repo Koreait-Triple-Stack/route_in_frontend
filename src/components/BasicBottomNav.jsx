@@ -10,6 +10,7 @@ import { Badge } from "@mui/material";
 import { countUnreadNotificationByUserId } from "../apis/notification/notificationService";
 import { usePrincipalState } from "../store/usePrincipalState";
 import { useQuery } from "@tanstack/react-query";
+import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 
 function BasicBottomNav() {
     const location = useLocation();
@@ -50,7 +51,7 @@ function BasicBottomNav() {
                 <BottomNavigationAction
                     label="채팅"
                     value="/chat"
-                    icon={<FilterFramesOutlinedIcon />}
+                    icon={<ChatBubbleOutlineIcon />}
                 />
                 <BottomNavigationAction
                     label="홈"

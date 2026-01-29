@@ -1,14 +1,19 @@
 import React, { use, useState } from "react";
 import {
     Box,
+    ListItemText,
+    Menu,
+    MenuItem,
+    Divider,
     TextField,
     Button,
     Dialog,
     DialogContent,
     DialogTitle,
     DialogActions,
-    ToggleButton,
+    Drawer,
     ToggleButtonGroup,
+    ToggleButton,
 } from "@mui/material";
 import {
     getFollowerUserList,
@@ -18,23 +23,25 @@ import SearchIcon from "@mui/icons-material/Search";
 import { Stack } from "@mui/system";
 import FollowUserList from "./FollowUserList";
 import { useMutation } from "@tanstack/react-query";
-import { addRoomRequest } from "../../apis/chat/chatApi";
-import { useNavigate } from "react-router-dom";
+import { addRoomParticipantRequest } from "../../apis/chat/chatApi";
 import { useToastStore } from "../../store/useToastStore";
-import { usePrincipalState } from "../../store/usePrincipalState";
 
-function NewChatDialog({ isNewChat, setIsNewChat }) {
+function InviteDialog({
+    isInvite,
+    setIsInvite,
+    setIsMenu,
+    title,
+    roomId,
+    participantIds,
+}) {
     const { show } = useToastStore();
-    const { principal } = usePrincipalState();
-    const navigate = useNavigate();
     const [searchInputValue, setSearchInputValue] = useState("");
     const [isFollow, setIsFollow] = useState("follower");
-    const [selectedIds, setSelectedIds] = useState([principal.userId]);
-    const [title, setTitle] = useState([]);
-    const mutation = useMutation({
-        mutationFn: (data) => addRoomRequest(data),
+    const [selectedIds, setSelectedIds] = useState([]);
+    const inviteMutation = useMutation({
+        mutationFn: addRoomParticipantRequest,
         onSuccess: (resp) => {
-            navigate(`/chat/room/${resp.data}`);
+            show(resp.message, "success");
         },
         onError: (resp) => {
             show(resp.message, "error");
@@ -42,25 +49,35 @@ function NewChatDialog({ isNewChat, setIsNewChat }) {
     });
 
     const onClickHandler = async () => {
-        if (selectedIds.length === 1) {
+        if (selectedIds.length === 0) {
             show("한명 이상을 선택해주세요");
             return;
         }
 
-        mutation.mutate({
-            title: title.join(", "),
+        inviteMutation.mutate({
+            roomId: roomId,
+            title: title,
             userIds: selectedIds,
         });
+
+        onClose();
+        setIsMenu(false);
     };
 
     const followOnChangeHandler = (e) => {
-        setIsFollow(e.target.value)
-    }
+        setIsFollow(e.target.value);
+    };
+
+    const onClose = () => {
+        setIsInvite(false);
+        setIsFollow("follower");
+        setSelectedIds([]);
+    };
 
     return (
         <Dialog
-            open={isNewChat}
-            onClose={() => setIsNewChat(false)}
+            open={isInvite}
+            onClose={onClose}
             PaperProps={{
                 sx: {
                     height: "100%",
@@ -88,6 +105,7 @@ function NewChatDialog({ isNewChat, setIsNewChat }) {
                         sx={{ mb: 0.5, ml: 1, width: "90%" }}
                     />
                 </Stack>
+
                 <Box sx={{ display: "flex", justifyContent: "center", mb: 3 }}>
                     <ToggleButtonGroup
                         value={isFollow}
@@ -127,17 +145,14 @@ function NewChatDialog({ isNewChat, setIsNewChat }) {
                     mode={isFollow === "follower" ? "followers" : "following"}
                     selectedIds={selectedIds}
                     setSelectedIds={setSelectedIds}
-                    setTitle={setTitle}
+                    participantIds={participantIds}
                 />
 
                 <Stack spacing={2}></Stack>
             </DialogContent>
             <DialogActions sx={{ p: 2 }}>
                 <Stack direction="row" spacing={2}>
-                    <Button
-                        variant="outlined"
-                        size="large"
-                        onClick={() => setIsNewChat(false)}>
+                    <Button variant="outlined" size="large" onClick={onClose}>
                         취소
                     </Button>
                     <Button
@@ -152,4 +167,4 @@ function NewChatDialog({ isNewChat, setIsNewChat }) {
     );
 }
 
-export default NewChatDialog;
+export default InviteDialog;
