@@ -1,13 +1,11 @@
 import {
     FormControl,
-    FormHelperText,
     MenuItem,
     Select,
     ToggleButton,
     ToggleButtonGroup,
 } from "@mui/material";
 import { Box, Grid, Stack } from "@mui/system";
-import React from "react";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 
 function TypeBox({ checked, setChecked, form, setForm, setTags }) {

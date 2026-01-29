@@ -30,6 +30,12 @@ export const changeRoomTitleRequest = async (data) => {
     return result.data;
 };
 
+export const addRoomParticipantRequest = async (data) => {
+    const result = await instance.post("/chat/room/participant/add", data);
+    if (result.data.status !== "success") throw new Error(result.data.message);
+    return result.data;
+};
+
 export const addMessageRequest = async (data) => {
     const result = await instance.post("/chat/message/add", data);
     if (result.data.status !== "success") throw new Error(result.data.message);

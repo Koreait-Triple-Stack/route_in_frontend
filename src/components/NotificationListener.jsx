@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { usePrincipalState } from "../store/usePrincipalState";
-import { useNotificationStore } from "../store/useNotificationStore";
 import { useNotificationWS } from "../hooks/useNotificationWS";
 import { Alert, Avatar, Button, Snackbar, Typography } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
@@ -13,7 +12,6 @@ function NotificationListener() {
     const token = localStorage.getItem("AccessToken");
     const queryClient = useQueryClient();
     const { principal } = usePrincipalState();
-    // const { push } = useNotificationStore();
     const [open, setOpen] = useState(false);
     const [lastId, setLastId] = useState(null);
     const [toastMsg, setToastMsg] = useState("새 알림이 도착했어요");

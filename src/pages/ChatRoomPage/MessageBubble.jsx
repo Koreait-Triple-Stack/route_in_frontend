@@ -6,7 +6,6 @@ import ErrorComponent from "../../components/ErrorComponent";
 import MessageBubbleComponent from "./MessageBubbleComponent";
 import { ClipLoader } from "react-spinners";
 import { useEffect, useLayoutEffect, useRef } from "react";
-import { useNotificationWS } from "../../hooks/useNotificationWS";
 import { usePrincipalState } from "../../store/usePrincipalState";
 
 function MessageBubble({ roomId }) {
@@ -15,8 +14,6 @@ function MessageBubble({ roomId }) {
     const prevScrollHeightRef = useRef(0);
     const needAdjustRef = useRef(false);
     const didInitScrollRef = useRef(false);
-    const queryClient = useQueryClient();
-    const token = localStorage.getItem("AccessToken");
     const { principal } = usePrincipalState();
 
     const scrollToBottom = () => {
@@ -41,7 +38,7 @@ function MessageBubble({ roomId }) {
         fetchNextPage,
         hasNextPage,
     } = useInfiniteQuery({
-        queryKey: ["getMessageListInfiniteRequest", { roomId, limit: 20 }],
+        queryKey: ["getMessageListInfiniteRequest", { roomId, userId: principal?.userId, limit: 20 }],
         queryFn: getMessageListInfiniteRequest,
         initialPageParam: null,
         getNextPageParam: (lastPage) => {

@@ -118,8 +118,8 @@ function NotificationPage() {
                                 <Avatar
                                     src={n?.profileImg}
                                     sx={{
-                                        width: 44,
-                                        height: 44,
+                                        width: 56,
+                                        height: 56,
                                         fontWeight: 800,
                                         bgcolor: "grey.200",
                                     }}>
