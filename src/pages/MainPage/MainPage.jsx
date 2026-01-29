@@ -20,7 +20,7 @@ const MainPage = () => {
     const handleRoutine = () => setRoutineOpen(!routineOpen);
     const handleRunning = () => setRunningOpen(!runningOpen);
     const handleAI = () => setAIOpen(!AIOpen);
-  
+
     const { open, close } = OncePerDay(principal?.userId);
     return (
         <Container>
@@ -53,14 +53,7 @@ const MainPage = () => {
                 </Stack>
 
                 <Stack spacing={2}>
-                    <Button onClick={handleAI}>
-                        <Typography>오늘의 운동 추천</Typography>
-                        {AIOpen ? <ExpandLess /> : <ExpandMore />}
-                    </Button>
-                    <Collapse in={AIOpen} timeout="auto" unmountOnExit>
-                        <AIRecommend userId={principal?.userId} />
-                    </Collapse>
-
+                    <AIRecommend userId={principal?.userId} />
                     <Button onClick={handleRoutine}>
                         <Typography>운동루틴 수정</Typography>
                         {routineOpen ? <ExpandLess /> : <ExpandMore />}

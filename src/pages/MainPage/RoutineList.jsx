@@ -1,7 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Stack } from "@mui/system";
 import ScheduleItem from "../../components/ScheduleItem";
-import { changeChecked, getRoutine, removeRoutine, updateRoutine } from "../../apis/routine/routineService";
+import { getRoutine, removeRoutine, updateRoutine } from "../../apis/routine/routineService";
+import Loading from "../../components/Loading";
+import ErrorComponent from "../../components/ErrorComponent";
 
 function RoutineList({ userId }) {
     const dbDays = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
@@ -17,7 +19,7 @@ function RoutineList({ userId }) {
 
     const queryClient = useQueryClient();
 
-    const { data: response, isLoading } = useQuery({
+    const { data: response, isLoading, error } = useQuery({
         queryKey: ["getRoutine", userId],
         queryFn: () => getRoutine(userId),
         staleTime: 30000,
@@ -62,7 +64,8 @@ function RoutineList({ userId }) {
         updateMutation.mutate(payload);
     };
 
-    if (isLoading) return <div>로딩중...</div>;
+    if (isLoading) return <Loading />;
+    if (error) return <ErrorComponent error={error} />;
 
     return (
         <Stack spacing={2}>
