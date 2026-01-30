@@ -1,5 +1,5 @@
 import { Avatar, Chip, Paper, Typography } from "@mui/material";
-import { Box, Stack } from "@mui/system";
+import { borderColor, Box, Stack } from "@mui/system";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import FavoriteIcon from "@mui/icons-material/Favorite";
@@ -8,6 +8,12 @@ import { timeAgo } from "../../apis/utils/time";
 function PostCard({ board }) {
     const year = new Date().getFullYear();
     const navigate = useNavigate();
+    const tagSx = {
+        color: board.type === "COURSE" ? "primary.dark" : "white",
+        bgcolor: board.type === "COURSE" ? "transparent" : "primary.light",
+        border: "1px solid",
+        borderColor: board.type === "COURSE" ? "primary.dark" : "transparent",
+    };
 
     return (
         <Paper
@@ -44,13 +50,7 @@ function PostCard({ board }) {
                                     : "운동루틴"
                             }
                             size="small"
-                            sx={{
-                                color: "white",
-                                bgcolor:
-                                    board.type === "COURSE"
-                                        ? "#ff7961"
-                                        : "#2196f3",
-                            }}
+                            sx={tagSx}
                         />
                         <Chip
                             size="small"
@@ -100,15 +100,16 @@ function PostCard({ board }) {
                 {board.type === "ROUTINE" ? (
                     <Stack direction="row" spacing={1} flexWrap="wrap">
                         {board.tags.map((m, i) => (
-                            <Chip key={i} label={m} size="small" />
+                            <Chip key={i} label={m} size="small" sx={tagSx} />
                         ))}
                     </Stack>
                 ) : (
                     <Stack direction="row" spacing={1} flexWrap="wrap">
-                        <Chip label={board.tags[0]} size="small" />
+                        <Chip label={board.tags[0]} size="small" sx={tagSx} />
                         <Chip
                             label={`${Math.round((board.tags[1] ?? 0) / 100) / 10} km`}
                             size="small"
+                            sx={tagSx}
                         />
                     </Stack>
                 )}

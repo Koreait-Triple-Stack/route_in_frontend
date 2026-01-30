@@ -61,8 +61,9 @@ function FilterBox({ form, setForm, setTags }) {
                 display: "flex",
                 flexDirection: "column",
                 gap: "15px",
-                border: "1px solid #dbdbdb",
-                padding: "20px",
+                border: "1px solid",
+                borderColor: "primary.main",
+                p: 3,
                 boxSizing: "border-box",
                 borderRadius: "12px",
                 mb: 1,
@@ -107,6 +108,20 @@ function FilterBox({ form, setForm, setTags }) {
                                         borderRadius: 999,
                                         px: 2,
                                         boxSizing: "border-box",
+                                        color: "primary.main",
+                                        borderColor: "primary.main",
+                                        "&.Mui-selected": {
+                                            bgcolor: "primary.main",
+                                            color: "#fff",
+                                            "&:hover": {
+                                                bgcolor: "primary.dark",
+                                                color: "#fff",
+                                            },
+                                        },
+                                        "&:hover": {
+                                            bgcolor: "primary.dark",
+                                            color: "#fff",
+                                        },
                                     }}>
                                     {part}
                                 </ToggleButton>

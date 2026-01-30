@@ -43,7 +43,7 @@ function NewChatDialog({ isNewChat, setIsNewChat }) {
 
     const onClickHandler = async () => {
         if (selectedIds.length === 1) {
-            show("한명 이상을 선택해주세요");
+            show("한명 이상을 선택해주세요", "error");
             return;
         }
 
@@ -53,14 +53,19 @@ function NewChatDialog({ isNewChat, setIsNewChat }) {
         });
     };
 
-    const followOnChangeHandler = (e) => {
-        setIsFollow(e.target.value)
-    }
+    const followOnChangeHandler = (e, newValue) => {
+        if (newValue !== null) setIsFollow(newValue);
+    };
+
+    const onClose = () => {
+        setSelectedIds([]);
+        setIsNewChat(false);
+    };
 
     return (
         <Dialog
             open={isNewChat}
-            onClose={() => setIsNewChat(false)}
+            onClose={onClose}
             PaperProps={{
                 sx: {
                     height: "100%",
@@ -73,7 +78,7 @@ function NewChatDialog({ isNewChat, setIsNewChat }) {
                     direction="row"
                     alignItems="center"
                     sx={{
-                        pl: 2,
+                        p: 2,
                         width: "100%",
                         height: "8%",
                         mb: 2,
@@ -85,14 +90,15 @@ function NewChatDialog({ isNewChat, setIsNewChat }) {
                         value={searchInputValue}
                         placeholder="이름 검색"
                         onChange={(e) => setSearchInputValue(e.target.value)}
-                        sx={{ mb: 0.5, ml: 1, width: "90%" }}
+                        sx={{ mb: 0.5, ml: 1, width: "100%" }}
                     />
                 </Stack>
-                <Box sx={{ display: "flex", justifyContent: "center", mb: 3 }}>
+                <Box sx={{ display: "flex", justifyContent: "center", mb: 1 }}>
                     <ToggleButtonGroup
+                        exclusive
                         value={isFollow}
                         onChange={followOnChangeHandler}
-                        sx={{ width: "90%" }}>
+                        sx={{ width: "94%" }}>
                         <ToggleButton
                             fullWidth
                             value="follower"
@@ -134,10 +140,7 @@ function NewChatDialog({ isNewChat, setIsNewChat }) {
             </DialogContent>
             <DialogActions sx={{ p: 2 }}>
                 <Stack direction="row" spacing={2}>
-                    <Button
-                        variant="outlined"
-                        size="large"
-                        onClick={() => setIsNewChat(false)}>
+                    <Button variant="outlined" size="large" onClick={onClose}>
                         취소
                     </Button>
                     <Button

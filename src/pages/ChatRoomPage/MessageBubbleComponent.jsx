@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import UserAvatarLink from "../../components/UserAvatarLink";
 import { Box, flex } from "@mui/system";
-import { Badge, Typography } from "@mui/material";
+import { Badge, Button, Typography } from "@mui/material";
 import { usePrincipalState } from "../../store/usePrincipalState";
+import MessageModal from "./MessageModal";
 
 function MessageBubbleComponent({ message }) {
     const { principal } = usePrincipalState();
@@ -26,6 +27,21 @@ function MessageBubbleComponent({ message }) {
         hour12: true,
     });
 
+    const [contextMenuMes, setContextMenuMes] = useState(null);
+    const [selectedMessage, setSelectedMessage] = useState(null);
+    const handleContextMenu = (event, message) => {
+        event.preventDefault(); // 브라우저 기본 메뉴(복사/인쇄 등)가 안 뜨게 막음!
+        setSelectedMessage(message); // 어떤 채팅방을 눌렀는지 저장
+        setContextMenuMes(
+            contextMenuMes === null
+                ? {
+                      mouseX: event.clientX,
+                      mouseY: event.clientY,
+                  }
+                : null,
+        );
+    };
+
     return (
         <Box
             sx={{
@@ -36,15 +52,23 @@ function MessageBubbleComponent({ message }) {
                 width: "100%",
                 height: "100%",
             }}>
-            {(!isMe && !isMiddle) && (
+            {!isMe && !isMiddle && (
                 <UserAvatarLink userId={senderId} src={profileImg} size={48} />
             )}
             {isMiddle ? (
-                <Box sx={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center", mb: 1, mt: 1 }}>
+                <Box
+                    sx={{
+                        width: "100%",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        mb: 1,
+                        mt: 1,
+                    }}>
                     <Typography
                         sx={{
                             display: "inline-block",
-                            bgcolor: "rgba(0,0,0,0.1)",
+                            bgcolor: "grey.500",
                             color: "#fff",
                             px: 2,
                             py: 0.5,
@@ -80,19 +104,22 @@ function MessageBubbleComponent({ message }) {
                         }}>
                         {/* 💬 말풍선 */}
                         <Box
+                            onContextMenu={(e) => {
+                                handleContextMenu(e, message);
+                            }}
                             sx={{
-                                bgcolor: isMe ? "#FEE500" : "#FFFFFF", // 카카오 노랑 vs 흰색
-                                color: "#000",
+                                bgcolor: isMe ? "primary.main" : "#FFFFFF",
+                                color: isMe ? "#FFF" : "#000",
                                 p: "10px 14px",
                                 borderRadius: isMe
                                     ? "15px 0px 15px 15px"
                                     : "0px 15px 15px 15px", // 꼬리 모양 흉내
                                 maxWidth: "70vw", // 화면의 70%까지만 차지
-                                maxHeight: "40px",
                                 boxShadow: "0 1px 1px rgba(0,0,0,0.1)",
-                                wordBreak: "break-word",
+                                wordBreak: "normal",
                                 fontSize: "0.95rem",
                                 lineHeight: 1.5,
+                                whiteSpace: "pre-wrap",
                             }}>
                             {content}
                         </Box>
@@ -110,7 +137,7 @@ function MessageBubbleComponent({ message }) {
                             {unreadCnt > 0 && (
                                 <Box
                                     sx={{
-                                        color: "#fffb00",
+                                        color: "primary.main",
                                         fontSize: "0.75rem",
                                         fontWeight: "bold",
                                         height: "10px",
@@ -137,6 +164,13 @@ function MessageBubbleComponent({ message }) {
                     </Box>
                 </Box>
             )}
+
+            <MessageModal
+                setContextMenuMes={setContextMenuMes}
+                contextMenuMes={contextMenuMes}
+                selectedMessage={selectedMessage}
+                setSelectedMessage={setSelectedMessage}
+            />
         </Box>
     );
 }

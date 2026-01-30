@@ -65,8 +65,6 @@ export function useNotificationWS({ enabled, token, onMessage, roomId }) {
                         } catch (e) {}
                     },
                 );
-
-                // ✅ 여기서는 roomId가 아직 null일 수도 있으니, roomId effect가 책임지게 둬도 됨
             },
 
             onDisconnect: () => {

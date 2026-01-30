@@ -78,13 +78,22 @@ const AddressForm = ({ userId, onClose }) => {
                             InputProps={{
                                 endAdornment: (
                                     <InputAdornment position="end">
-                                        <Button onClick={handleAddressSearch}>주소 검색</Button>
+                                        <Button onClick={handleAddressSearch}>
+                                            주소 검색
+                                        </Button>
                                     </InputAdornment>
                                 ),
                             }}
                         />
                     </Stack>
-                    <TextField fullWidth placeholder="기본 주소" value={addressInputValue.baseAddress || ""} variant="outlined" size="small" inputProps={{ readOnly: true }} />
+                    <TextField
+                        fullWidth
+                        placeholder="기본 주소"
+                        value={addressInputValue.baseAddress || ""}
+                        variant="outlined"
+                        size="small"
+                        inputProps={{ readOnly: true }}
+                    />
                     <TextField
                         fullWidth
                         placeholder="상세 주소 (예: 101동 101호)"
@@ -97,8 +106,17 @@ const AddressForm = ({ userId, onClose }) => {
                     />
                 </Stack>
             </DialogContent>
-            <DialogActions sx={{ p: 2 }}>
-                <Button variant="contained" fullWidth size="large" sx={{ mt: 3 }} onClick={handleSubmit} disabled={!addressInputValue.zipCode || !addressInputValue.detailAddress}>
+            <DialogActions sx={{ p: 3}}>
+                <Button variant="outlined" onClick={onClose}>
+                    취소
+                </Button>
+                <Button
+                    variant="contained"
+                    onClick={handleSubmit}
+                    disabled={
+                        !addressInputValue.zipCode ||
+                        !addressInputValue.detailAddress
+                    }>
                     변경 완료
                 </Button>
             </DialogActions>

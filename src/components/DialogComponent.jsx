@@ -21,7 +21,6 @@ function DialogComponent({open, setOpen, title, content, onClick}) {
 
             <DialogActions sx={{ p: 2, gap: 1 }}>
                 <Button
-                    fullWidth
                     variant="outlined"
                     onClick={() => setOpen(false)}
                     sx={{ borderRadius: 2, py: 1.1, fontWeight: 800 }}>
@@ -29,7 +28,6 @@ function DialogComponent({open, setOpen, title, content, onClick}) {
                 </Button>
 
                 <Button
-                    fullWidth
                     variant="contained"
                     onClick={() => {
                         onClick()

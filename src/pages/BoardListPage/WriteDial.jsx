@@ -36,10 +36,10 @@ function WriteDial() {
                 "& .MuiFab-root": {
                     width: 64,
                     height: 64,
-                    bgcolor: "grey.200",
-                    color: "text.primary",
+                    bgcolor: "primary.light",
+                    color: "#fff",
                     boxShadow: "0 12px 30px rgba(0,0,0,0.18)",
-                    "&:hover": { bgcolor: "grey.300" },
+                    "&:hover": { bgcolor: "primary.main" },
                 },
                 "& .MuiSpeedDialAction-fab": {
                     width: 64,

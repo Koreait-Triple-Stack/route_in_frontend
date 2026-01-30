@@ -71,6 +71,7 @@ export default function FollowButton({
                 borderRadius: 2,
                 fontWeight: 900,
                 whiteSpace: "nowrap",
+                border: isFollowing ? "" : "1px solid transparent",
                 ...sx,
             }}
             title={isFollowStatusError ? String(followStatusError) : undefined}>

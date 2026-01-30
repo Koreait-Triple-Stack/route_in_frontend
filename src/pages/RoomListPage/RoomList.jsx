@@ -37,9 +37,10 @@ function RoomList({ roomList }) {
     };
 
     return (
-        <Box sx={{ flex: 1, overflowY: "auto" }}>
+        <Box sx={{ px: 0, flex: 1, overflowY: "auto" }}>
             <List
                 sx={{
+                    px: 0,
                     width: "100%",
                     bgcolor: "background.paper",
                     overflowY: "auto",
@@ -54,7 +55,7 @@ function RoomList({ roomList }) {
                             onContextMenu={(e) =>
                                 handleContextMenu(e, room)
                             }
-                            sx={{ py: 1.5, px: 0.5 }}>
+                            sx={{ py: 1.5, px: 1, borderRadius: 4 }}>
                             <ListItemAvatar sx={{ minWidth: 0, margin: 0 }}>
                                 <Avatar
                                     src={room.profileImg}

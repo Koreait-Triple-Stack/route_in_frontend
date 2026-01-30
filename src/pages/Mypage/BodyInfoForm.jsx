@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { TextField, Button, DialogActions, Dialog, DialogTitle, DialogContent } from "@mui/material";
+import {
+    TextField,
+    Button,
+    DialogActions,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+} from "@mui/material";
 import { changeBodyInfo } from "../../apis/account/accountService";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToastStore } from "../../store/useToastStore";
@@ -21,10 +28,11 @@ const BodyInfoForm = ({ userId, onClose }) => {
     };
 
     const updateMutation = useMutation({
-        mutationFn: (bodyInfo) => changeBodyInfo({
-            userId: userId,
-            ...bodyInfo
-        }),
+        mutationFn: (bodyInfo) =>
+            changeBodyInfo({
+                userId: userId,
+                ...bodyInfo,
+            }),
         onSuccess: (res) => {
             queryClient.invalidateQueries(["getUserByUserId", userId]);
             show(res.message, "success");
@@ -58,14 +66,16 @@ const BodyInfoForm = ({ userId, onClose }) => {
                     value={bodyInfo.weight}
                     onChange={handleChange}
                     placeholder="숫자만 입력해주세요."
-                    sx={{ mb: 3 }}
+                    sx={{ mb: 1 }}
                 />
             </DialogContent>
-            <DialogActions>
+
+            <DialogActions sx={{ p: 3 }}>
+                <Button variant="outlined" onClick={onClose}>
+                    취소
+                </Button>
                 <Button
                     variant="contained"
-                    fullWidth
-                    size="large"
                     onClick={() => updateMutation.mutate(bodyInfo)}
                     disabled={!bodyInfo.height || !bodyInfo.weight}>
                     변경 완료

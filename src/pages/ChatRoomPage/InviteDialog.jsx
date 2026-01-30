@@ -106,11 +106,11 @@ function InviteDialog({
                     />
                 </Stack>
 
-                <Box sx={{ display: "flex", justifyContent: "center", mb: 3 }}>
+                <Box sx={{ display: "flex", justifyContent: "center", mb: 1 }}>
                     <ToggleButtonGroup
                         value={isFollow}
                         onChange={followOnChangeHandler}
-                        sx={{ width: "90%" }}>
+                        sx={{ width: "94%" }}>
                         <ToggleButton
                             fullWidth
                             value="follower"

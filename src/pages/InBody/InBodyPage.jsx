@@ -315,8 +315,8 @@ export default function InbodyChartWithActions() {
                         />
                     </Stack>
                 </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleAddClose} color="inherit">
+                <DialogActions sx={{p: 3}}>
+                    <Button onClick={handleAddClose} variant="outlined">
                         취소
                     </Button>
                     <Button onClick={handleAddData} variant="contained">
