@@ -194,7 +194,7 @@ function RunningRecord({ userId }) {
                                                 letterSpacing: "-0.5px",
                                             }}
                                         >
-                                            {currentValues[index]} / <span style={{ color: "#28d219" }}>{weeklyValues[index]}</span>
+                                            <span style={{ color: "#2e7d32" }}>{currentValues[index]}</span> / <span style={{ color: "#3F51B5" }}>{weeklyValues[index]}</span>
                                         </Typography>
                                     )}
                                 </Box>

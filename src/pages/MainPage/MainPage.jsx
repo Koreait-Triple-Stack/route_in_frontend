@@ -15,11 +15,9 @@ const MainPage = () => {
     const { principal } = usePrincipalState();
     const [routineOpen, setRoutineOpen] = useState(false);
     const [runningOpen, setRunningOpen] = useState(false);
-    const [AIOpen, setAIOpen] = useState(false);
 
     const handleRoutine = () => setRoutineOpen(!routineOpen);
     const handleRunning = () => setRunningOpen(!runningOpen);
-    const handleAI = () => setAIOpen(!AIOpen);
 
     const { open, close } = OncePerDay(principal?.userId);
     return (
