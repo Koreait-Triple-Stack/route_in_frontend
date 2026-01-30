@@ -1,5 +1,13 @@
 import { instance } from "../utils/instance";
 
-export const getAIContextRequest = async (userId) => {
-    return await instance.get(`/api/recommend/${userId}`);
+export const getAIChatListByUserIdRequest = async (userId) => {
+    return await instance.get(`/ai/chatList/${userId}`);
+};
+
+export const getTodayRecommendationRequest = async (userId) => {
+    return await instance.get(`/ai/recommend/${userId}`);
+};
+
+export const getAIRespRequest = async (data) => {
+    return await instance.post("/ai/question", data);
 };
