@@ -124,7 +124,17 @@ function MenuModal({
                         setOpenLeaveRoom(true);
                         setContextMenu(null);
                     }}
-                    sx={{ color: "#d32f2f" }}>
+                    sx={{
+                        color: "error.main",
+                        "& .MuiListItemIcon-root": {
+                            color: "error.main",
+                        },
+                        "& .MuiListItemText-primary": {
+                            color: "error.main",
+                            fontWeight: 700,
+                        },
+                        "&:hover": { bgcolor: "rgba(211,47,47,0.08)" },
+                    }}>
                     나가기
                 </MenuItem>
             </Menu>

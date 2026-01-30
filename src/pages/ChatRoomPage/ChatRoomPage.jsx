@@ -86,8 +86,7 @@ function ChatRoomPage() {
                 height: "100%",
                 display: "flex",
                 flexDirection: "column",
-                backgroundColor: "grey",
-                overflow: "visible",
+                backgroundColor: "#f2f2f2",
             }}>
             {/* 🟦 상단 헤더 */}
             <Box

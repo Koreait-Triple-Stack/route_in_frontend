@@ -60,8 +60,8 @@ const UsernameForm = ({ userId, onClose }) => {
                 />
             </DialogContent>
 
-            <DialogActions sx={{ p: 2 }}>
-                <Button onClick={onClose} color="inherit">
+            <DialogActions sx={{ p: 3 }}>
+                <Button variant="outlined" onClick={onClose} color="inherit">
                     취소
                 </Button>
                 <Button variant="contained" onClick={() => updateMutation.mutate(username)} disabled={!isDuplicated || username !== finalName}>

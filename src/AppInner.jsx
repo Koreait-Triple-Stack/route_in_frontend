@@ -3,15 +3,17 @@ import { usePrincipalState } from "./store/usePrincipalState";
 import { useEffect } from "react";
 import { getPrincipal } from "./apis/account/accountService";
 import { useQuery } from "@tanstack/react-query";
-import { Box } from "@mui/system";
+import { Box} from "@mui/system";
 import NotificationListener from "./components/NotificationListener";
 import Loading from "./components/Loading";
 import ToastProvider from "./components/ToastProvider";
 import SmartScroll from "./components/SmartScroll";
+import { createTheme, ThemeProvider } from "@mui/material";
 
 function AppInner() {
     const token = localStorage.getItem("AccessToken");
     const { login, setLoading } = usePrincipalState();
+    const theme = createTheme();
     const {
         data: response,
         error,
@@ -37,12 +39,12 @@ function AppInner() {
     if (error) return <Box>{error}</Box>;
 
     return (
-        <>
+        <ThemeProvider theme={theme}>
             <MainRouter />
             <ToastProvider />
             <NotificationListener />
             <SmartScroll />
-        </>
+        </ThemeProvider>
     );
 }
 
