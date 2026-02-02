@@ -84,6 +84,12 @@ function NotificationListener() {
                             { roomId: activeRoomId, limit: 20 },
                         ],
                     });
+                    queryClient.invalidateQueries({
+                        queryKey: [
+                            "countUnreadChatByUserIdRequest",
+                            principal.userId,
+                        ],
+                    });
                 }
                 return;
             }
@@ -116,6 +122,12 @@ function NotificationListener() {
                     queryKey: [
                         "countUnreadNotificationByUserId",
                         payload?.userId,
+                    ],
+                });
+                queryClient.invalidateQueries({
+                    queryKey: [
+                        "countUnreadChatByUserIdRequest",
+                        principal.userId,
                     ],
                 });
 

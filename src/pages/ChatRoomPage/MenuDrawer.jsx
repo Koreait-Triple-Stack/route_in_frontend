@@ -8,6 +8,7 @@ import {
     DialogTitle,
     Divider,
     Drawer,
+    Grow,
     IconButton,
     List,
     ListItem,
@@ -31,7 +32,6 @@ function MenuDrawer({
     setIsMenu,
     isMenu,
     setIsInvite,
-    chatAreaRef,
 }) {
     const navigate = useNavigate();
     const { show } = useToastStore();
@@ -65,31 +65,31 @@ function MenuDrawer({
 
     return (
         <>
+            {isMenu && (
+                <Box
+                    onClick={() => setIsMenu(false)}
+                    sx={{
+                        position: "absolute",
+                        inset: 0,
+                        backgroundColor: "rgba(0,0,0,0.3)",
+                        zIndex: 1200,
+                    }}
+                />
+            )}
+
             <Drawer
                 anchor="right"
                 open={isMenu}
                 onClose={() => setIsMenu(false)}
-                variant="temporary"
-                ModalProps={{
-                    container: () => chatAreaRef.current, // ✅ 여기로 제한
-                    disablePortal: true, // ✅ body로 안튀어나가게
-                    keepMounted: true,
-                    BackdropProps: {
-                        sx: {
-                            backgroundColor: "transparent", // ✅ 배경 안 어두워짐
-                            position: "absolute", // ✅ chatAreaRef 안에서만 덮기
-                            inset: 0,
-                        },
-                    },
-                }}
+                variant="persistent"
                 sx={{
-                    position: "absolute",
-                    zIndex: 1300,
+                    "& .MuiDrawer-root": {
+                        position: "absolute",
+                        zIndex: 1300,
+                        height: "100%",
+                    },
                     "& .MuiDrawer-paper": {
                         position: "absolute",
-                        top: 0,
-                        right: 0,
-                        height: "100%",
                         width: "80%",
                         boxSizing: "border-box",
                         borderLeft: "1px solid #ddd",
@@ -119,13 +119,6 @@ function MenuDrawer({
                             onClick={() => setIsMenu(false)}>
                             <CloseIcon />
                         </IconButton>
-
-                        <Typography
-                            textAlign={"center"}
-                            variant="h6"
-                            sx={{ fontWeight: "bold", pl: 1 }}>
-                            채팅방
-                        </Typography>
                     </Box>
 
                     <Divider />
@@ -152,7 +145,7 @@ function MenuDrawer({
 
                         <List>
                             {participants.map((user) => (
-                                <ListItem key={user.userId}>
+                                <ListItem sx={{px: 1}} key={user.userId}>
                                     <ListItemButton
                                         onClick={() =>
                                             navigate(`/user/${user.userId}`)

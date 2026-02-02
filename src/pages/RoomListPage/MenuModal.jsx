@@ -52,6 +52,9 @@ function MenuModal({
             queryClient.invalidateQueries({
                 queryKey: ["getRoomListByUserIdRequest", principal.userId],
             });
+            queryClient.invalidateQueries({
+                queryKey: ["countUnreadChatByUserIdRequest", principal.userId],
+            });
         },
         onError: (resp) => {
             show(resp.message, "error");

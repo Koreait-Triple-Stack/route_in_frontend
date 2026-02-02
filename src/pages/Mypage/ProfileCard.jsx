@@ -53,10 +53,6 @@ export default function ProfileCard({
                 width: "100%",
                 bgcolor: "background.paper",
                 overflow: "hidden",
-                border: "1px solid",
-                borderColor: "divider",
-                borderRadius: 3,
-                boxShadow: "0 6px 20px rgba(0,0,0,0.06)",
             }}
             component="nav"
             aria-labelledby="profile"
@@ -66,9 +62,8 @@ export default function ProfileCard({
                     id="profile"
                     sx={{
                         bgcolor: "transparent",
-                        py: 1.3,
-                        px: 3,
-                        fontSize: 14,
+                        pb: 1,
+                        fontSize: 18,
                         fontWeight: 700,
                         color: "text.primary",
                         borderBottom: "1px solid",

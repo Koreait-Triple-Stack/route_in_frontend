@@ -111,7 +111,7 @@ function Header({ boardData, setOpenCopy, boardId }) {
     };
 
     return (
-        <Box sx={{ p: 2.2 }}>
+        <Box sx={{ pb: 2, pl: 1 }}>
             <Stack
                 direction="row"
                 alignItems="center"
@@ -136,8 +136,8 @@ function Header({ boardData, setOpenCopy, boardId }) {
 
                     {/* 점 3개 */}
                     <IconButton
-                        onClick={(e) => setAnchorEl(e.currentTarget)}
-                        sx={{ borderRadius: 2 }}>
+                        sx={{ pr: 0}}
+                        onClick={(e) => setAnchorEl(e.currentTarget)}>
                         <MoreVertIcon />
                     </IconButton>
 

@@ -76,7 +76,7 @@ function CourseDetail({ course, setCourse }) {
                 border: "1px solid",
                 borderColor: "divider",
                 width: "100%",
-                maxWidth: { xs: "100%", sm: 520 },
+                maxWidth: { xs: "100%"},
                 mx: { xs: 0, sm: "auto" },
             }}>
             {/* 지도 영역 */}

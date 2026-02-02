@@ -8,7 +8,7 @@ import { getBoardListInfinite } from "../../apis/board/boardService";
 import { ClipLoader } from "react-spinners";
 import WriteDial from "./WriteDial";
 import Loading from "../../components/Loading";
-import { Paper, Typography } from "@mui/material";
+import { List, Paper, Typography } from "@mui/material";
 
 function BoardListPage() {
     const [form, setForm] = useState({
@@ -84,14 +84,16 @@ function BoardListPage() {
             {checked && (
                 <FilterBox form={form} setForm={setForm} setTags={setTags} />
             )}
-            <Stack spacing={2}>
+            
+            <List sx={{p: 0}}>
                 {boardList.map((board) => (
                     <PostCard key={board.boardId} board={board} />
                 ))}
                 <Box sx={{ height: 1 }} ref={bottomRef} />
-            </Stack>
+            </List>
+
             {isFetchingNextPage && (
-                <Box>
+                <Box sx={{display: "flex", justifyContent: "center"}}>
                     <ClipLoader />
                 </Box>
             )}

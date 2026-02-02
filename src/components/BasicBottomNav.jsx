@@ -11,15 +11,20 @@ import { countUnreadNotificationByUserId } from "../apis/notification/notificati
 import { usePrincipalState } from "../store/usePrincipalState";
 import { useQuery } from "@tanstack/react-query";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
+import { countUnreadChatByUserIdRequest } from "../apis/chat/chatApi";
 
 function BasicBottomNav() {
     const location = useLocation();
     const navigate = useNavigate();
     const { principal } = usePrincipalState();
-    const { data: response } = useQuery({
+    const { data: notificationResp } = useQuery({
         queryFn: () => countUnreadNotificationByUserId(principal.userId),
         queryKey: ["countUnreadNotificationByUserId", principal?.userId],
         staleTime: 30000,
+    });
+    const { data: chatResp } = useQuery({
+        queryFn: () => countUnreadChatByUserIdRequest(principal.userId),
+        queryKey: ["countUnreadChatByUserIdRequest", principal?.userId],
     });
 
     const value = location.pathname;
@@ -51,7 +56,15 @@ function BasicBottomNav() {
                 <BottomNavigationAction
                     label="채팅"
                     value="/chat"
-                    icon={<ChatBubbleOutlineIcon />}
+                    icon={
+                        <Badge
+                            badgeContent={chatResp?.data}
+                            color="error"
+                            overlap="circular"
+                            showZero={false}>
+                            <ChatBubbleOutlineIcon />
+                        </Badge>
+                    }
                 />
                 <BottomNavigationAction
                     label="홈"
@@ -63,7 +76,7 @@ function BasicBottomNav() {
                     value="/notification"
                     icon={
                         <Badge
-                            badgeContent={response?.data}
+                            badgeContent={notificationResp?.data}
                             color="error"
                             overlap="circular"
                             showZero={false}>

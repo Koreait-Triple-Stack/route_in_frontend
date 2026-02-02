@@ -69,7 +69,7 @@ export default function FollowUserList({
                 </Typography>
             </Stack>
 
-            <Divider sx={{ mb: 1 }} />
+            <Divider />
 
             <List>
                 {list.length > 0 ? (
@@ -81,70 +81,73 @@ export default function FollowUserList({
                             undefined;
 
                         return (
-                            <ListItem
-                                key={u?.userId ?? `${mode}-${idx}`}
-                                elevation={1}
-                                onClick={() => {
-                                    if (!u?.userId) return;
-                                    navigate(`/user/${u.userId}`);
-                                }}>
-                                <ListItemButton
-                                    sx={{
-                                        py: 2,
-                                        borderRadius: 3,
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "space-between",
-                                        gap: 2,
+                            <Box key={u?.userId ?? `${mode}-${idx}`}>
+                                <ListItem
+                                    onClick={() => {
+                                        if (!u?.userId) return;
+                                        navigate(`/user/${u.userId}`);
                                     }}>
-                                    {/* 왼쪽: 프로필 정보 */}
-                                    <Box
+                                    <ListItemButton
                                         sx={{
+                                            py: 2,
+                                            borderRadius: 3,
                                             display: "flex",
                                             alignItems: "center",
+                                            justifyContent: "space-between",
                                             gap: 2,
                                         }}>
-                                        <Avatar
-                                            src={profileSrc}
-                                            alt={u?.username ?? "profile"}
-                                            sx={{ width: 36, height: 36 }}
-                                        />
+                                        {/* 왼쪽: 프로필 정보 */}
                                         <Box
-                                            sx={{
-                                                display: "flex",
-                                                flexDirection: "column",
-                                            }}>
-                                            <Typography variant="h6">
-                                                {u?.username}
-                                            </Typography>
-                                            <Typography variant="body2">
-                                                {u?.gender}
-                                            </Typography>
-                                        </Box>
-                                    </Box>
-
-                                    {/* 팔로우/언팔로우 버튼  */}
-                                    {typeof renderRight === "function" ? (
-                                        <Box
-                                            onPointerDown={(e) =>
-                                                e.stopPropagation()
-                                            }
-                                            onMouseDown={(e) =>
-                                                e.stopPropagation()
-                                            }
-                                            onTouchStart={(e) =>
-                                                e.stopPropagation()
-                                            }
-                                            onClick={(e) => e.stopPropagation()}
                                             sx={{
                                                 display: "flex",
                                                 alignItems: "center",
+                                                gap: 2,
                                             }}>
-                                            {renderRight(u)}
+                                            <Avatar
+                                                src={profileSrc}
+                                                alt={u?.username ?? "profile"}
+                                                sx={{ width: 36, height: 36 }}
+                                            />
+                                            <Box
+                                                sx={{
+                                                    display: "flex",
+                                                    flexDirection: "column",
+                                                }}>
+                                                <Typography variant="h6">
+                                                    {u?.username}
+                                                </Typography>
+                                                <Typography variant="body2">
+                                                    {u?.gender}
+                                                </Typography>
+                                            </Box>
                                         </Box>
-                                    ) : null}
-                                </ListItemButton>
-                            </ListItem>
+
+                                        {/* 팔로우/언팔로우 버튼  */}
+                                        {typeof renderRight === "function" ? (
+                                            <Box
+                                                onPointerDown={(e) =>
+                                                    e.stopPropagation()
+                                                }
+                                                onMouseDown={(e) =>
+                                                    e.stopPropagation()
+                                                }
+                                                onTouchStart={(e) =>
+                                                    e.stopPropagation()
+                                                }
+                                                onClick={(e) =>
+                                                    e.stopPropagation()
+                                                }
+                                                sx={{
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                }}>
+                                                {renderRight(u)}
+                                            </Box>
+                                        ) : null}
+                                    </ListItemButton>
+                                </ListItem>
+                                <Divider variant="middle" />
+                            </Box>
                         );
                     })
                 ) : (

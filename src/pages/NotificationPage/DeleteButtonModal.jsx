@@ -48,12 +48,12 @@ function DeleteButtonModal() {
                     <Fab
                         onClick={() => setOpenDeleteAll(true)}
                         sx={{
-                            width: 64,
-                            height: 64,
-                            bgcolor: "primary.light",
+                            width: 52,
+                            height: 52,
+                            bgcolor: "primary.main",
                             color: "#fff",
                             boxShadow: "0 12px 30px rgba(0,0,0,0.18)",
-                            "&:hover": { bgcolor: "primary.main" },
+                            "&:hover": { bgcolor: "primary.dark" },
                         }}>
                         <DeleteOutlineRoundedIcon />
                     </Fab>
