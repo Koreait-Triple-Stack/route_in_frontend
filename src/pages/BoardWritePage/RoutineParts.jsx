@@ -24,7 +24,7 @@ function RoutineParts({ form, setForm, setRoutine }) {
 
     return (
         <Box>
-            <Stack spacing={1.2}>
+            <Stack spacing={2}>
                 <Stack direction="row" alignItems="baseline" justifyContent="space-between">
                     <Typography
                         sx={{

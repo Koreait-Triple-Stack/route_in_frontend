@@ -12,11 +12,9 @@ import CloseIcon from "@mui/icons-material/Close";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import SettingsIcon from "@mui/icons-material/Settings";
-import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import SearchIcon from "@mui/icons-material/Search";
 
 function RoomListHeader({
-    setIsNewChat,
     setSearchInputValue,
     searchInputValue,
 }) {
@@ -32,6 +30,7 @@ function RoomListHeader({
         <Box sx={{ flexShrink: 0 }}>
             <Box
                 sx={{
+                    pl: 1.5,
                     display: "flex",
                     justifyContent: "space-between",
                     flexDirection: "row",
@@ -49,19 +48,13 @@ function RoomListHeader({
                         sx={{ color: "#000" }}>
                         <SearchIcon />
                     </IconButton>
-                    <IconButton
-                        size="large"
-                        onClick={() => setIsNewChat(true)}
-                        sx={{ color: "#000" }}>
-                        <ChatBubbleOutlineIcon />
-                    </IconButton>
-                    <IconButton
+                    {/* <IconButton
                         size="large"
                         onClick={() => setIsSetting(!isSetting)}
                         sx={{ color: "#000", pr: 0 }}>
                         <SettingsIcon />
                         {isSetting ? <ExpandLess /> : <ExpandMore />}
-                    </IconButton>
+                    </IconButton> */}
                 </Box>
                 {/* <Drawer
                         anchor="top"

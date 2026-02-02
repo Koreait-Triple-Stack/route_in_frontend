@@ -27,6 +27,7 @@ function TypeBox({ checked, setChecked, form, setForm, setTags }) {
                 justifyContent: "space-between",
                 alignItems: "center",
                 pb: 1,
+                pl: 0.8,
             }}>
             <ToggleButtonGroup
                 value={form.type}

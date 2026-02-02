@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Box, Chip, Divider, Paper } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Container, Stack } from "@mui/system";
+import { Container, Grid, Stack } from "@mui/system";
 import { copyPayload, getBoardByBoardId } from "../../apis/board/boardService";
 import Header from "./Header";
 import CourseDetail from "./CourseDetail";
@@ -71,13 +71,11 @@ function BoardDetailPage() {
 
     return (
         <Container>
-            <Paper
+            <Box
                 variant="outlined"
                 sx={{
-                    borderRadius: 3,
                     overflow: "hidden",
-                    bgcolor: "white",
-                    borderColor: "divider",
+                    bgcolor: "transparent",
                 }}>
                 {/* 상단 헤더 */}
                 <Header
@@ -92,14 +90,11 @@ function BoardDetailPage() {
                 )}
                 {boardData.type === "ROUTINE" && (
                     <>
-                        <Stack direction="row" spacing={2} px={2} py={1}>
+                        <Grid container spacing={1.5} sx={{ pl: 1, py: 1 }}>
                             {boardData.tags.map((tag, index) => (
-                                <Chip
-                                    key={index}
-                                    label={tag}
-                                />
+                                <Chip key={index} label={tag} />
                             ))}
-                        </Stack>
+                        </Grid>
                         <Divider />
                         <RoutineList routines={boardData.routines} />
                     </>
@@ -108,7 +103,7 @@ function BoardDetailPage() {
                 <Divider />
 
                 <Box sx={{ p: 2.2 }}>{boardData.content}</Box>
-            </Paper>
+            </Box>
 
             <CommentSection boardId={boardId} />
 

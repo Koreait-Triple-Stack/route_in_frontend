@@ -14,7 +14,6 @@ import {
 import Loading from "../../components/Loading";
 import ErrorComponent from "../../components/ErrorComponent";
 import { useToastStore } from "../../store/useToastStore";
-import { useNotificationWS } from "../../hooks/useNotificationWS";
 import { useChatUiState } from "../../store/useChatUiState";
 import MenuDrawer from "./MenuDrawer";
 import InviteDialog from "./InviteDialog";
@@ -26,7 +25,6 @@ function ChatRoomPage() {
     const navigate = useNavigate();
     const { principal } = usePrincipalState();
     const { roomId: roomIdParam } = useParams();
-    const chatAreaRef = useRef();
     const [isInvite, setIsInvite] = useState();
     const roomId = Number(roomIdParam);
     const {
@@ -81,12 +79,13 @@ function ChatRoomPage() {
     return (
         <Box
             position="relative"
-            ref={chatAreaRef}
             sx={{
                 height: "100%",
                 display: "flex",
                 flexDirection: "column",
                 backgroundColor: "#f2f2f2",
+                overflowX: "hidden",
+                width: "100%",
             }}>
             {/* 🟦 상단 헤더 */}
             <Box
@@ -122,7 +121,6 @@ function ChatRoomPage() {
             </Box>
 
             <MenuDrawer
-                chatAreaRef={chatAreaRef}
                 setIsMenu={setIsMenu}
                 isMenu={isMenu}
                 setIsInvite={setIsInvite}
@@ -133,12 +131,13 @@ function ChatRoomPage() {
                 isInvite={isInvite}
                 setIsInvite={setIsInvite}
                 setIsMenu={setIsMenu}
-                title={room.participants.map(part => part.username).join(", ")}
+                participants={room.participants}
                 roomId={roomId}
-                participantIds={new Set(room?.participants.map(part => Number(part.userId)))}
             />
 
-            <MessageBubble roomId={roomId} />
+            <Box sx={{ flex: 1, minWidth: 0, overflowX: "hidden" }}>
+                <MessageBubble roomId={roomId} />
+            </Box>
 
             <Box sx={{ flexShrink: 0 }}>
                 <Box
@@ -184,12 +183,12 @@ function ChatRoomPage() {
                         onClick={handleSend}
                         sx={{
                             bgcolor: inputValue.trim()
-                                ? "#FEE500"
-                                : "transparent", // 입력 시 노란색 활성화
-                            color: inputValue.trim() ? "#000" : "#ddd",
+                                ? "primary.main"
+                                : "transparent",
+                            color: inputValue.trim() ? "#FFF" : "#ddd",
                             "&:hover": {
                                 bgcolor: inputValue.trim()
-                                    ? "#E6CF00"
+                                    ? "primary.dark"
                                     : "transparent",
                             },
                         }}>

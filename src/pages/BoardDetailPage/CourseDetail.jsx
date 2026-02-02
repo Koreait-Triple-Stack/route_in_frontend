@@ -59,7 +59,8 @@ function CourseDetail({ course }) {
         <Paper
             elevation={0}
             sx={{
-                borderRadius: 0,
+                my: 1,
+                borderRadius: 2,
                 overflow: "hidden",
                 bgcolor: "#F3F8FF",
                 borderColor: "divider",

@@ -29,17 +29,20 @@ function BoardWritePage() {
 
     const setCourse = (course) => {
         setForm((prev) => ({
-            ...prev, course: course,
-        }))
-    }
+            ...prev,
+            course: course,
+        }));
+    };
 
     const setRoutine = (day, localRoutine) => {
         setForm((prev) => {
-            const otherRoutines = prev.routines.filter(r => r.weekday !== day);
-            
+            const otherRoutines = prev.routines.filter(
+                (r) => r.weekday !== day,
+            );
+
             return {
                 ...prev,
-                routines: [...otherRoutines, ...localRoutine]
+                routines: [...otherRoutines, ...localRoutine],
             };
         });
     };
@@ -75,8 +78,8 @@ function BoardWritePage() {
             return;
         }
 
-        if (form.course?.region !== null) {
-            show("코스를 작성해 주세요", "error")
+        if (type === "COURSE" && !form.course?.region) {
+            show("코스를 작성해 주세요", "error");
             return;
         }
 
@@ -119,30 +122,23 @@ function BoardWritePage() {
                     }}></Typography>
             </Box>
 
-            <Paper
-                elevation={0}
-                variant="outlined"
-                sx={{
-                    borderRadius: 3,
-                    p: { xs: 2, sm: 3 },
-                    bgcolor: "white",
-                }}>
+            <Box>
                 <Stack spacing={2}>
-                    <Box>
-                        <Typography
-                            sx={{ fontWeight: 800, mb: 0.8, fontSize: 14 }}>
-                            제목
-                        </Typography>
-                        <TextField
-                            fullWidth
-                            placeholder="제목을 입력하세요."
-                            name="title"
-                            value={form.title}
-                            onChange={onChangeHandler}
-                        />
-                    </Box>
+                    <TextField
+                        fullWidth
+                        variant="outlined"
+                        label="제목"
+                        placeholder="제목을 입력하세요."
+                        name="title"
+                        value={form.title}
+                        onChange={onChangeHandler}
+                    />
                     {type === "ROUTINE" ? (
-                        <RoutineParts form={form} setForm={setForm} setRoutine={setRoutine}/>
+                        <RoutineParts
+                            form={form}
+                            setForm={setForm}
+                            setRoutine={setRoutine}
+                        />
                     ) : (
                         <CourseDetail
                             course={form.course}
@@ -150,21 +146,17 @@ function BoardWritePage() {
                         />
                     )}
 
-                    <Box>
-                        <Typography
-                            sx={{ fontWeight: 800, mb: 0.8, fontSize: 14 }}>
-                            내용
-                        </Typography>
-                        <TextField
-                            fullWidth
-                            multiline
-                            minRows={6}
-                            placeholder="내용을 입력하세요."
-                            name="content"
-                            value={form.content}
-                            onChange={onChangeHandler}
-                        />
-                    </Box>
+                    <TextField
+                        fullWidth
+                        multiline
+                        variant="outlined"
+                        label="내용"
+                        minRows={6}
+                        placeholder="내용을 입력하세요."
+                        name="content"
+                        value={form.content}
+                        onChange={onChangeHandler}
+                    />
 
                     {/* 버튼 */}
                     <Stack direction="row" spacing={1}>
@@ -194,7 +186,7 @@ function BoardWritePage() {
                         </Button>
                     </Stack>
                 </Stack>
-            </Paper>
+            </Box>
 
             <DialogComponent
                 open={openSave}

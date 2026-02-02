@@ -1,4 +1,4 @@
-import React, { use, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import {
     Box,
     ListItemText,
@@ -30,14 +30,14 @@ function InviteDialog({
     isInvite,
     setIsInvite,
     setIsMenu,
-    title,
+    participants,
     roomId,
-    participantIds,
 }) {
     const { show } = useToastStore();
     const [searchInputValue, setSearchInputValue] = useState("");
     const [isFollow, setIsFollow] = useState("follower");
-    const [selectedIds, setSelectedIds] = useState([]);
+    const [userIds, setUserIds] = useState([]);
+    const [usernames, setUsernames] = useState([]);
     const inviteMutation = useMutation({
         mutationFn: addRoomParticipantRequest,
         onSuccess: (resp) => {
@@ -48,16 +48,22 @@ function InviteDialog({
         },
     });
 
+    useEffect(() => {
+        if (!participants) return;
+        setUsernames(participants.map(part => part.username));
+        setUserIds(participants.map(part => part.userId))
+    }, [participants]);
+
     const onClickHandler = async () => {
-        if (selectedIds.length === 0) {
+        if (userIds.length === participants.length) {
             show("한명 이상을 선택해주세요");
             return;
         }
 
         inviteMutation.mutate({
             roomId: roomId,
-            title: title,
-            userIds: selectedIds,
+            usernames: usernames,
+            userIds: userIds,
         });
 
         onClose();
@@ -71,7 +77,8 @@ function InviteDialog({
     const onClose = () => {
         setIsInvite(false);
         setIsFollow("follower");
-        setSelectedIds([]);
+        setUserIds([]);
+        setUsernames([])
     };
 
     return (
@@ -143,9 +150,16 @@ function InviteDialog({
                             : "팔로잉이 없습니다."
                     }
                     mode={isFollow === "follower" ? "followers" : "following"}
-                    selectedIds={selectedIds}
-                    setSelectedIds={setSelectedIds}
-                    participantIds={participantIds}
+                    userIds={userIds}
+                    setUserIds={setUserIds}
+                    setUsernames={setUsernames}
+                    participantIds={
+                        new Set(
+                            participants.map((part) =>
+                                Number(part.userId),
+                            ),
+                        )
+                    }
                 />
 
                 <Stack spacing={2}></Stack>

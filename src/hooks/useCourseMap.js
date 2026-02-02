@@ -220,7 +220,7 @@ export function useCourseMap({
         const startLabelHtml = `
       <div style="
         pointer-events:none;
-        transform: translate(-50%, -120%);
+        transform: translate(-50%, -50%);
         background: ${startLabelBgRgba};
         color: #fff;
         padding: 4px 8px;
@@ -272,7 +272,7 @@ export function useCourseMap({
         const endLabelHtml = `
       <div style="
         pointer-events:none;
-        transform: translate(-50%, -120%);
+        transform: translate(-50%, -50%);
         background: ${endLabelBgRgba};
         color: #fff;
         padding: 4px 8px;

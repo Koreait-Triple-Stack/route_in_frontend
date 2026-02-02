@@ -72,3 +72,9 @@ export const getMessageListInfiniteRequest = async ({
     if (result.data.status !== "success") throw new Error(result.data.message);
     return result.data;
 };
+
+export const countUnreadChatByUserIdRequest = async (userId) => {
+    const result = await instance.get(`/chat/message/unread/${userId}`);
+    if (result.data.status !== "success") throw new Error(result.data.message);
+    return result.data;
+};
