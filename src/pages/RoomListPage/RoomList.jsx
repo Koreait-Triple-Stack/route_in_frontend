@@ -7,11 +7,13 @@ import {
     ListItemText,
     Typography,
 } from "@mui/material";
-import { Box, Container } from "@mui/system";
+import { Box, Container, Stack } from "@mui/system";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { timeAgo } from "../../apis/utils/time";
 import MenuModal from "./MenuModal";
+import StarIcon from "@mui/icons-material/Star";
+import NotificationsOffIcon from "@mui/icons-material/NotificationsOff";
 
 function RoomList({ roomList }) {
     const navigate = useNavigate();
@@ -52,9 +54,7 @@ function RoomList({ roomList }) {
                             key={room.roomId}
                             alignItems="center"
                             onClick={() => handleChatClick(room.roomId)}
-                            onContextMenu={(e) =>
-                                handleContextMenu(e, room)
-                            }
+                            onContextMenu={(e) => handleContextMenu(e, room)}
                             sx={{ py: 1.5, px: 1, borderRadius: 4 }}>
                             <ListItemAvatar sx={{ minWidth: 0, margin: 0 }}>
                                 <Avatar
@@ -103,15 +103,33 @@ function RoomList({ roomList }) {
                                     mb: 2.5,
                                     minWidth: "60px",
                                 }}>
-                                <Typography
-                                    variant="caption"
-                                    sx={{
-                                        color: "#999",
-                                        fontSize: "0.75rem",
-                                        mb: 0.5,
-                                    }}>
-                                    {timeAgo(room.lastMessageDt)}
-                                </Typography>
+                                <Box sx={{display: "flex", justifyContent:"end", minWidth: 50, gap: 1}}>
+                                    {room.favorite && (
+                                        <StarIcon
+                                            fontSize="small"
+                                            sx={{
+                                                color: "warning.light",
+                                            }}
+                                        />
+                                    )}
+                                    {room.muteNotification && (
+                                        <NotificationsOffIcon
+                                            fontSize="small"
+                                            sx={{
+                                                color: "grey",
+                                            }}
+                                        />
+                                    )}
+                                    <Typography
+                                        variant="caption"
+                                        sx={{
+                                            color: "#999",
+                                            fontSize: "0.75rem",
+                                            mb: 0.5,
+                                        }}>
+                                        {timeAgo(room.lastMessageDt)}
+                                    </Typography>
+                                </Box>
                                 {room.unreadCnt > 0 && (
                                     <Badge
                                         badgeContent={room.unreadCnt}
