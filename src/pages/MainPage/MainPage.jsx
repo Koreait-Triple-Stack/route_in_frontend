@@ -1,4 +1,12 @@
-import { Container, Typography, Box, Paper, Stack, List, ListItemButton, ListItemText, Collapse, Button, Divider } from "@mui/material";
+import {
+    Container,
+    Typography,
+    Box,
+    Paper,
+    Stack,
+    Collapse,
+    Button,
+} from "@mui/material";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import RoutineList from "./RoutineList";
 import { usePrincipalState } from "../../store/usePrincipalState";
@@ -8,18 +16,22 @@ import ExpandMore from "@mui/icons-material/ExpandMore";
 import { useState } from "react";
 import RunningRecord from "./RunningRecord";
 import AIRecommend from "./AIRecommend";
-import OncePerDay from "../../hooks/OncePerDay";
 import Calendar from "../../components/Calendar";
+import { updateAttendancePopupShownToday } from "../../apis/attendance/attendanceService";
 
 const MainPage = () => {
-    const { principal } = usePrincipalState();
+    const { principal, AttendanceChecked } = usePrincipalState();
     const [routineOpen, setRoutineOpen] = useState(false);
     const [runningOpen, setRunningOpen] = useState(false);
 
     const handleRoutine = () => setRoutineOpen(!routineOpen);
     const handleRunning = () => setRunningOpen(!runningOpen);
 
-    const { open, close } = OncePerDay(principal?.userId);
+    const handleClose = () => {
+        AttendanceChecked();
+        updateAttendancePopupShownToday().catch(() => {});
+    };
+
     return (
         <Container>
             <Stack spacing={2}>
@@ -72,7 +84,11 @@ const MainPage = () => {
                     </Collapse>
                 </Stack>
             </Stack>
-            <Calendar open={open} onClose={close} lockCurrentMonth />
+            <Calendar
+                open={!!principal?.checked}
+                onClose={handleClose}
+                lockMonth
+            />
         </Container>
     );
 };
