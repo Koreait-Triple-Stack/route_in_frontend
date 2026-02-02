@@ -37,7 +37,7 @@ const MainPage = () => {
             sx={{
                 bgcolor: THEME.bg,
                 minHeight: "100vh",
-                pb: 8,
+                pb: 3,
                 color: "#1D1D1F", // Apple 스타일의 짙은 회색 텍스트
                 fontFamily: "'Pretendard', sans-serif",
             }}>

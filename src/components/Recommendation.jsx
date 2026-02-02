@@ -1,5 +1,4 @@
 import { CardContent, Typography, Stack, Chip, Box } from "@mui/material";
-import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome"; // AI 느낌의 아이콘
 
 const AIRecommendContent = ({ title, reason, tags }) => {
     const THEME = {

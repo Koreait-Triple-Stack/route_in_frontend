@@ -121,6 +121,8 @@ function RunningRecord({ userId }) {
                         sx={{
                             width: "100%",
                             justifyContent: "space-between",
+                            bgcolor: THEME.bgLight,
+                            borderRadius: "12px",
                         }}
                     >
                         {days.map((day, index) => (
@@ -128,10 +130,7 @@ function RunningRecord({ userId }) {
                                 key={day}
                                 sx={{
                                     flex: 1,
-                                    bgcolor: THEME.bgLight,
-                                    borderRadius: "12px",
                                     textAlign: "center",
-                                    border: "1px solid rgba(255,255,255,0.5)",
                                 }}
                             >
                                 <Typography variant="caption" color="text.secondary" sx={{ mb: 1, fontSize: "0.8rem" }}>

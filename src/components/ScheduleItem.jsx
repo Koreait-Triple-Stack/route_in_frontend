@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Typography, Box, Paper, Button, TextField, Chip, Stack, IconButton } from "@mui/material";
+import { Typography, Box, Paper, Button, TextField, Chip, Stack } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle"; // 체크 아이콘 추가
 import { usePrincipalState } from "../store/usePrincipalState";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { changeChecked } from "../apis/routine/routineService";
@@ -63,7 +62,7 @@ const ScheduleItem = ({ dayEng, day, routines, active, onReset, onSave }) => {
                 mb: 1.2,
                 borderRadius: "16px",
                 bgcolor: active ? THEME.activeBg : "#FFFFFF",
-                border: `1px solid ${active ? THEME.accent : "#F1F5F9"}`,
+                border: `1px solid ${active ? THEME.accent : "#bbbdbe"}`,
                 transition: "all 0.2s ease-in-out",
             }}
         >
@@ -77,7 +76,7 @@ const ScheduleItem = ({ dayEng, day, routines, active, onReset, onSave }) => {
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        bgcolor: active ? THEME.accent : "#F8FAFC",
+                        bgcolor: active ? THEME.accent : "#ffffff",
                         color: active ? "white" : THEME.text,
                         flexShrink: 0,
                     }}
