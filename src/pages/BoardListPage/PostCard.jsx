@@ -4,10 +4,9 @@ import {
     Divider,
     ListItem,
     ListItemButton,
-    Paper,
     Typography,
 } from "@mui/material";
-import { borderColor, Box, Stack } from "@mui/system";
+import { Box, Stack } from "@mui/system";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import FavoriteIcon from "@mui/icons-material/Favorite";
@@ -25,18 +24,39 @@ function PostCard({ board }) {
 
     return (
         <>
-            <ListItem sx={{px: 0}}>
+           
+            <ListItem sx={{ px: 0, mb: 1}}>
                 <ListItemButton
-                    sx={{ borderRadius: 3, px: 1}}
-                    onClick={() => navigate(`/board/detail/${board.boardId}`)}>
-                    <Stack sx={{width:"100%"}} spacing={1.5}>
+                    onClick={() => navigate(`/board/detail/${board.boardId}`)}
+                    sx={{
+                        borderRadius: 3,
+                        px: 2,
+                        py: 2,
+                        bgcolor: "background.paper",
+                        boxShadow: 1,
+                        border: "1px solid",
+                        borderColor: "divider",
+                        transition:
+                            "transform 120ms ease, box-shadow 120ms ease",
+                        "&:hover": {
+                            transform: "translateY(-2px)",
+                            boxShadow: 3,
+                        },
+                    }}
+                >
+                    <Stack sx={{ width: "100%" }} spacing={1.5}>
                         <Box
                             sx={{
                                 display: "flex",
                                 justifyContent: "space-between",
                                 alignItems: "center",
-                            }}>
-                            <Stack direction="row" spacing={1}>
+                            }}
+                        >
+                            <Stack
+                                direction="row"
+                                spacing={1}
+                                alignItems="center"
+                            >
                                 <Chip
                                     label={
                                         board.type === "COURSE"
@@ -54,13 +74,14 @@ function PostCard({ board }) {
                                         px: 0.8,
                                         bgcolor: "transparent",
                                         borderRadius: "999px",
+                                        border: "1px solid",
+                                        borderColor: "divider",
 
                                         "& .MuiChip-icon": {
                                             fontSize: 18,
-                                            color: "#ff4d4f", // 하트 색
+                                            color: "#ff4d4f",
                                             ml: 0.5,
                                         },
-
                                         "& .MuiChip-label": {
                                             fontSize: 13,
                                             fontWeight: 900,
@@ -70,21 +91,38 @@ function PostCard({ board }) {
                                     }}
                                 />
                             </Stack>
+
                             <Typography
                                 variant="caption"
-                                color="text.secondary">
+                                color="text.secondary"
+                            >
                                 {timeAgo(board.createDt)}
                             </Typography>
                         </Box>
 
-                        <Typography fontWeight={700} sx={{pl: 0.3}}>{board.title}</Typography>
+                        {/* ✅ 제목/본문은 clamp로 리스트 가독성 */}
+                        <Typography
+                            sx={{
+                                fontWeight: 800,
+                                lineHeight: 1.25,
+                                display: "-webkit-box",
+                                WebkitLineClamp: 2,
+                                WebkitBoxOrient: "vertical",
+                                overflow: "hidden",
+                            }}
+                        >
+                            {board.title}
+                        </Typography>
 
                         <Stack direction="row" spacing={1} alignItems="center">
                             <Avatar
                                 sx={{ width: 32, height: 32 }}
                                 src={board.profileImg}
                             />
-                            <Typography variant="body2">
+                            <Typography
+                                variant="body2"
+                                sx={{ fontWeight: 600 }}
+                            >
                                 {board.username} ·{" "}
                                 {Math.floor(
                                     (year - board.birthDate.split("-")[0] + 1) /
@@ -123,7 +161,7 @@ function PostCard({ board }) {
                 </ListItemButton>
             </ListItem>
 
-            <Divider variant="middle" />
+           
         </>
     );
 }

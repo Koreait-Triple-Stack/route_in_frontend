@@ -12,7 +12,6 @@ import {
     List,
     ListItem,
     ListItemButton,
-    Paper,
     Typography,
 } from "@mui/material";
 
@@ -63,7 +62,8 @@ export default function FollowUserList({
                 direction="row"
                 alignItems="center"
                 spacing={1}
-                sx={{ mb: 2 }}>
+                sx={{ mb: 2 }}
+            >
                 <Typography variant="h6" sx={{ fontWeight: "bold" }}>
                     {title}
                 </Typography>
@@ -86,7 +86,8 @@ export default function FollowUserList({
                                     onClick={() => {
                                         if (!u?.userId) return;
                                         navigate(`/user/${u.userId}`);
-                                    }}>
+                                    }}
+                                >
                                     <ListItemButton
                                         sx={{
                                             py: 2,
@@ -95,14 +96,16 @@ export default function FollowUserList({
                                             alignItems: "center",
                                             justifyContent: "space-between",
                                             gap: 2,
-                                        }}>
+                                        }}
+                                    >
                                         {/* 왼쪽: 프로필 정보 */}
                                         <Box
                                             sx={{
                                                 display: "flex",
                                                 alignItems: "center",
                                                 gap: 2,
-                                            }}>
+                                            }}
+                                        >
                                             <Avatar
                                                 src={profileSrc}
                                                 alt={u?.username ?? "profile"}
@@ -112,7 +115,8 @@ export default function FollowUserList({
                                                 sx={{
                                                     display: "flex",
                                                     flexDirection: "column",
-                                                }}>
+                                                }}
+                                            >
                                                 <Typography variant="h6">
                                                     {u?.username}
                                                 </Typography>
@@ -140,7 +144,8 @@ export default function FollowUserList({
                                                 sx={{
                                                     display: "flex",
                                                     alignItems: "center",
-                                                }}>
+                                                }}
+                                            >
                                                 {renderRight(u)}
                                             </Box>
                                         ) : null}
