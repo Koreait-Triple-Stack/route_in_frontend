@@ -8,6 +8,7 @@ import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
 import { PickersDay } from "@mui/x-date-pickers/PickersDay";
 import { usePrincipalState } from "../store/usePrincipalState";
 import { getAttendanceMonthDates } from "../apis/attendance/attendanceService";
+import { Box } from "@mui/system";
 
 // 출석날 표시
 function MarkedDay({ day, markedSet, ...other }) {
@@ -30,55 +31,54 @@ function MarkedDay({ day, markedSet, ...other }) {
     );
 }
 
-export default function Calendar({ open, onClose, lockCurrentMonth = false }) {
+export default function Calendar({ open, onClose, lockMonth = false }) {
     const { principal } = usePrincipalState();
 
-    // 현재 화면 보여주기
+    // 현재 보고있는 월 상태
     const [month, setMonth] = useState(() => dayjs().startOf("month"));
     const ym = month.format("YYYY-MM");
 
-    // 달력 닫았다가 열면 항상 현재 달 기준으로 보여주기
+    // 모달 열릴 때 이번달 부터 보여주기
     useEffect(() => {
         if (open) setMonth(dayjs().startOf("month"));
     }, [open]);
 
+    // 출석 날짜 가져오기
     const { data } = useQuery({
-        queryKey: ["getAttendanceMonthDates", principal?.userId, ym],
+        queryKey: ["AttendanceMonthDates", principal?.userId, ym],
         queryFn: () => getAttendanceMonthDates({ ym }),
         enabled: open && !!principal?.userId,
-        staleTime: 30000,
+        staleTime: 0,
     });
 
     const markedSet = useMemo(() => new Set(data?.data ?? []), [data?.data]);
 
     return (
-        <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-            <DialogContent>
-                <Paper
-                    variant="outlined"
-                    sx={{ borderRadius: 3, overflow: "hidden" }}
-                >
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DateCalendar
-                            referenceDate={month}
-                            showDaysOutsideCurrentMonth={false}
-                            views={lockCurrentMonth ? ["day"] : ["year", "day"]}
-                            onMonthChange={(m) => {
-                                if (lockCurrentMonth) return;
-                                setMonth(dayjs(m).startOf("month"));
-                            }}
-                            slots={{ day: MarkedDay }}
-                            slotProps={{
-                                day: { markedSet },
-                                previousIconButton: {
-                                    disabled: lockCurrentMonth,
-                                },
-                                nextIconButton: { disabled: lockCurrentMonth },
-                            }}
-                        />
-                    </LocalizationProvider>
-                </Paper>
-            </DialogContent>
-        </Dialog>
+        
+            <Dialog open={!!open} onClose={onClose} fullWidth maxWidth="xs">
+                <DialogContent sx={{ overflowX: "auto" }}>
+                    <Box sx={{ display: "flex", justifyContent: "center" }}>
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DateCalendar
+                                value={null}
+                                referenceDate={month}
+                                onMonthChange={(m) => {
+                                    if (lockMonth) return;
+                                    setMonth(dayjs(m).startOf("month"));
+                                }}
+                                slots={{ day: MarkedDay }}
+                                slotProps={{
+                                    day: { markedSet },
+                                    previousIconButton: {
+                                        disabled: lockMonth,
+                                    },
+                                    nextIconButton: { disabled: lockMonth },
+                                }}
+                            />
+                        </LocalizationProvider>
+                    </Box>
+                </DialogContent>
+            </Dialog>
+    
     );
 }

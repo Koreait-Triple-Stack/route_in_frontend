@@ -9,13 +9,13 @@ import RoutineList from "./RoutineList";
 import CourseDetail from "./CourseDetail";
 import RunningRecord from "./RunningRecord";
 import AIRecommend from "./AIRecommend";
-import OncePerDay from "../../hooks/OncePerDay";
 import Calendar from "../../components/Calendar";
+import { updateAttendancePopupShownToday } from "../../apis/attendance/attendanceService";
 import Weather from "./Weather";
 import { alignItems, display, justifyContent } from "@mui/system";
 
 const MainPage = () => {
-    const { principal } = usePrincipalState();
+    const { principal, AttendanceChecked } = usePrincipalState();
     const [routineOpen, setRoutineOpen] = useState(false);
     const [runningOpen, setRunningOpen] = useState(false);
     const { open, close } = OncePerDay(principal?.userId);
@@ -37,6 +37,11 @@ const MainPage = () => {
         display: "flex",
         flexDirection: "column",
         width: "100%",
+    };
+
+    const handleClose = () => {
+        AttendanceChecked();
+        updateAttendancePopupShownToday().catch(() => {});
     };
 
     return (
@@ -170,7 +175,13 @@ const MainPage = () => {
                         </Paper>
                     </Stack>
                 </Stack>
-            </Container>
+            </Stack>
+            <Calendar
+                open={!!principal?.checked}
+                onClose={handleClose}
+                lockMonth
+            />
+        </Container>
         </Box>
     );
 };
