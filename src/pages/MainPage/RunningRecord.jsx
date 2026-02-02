@@ -13,6 +13,13 @@ function RunningRecord({ userId }) {
     const [currentValues, setCurrentValues] = useState(Array(7).fill(0));
     const [weeklyValues, setWeeklyValues] = useState(Array(7).fill(0));
 
+    const THEME = {
+        accent: "#3B82F6", // 맑고 선명한 블루
+        bgLight: "#F1F5F9", // 영역 구분을 위한 연한 회색/블루
+        border: "#E2E8F0",
+        textMain: "#1E293B", // 깊이감 있는 텍스트 컬러
+    };
+
     const { data: response, isLoading, error } = useQuery({
         queryKey: ["getUserByUserId", userId],
         queryFn: () => getUserByUserId(userId),
@@ -66,13 +73,13 @@ function RunningRecord({ userId }) {
 
     return (
         <Paper
-            variant="outlined"
+            elevation={0}
             sx={{
-                p: 2,
+                p: 2.5,
                 bgcolor: "white",
-                borderColor: "grey.300",
-                width: "100%",
-                borderRadius: 2,
+                borderRadius: "20px",
+                border: `1px solid ${THEME.border}`,
+                boxShadow: "0 2px 10px rgba(0,0,0,0.02)", // 아주 미세한 그림자로 입체감만 부여
             }}
         >
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
@@ -111,7 +118,6 @@ function RunningRecord({ userId }) {
                 <Box sx={{ width: "100%" }}>
                     <Stack
                         direction="row"
-                        divider={<Divider orientation="vertical" flexItem />}
                         sx={{
                             width: "100%",
                             justifyContent: "space-between",
@@ -121,12 +127,11 @@ function RunningRecord({ userId }) {
                             <Box
                                 key={day}
                                 sx={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    alignItems: "center",
                                     flex: 1,
-                                    minWidth: 0,
-                                    px: 0,
+                                    bgcolor: THEME.bgLight,
+                                    borderRadius: "12px",
+                                    textAlign: "center",
+                                    border: "1px solid rgba(255,255,255,0.5)",
                                 }}
                             >
                                 <Typography variant="caption" color="text.secondary" sx={{ mb: 1, fontSize: "0.8rem" }}>
@@ -156,7 +161,7 @@ function RunningRecord({ userId }) {
                                                 value={currentValues[index]}
                                                 onChange={(e) => handleCurrentChange(index, e.target.value)}
                                                 inputProps={{
-                                                    style: { textAlign: "center", fontWeight: "bold", padding: 0 },
+                                                    style: { textAlign: "center", fontWeight: "bold", color: "#3B82F6", padding: 0 },
                                                     inputMode: "numeric",
                                                     pattern: "[0-9]*",
                                                 }}
@@ -172,7 +177,7 @@ function RunningRecord({ userId }) {
                                                 value={weeklyValues[index]}
                                                 onChange={(e) => handleWeeklyChange(index, e.target.value)}
                                                 inputProps={{
-                                                    style: { textAlign: "center", fontWeight: "bold", color: "#28d219", padding: 0 },
+                                                    style: { textAlign: "center", fontWeight: "bold", color: "#3F51B5", padding: 0 },
                                                     inputMode: "numeric",
                                                     pattern: "[0-9]*",
                                                 }}
@@ -194,7 +199,8 @@ function RunningRecord({ userId }) {
                                                 letterSpacing: "-0.5px",
                                             }}
                                         >
-                                            <span style={{ color: "#2e7d32" }}>{currentValues[index]}</span> / <span style={{ color: "#3F51B5" }}>{weeklyValues[index]}</span>
+                                            <span style={{ color: "#3B82F6", padding: "4px" }}>{currentValues[index]}</span> /{" "}
+                                            <span style={{ color: "#3F51B5", padding: "4px" }}>{weeklyValues[index]}</span>
                                         </Typography>
                                     )}
                                 </Box>
