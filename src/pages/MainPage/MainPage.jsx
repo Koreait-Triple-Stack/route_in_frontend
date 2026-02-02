@@ -20,30 +20,12 @@ import AIRecommend from "./AIRecommend";
 import Calendar from "../../components/Calendar";
 import { updateAttendancePopupShownToday } from "../../apis/attendance/attendanceService";
 import Weather from "./Weather";
+import { moduleStyle, THEME } from "../../constants/design";
 
 const MainPage = () => {
     const { principal, AttendanceChecked } = usePrincipalState();
     const [routineOpen, setRoutineOpen] = useState(false);
     const [runningOpen, setRunningOpen] = useState(false);
-
-    const THEME = {
-        bg: "#F0F4F8",
-        paper: "#FFFFFF",
-        accent: "#007AFF",
-        point: "#5856D6", // 퍼플 블루
-    };
-
-    const moduleStyle = {
-        px: 2.5, // 좌우 여백
-        py: 1.5, // 상하 여백 (높이가 너무 높지 않게 조정)
-        borderRadius: "20px", // 너무 둥글기보다 적당한 곡률이 더 깔끔함
-        background: "#FFFFFF",
-        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.03)",
-        border: "1px solid #F1F5F9",
-        display: "flex",
-        flexDirection: "column",
-        width: "100%",
-    };
 
     const handleClose = () => {
         AttendanceChecked();
