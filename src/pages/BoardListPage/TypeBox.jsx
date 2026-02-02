@@ -5,7 +5,7 @@ import {
     ToggleButton,
     ToggleButtonGroup,
 } from "@mui/material";
-import { Box, Grid, Stack } from "@mui/system";
+import { Box, Stack } from "@mui/system";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 
 function TypeBox({ checked, setChecked, form, setForm, setTags }) {
