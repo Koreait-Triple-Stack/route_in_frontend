@@ -1,11 +1,24 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Card, Typography, Box, Skeleton, Alert } from "@mui/material";
-import WaterDropIcon from "@mui/icons-material/WaterDrop";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
+import { Typography, Box, Alert } from "@mui/material";
 import { getWeather } from "../../apis/weather/weatherService";
 import ErrorComponent from "../../components/ErrorComponent";
-import Loading from "../../components/Loading";
+import { MoonLoader } from "react-spinners";
+
+function Loading() {
+    return (
+        <Box
+            sx={{
+                height: "100%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+            }}
+        >
+            <MoonLoader size={30} />
+        </Box>
+    );
+}
 
 function Weather() {
     const [coords, setCoords] = useState(null);
@@ -28,8 +41,8 @@ function Weather() {
             },
             (error) => {
                 // 실패 시 (거부 등)
-                console.error("위치 확보 실패:", error);
-                setLocationError("위치 권한이 필요합니다.");
+                console.warn("위치 정보를 가져올 수 없습니다. 기본 위치(서울)로 설정합니다.", error);
+                setCoords(DEFAULT_SEOUL);
             },
         );
     }, []);
@@ -59,13 +72,13 @@ function Weather() {
 
     if (error) return <ErrorComponent error={error} />;
 
-    const { temp, description, icon } = weatherResp.data;
+    const { temp, description, icon, city } = weatherResp.data;
     const iconUrl = `https://openweathermap.org/img/wn/${icon}@2x.png`;
 
     return (
         <Box display="flex" alignItems="center">
             <Typography
-                variant="h5"
+                variant="h6"
                 fontWeight="bold"
                 color="primary.dark"
                 sx={{
@@ -74,7 +87,7 @@ function Weather() {
                     pt: 0.3
                 }}
             >
-                {Math.round(temp)}°C
+                {city} {Math.round(temp)}°C
             </Typography>
 
             <Box
@@ -82,8 +95,8 @@ function Weather() {
                 src={iconUrl}
                 alt={description}
                 sx={{
-                    width: 44, 
-                    height: 44,
+                    width: 38, 
+                    height: 38 ,
                     filter: "drop-shadow(2px 4px 6px rgba(0,0,0,0.2))",
                 }}
             />
