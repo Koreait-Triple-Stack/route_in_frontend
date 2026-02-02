@@ -10,6 +10,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, Divider, Typography } from "@mui/material";
 import CourseDetail from "./CourseDetail";
 import CourseAdd from "./CourseAdd";
+import Loading from "../../components/Loading";
 
 function CourseListPage() {
     const [isAdd, setIsAdd] = useState(false);
@@ -101,12 +102,8 @@ function CourseListPage() {
     const handleAdd = () => {
         setIsAdd(true);
     };
-
-    // useEffect(() => {
-    //     setCourseList(response?.data);
-    // }, [response, isLoading]);
-
-    if (isLoading) return <div>로딩중...</div>;
+    
+    if (isLoading) return <Loading />;
 
     return (
         <Container>

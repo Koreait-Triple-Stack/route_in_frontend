@@ -34,16 +34,16 @@ function WriteDial() {
                 zIndex: 1300,
 
                 "& .MuiFab-root": {
-                    width: 64,
-                    height: 64,
-                    bgcolor: "primary.light",
+                    width: 52,
+                    height: 52,
+                    bgcolor: "primary.main",
                     color: "#fff",
                     boxShadow: "0 12px 30px rgba(0,0,0,0.18)",
                     "&:hover": { bgcolor: "primary.main" },
                 },
                 "& .MuiSpeedDialAction-fab": {
-                    width: 64,
-                    height: 64,
+                    width: 52,
+                    height: 52,
                 },
             }}>
             <SpeedDialAction

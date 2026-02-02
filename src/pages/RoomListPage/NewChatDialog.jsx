@@ -9,6 +9,7 @@ import {
     DialogActions,
     ToggleButton,
     ToggleButtonGroup,
+    Fab,
 } from "@mui/material";
 import {
     getFollowerUserList,
@@ -22,6 +23,7 @@ import { addRoomRequest } from "../../apis/chat/chatApi";
 import { useNavigate } from "react-router-dom";
 import { useToastStore } from "../../store/useToastStore";
 import { usePrincipalState } from "../../store/usePrincipalState";
+import AddIcon from "@mui/icons-material/Add";
 
 function NewChatDialog({ isNewChat, setIsNewChat }) {
     const { show } = useToastStore();
@@ -30,7 +32,7 @@ function NewChatDialog({ isNewChat, setIsNewChat }) {
     const [searchInputValue, setSearchInputValue] = useState("");
     const [isFollow, setIsFollow] = useState("follower");
     const [selectedIds, setSelectedIds] = useState([principal.userId]);
-    const [title, setTitle] = useState([]);
+    const [usernames, setUsernames] = useState([principal.username]);
     const mutation = useMutation({
         mutationFn: (data) => addRoomRequest(data),
         onSuccess: (resp) => {
@@ -41,14 +43,14 @@ function NewChatDialog({ isNewChat, setIsNewChat }) {
         },
     });
 
-    const onClickHandler = async () => {
+    const onClickHandler = () => {
         if (selectedIds.length === 1) {
             show("한명 이상을 선택해주세요", "error");
             return;
         }
 
         mutation.mutate({
-            title: title.join(", "),
+            usernames: usernames,
             userIds: selectedIds,
         });
     };
@@ -63,95 +65,139 @@ function NewChatDialog({ isNewChat, setIsNewChat }) {
     };
 
     return (
-        <Dialog
-            open={isNewChat}
-            onClose={onClose}
-            PaperProps={{
-                sx: {
-                    height: "100%",
-                    width: "100%",
-                },
-            }}>
-            <DialogTitle>대화상대 선택</DialogTitle>
-            <DialogContent>
-                <Stack
-                    direction="row"
-                    alignItems="center"
+        <>
+            <Box
+                sx={{
+                    position: "fixed",
+                    right: 16,
+                    bottom: 56 + 16, // BottomNav(56) 위로 16px
+                    zIndex: 1300,
+                    px: 1,
+                    pointerEvents: "none", // ✅ 박스는 클릭 막고
+                }}>
+                <Box
                     sx={{
-                        p: 2,
-                        width: "100%",
-                        height: "8%",
-                        mb: 2,
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        pointerEvents: "auto",
                     }}>
-                    <SearchIcon />
-                    <TextField
-                        multiline
-                        variant="standard"
-                        value={searchInputValue}
-                        placeholder="이름 검색"
-                        onChange={(e) => setSearchInputValue(e.target.value)}
-                        sx={{ mb: 0.5, ml: 1, width: "100%" }}
-                    />
-                </Stack>
-                <Box sx={{ display: "flex", justifyContent: "center", mb: 1 }}>
-                    <ToggleButtonGroup
-                        exclusive
-                        value={isFollow}
-                        onChange={followOnChangeHandler}
-                        sx={{ width: "94%" }}>
-                        <ToggleButton
-                            fullWidth
-                            value="follower"
-                            sx={{ color: "ButtonText" }}>
-                            팔로워 목록
-                        </ToggleButton>
-                        <ToggleButton
-                            fullWidth
-                            value="following"
-                            sx={{ color: "ButtonText" }}>
-                            팔로잉 목록
-                        </ToggleButton>
-                    </ToggleButtonGroup>
+                    <Fab
+                        onClick={() => setIsNewChat(true)}
+                        sx={{
+                            width: 52,
+                            height: 52,
+                            bgcolor: "primary.main",
+                            color: "#fff",
+                            boxShadow: "0 12px 30px rgba(0,0,0,0.18)",
+                            "&:hover": { bgcolor: "primary.dark" },
+                        }}>
+                        <AddIcon />
+                    </Fab>
                 </Box>
+            </Box>
 
-                <FollowUserList
-                    queryKeyPrefix={
-                        isFollow === "follower"
-                            ? "getFollowerUserList"
-                            : "getFollowingUserList"
-                    }
-                    queryFn={
-                        isFollow === "follower"
-                            ? getFollowerUserList
-                            : getFollowingUserList
-                    }
-                    emptyText={
-                        isFollow === "follower"
-                            ? "팔로워가 없습니다."
-                            : "팔로잉이 없습니다."
-                    }
-                    mode={isFollow === "follower" ? "followers" : "following"}
-                    selectedIds={selectedIds}
-                    setSelectedIds={setSelectedIds}
-                    setTitle={setTitle}
-                />
+            <Dialog
+                open={isNewChat}
+                onClose={onClose}
+                PaperProps={{
+                    sx: {
+                        height: "100%",
+                        width: "100%",
+                    },
+                }}>
+                <DialogTitle>대화상대 선택</DialogTitle>
+                <DialogContent>
+                    <Stack
+                        direction="row"
+                        alignItems="center"
+                        sx={{
+                            p: 2,
+                            width: "100%",
+                            height: "8%",
+                            mb: 2,
+                        }}>
+                        <SearchIcon />
+                        <TextField
+                            multiline
+                            variant="standard"
+                            value={searchInputValue}
+                            placeholder="이름 검색"
+                            onChange={(e) =>
+                                setSearchInputValue(e.target.value)
+                            }
+                            sx={{ mb: 0.5, ml: 1, width: "100%" }}
+                        />
+                    </Stack>
+                    <Box
+                        sx={{
+                            display: "flex",
+                            justifyContent: "center",
+                            mb: 1,
+                        }}>
+                        <ToggleButtonGroup
+                            exclusive
+                            value={isFollow}
+                            onChange={followOnChangeHandler}
+                            sx={{ width: "94%" }}>
+                            <ToggleButton
+                                fullWidth
+                                value="follower"
+                                sx={{ color: "ButtonText" }}>
+                                팔로워 목록
+                            </ToggleButton>
+                            <ToggleButton
+                                fullWidth
+                                value="following"
+                                sx={{ color: "ButtonText" }}>
+                                팔로잉 목록
+                            </ToggleButton>
+                        </ToggleButtonGroup>
+                    </Box>
 
-                <Stack spacing={2}></Stack>
-            </DialogContent>
-            <DialogActions sx={{ p: 2 }}>
-                <Stack direction="row" spacing={2}>
-                    <Button variant="outlined" size="large" onClick={onClose}>
-                        취소
-                    </Button>
-                    <Button
-                        variant="contained"
-                        size="large"
-                        onClick={onClickHandler}>
-                        확인
-                    </Button>
-                </Stack>
-            </DialogActions>
-        </Dialog>
+                    <FollowUserList
+                        queryKeyPrefix={
+                            isFollow === "follower"
+                                ? "getFollowerUserList"
+                                : "getFollowingUserList"
+                        }
+                        queryFn={
+                            isFollow === "follower"
+                                ? getFollowerUserList
+                                : getFollowingUserList
+                        }
+                        emptyText={
+                            isFollow === "follower"
+                                ? "팔로워가 없습니다."
+                                : "팔로잉이 없습니다."
+                        }
+                        mode={
+                            isFollow === "follower" ? "followers" : "following"
+                        }
+                        selectedIds={selectedIds}
+                        setSelectedIds={setSelectedIds}
+                        setUsernames={setUsernames}
+                    />
+
+                    <Stack spacing={2}></Stack>
+                </DialogContent>
+                <DialogActions sx={{ p: 2 }}>
+                    <Stack direction="row" spacing={2}>
+                        <Button
+                            variant="outlined"
+                            size="large"
+                            onClick={onClose}>
+                            취소
+                        </Button>
+                        <Button
+                            variant="contained"
+                            size="large"
+                            onClick={onClickHandler}>
+                            확인
+                        </Button>
+                    </Stack>
+                </DialogActions>
+            </Dialog>
+        </>
     );
 }
 

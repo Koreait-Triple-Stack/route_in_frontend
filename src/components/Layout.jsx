@@ -13,7 +13,7 @@ function Layout({ children }) {
             <Container
                 maxWidth="sm"
                 disableGutters
-                sx={{ height: "100%", py: isChatRoom ? 0 : 1 }}>
+                sx={{ height: "100%", py: isChatRoom ? 0 : 2 }}>
                 <Box
                     id="app-scroll"
                     sx={{

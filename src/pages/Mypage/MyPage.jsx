@@ -12,6 +12,7 @@ import Loading from "../../components/Loading";
 import ProfileCard from "./ProfileCard";
 import WithdrawForm from "./WithdrawForm";
 import Calendar from "../../components/Calendar";
+import { Box } from "@mui/system";
 
 function MyPage() {
     const navigate = useNavigate();

@@ -14,7 +14,15 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Loading from "../../components/Loading";
 import { timeAgo } from "../../apis/utils/time";
-import { Avatar } from "@mui/material";
+import {
+    Avatar,
+    Divider,
+    List,
+    ListItem,
+    ListItemAvatar,
+    ListItemButton,
+    ListItemText,
+} from "@mui/material";
 
 function NotificationPage() {
     const { principal } = usePrincipalState();
@@ -60,8 +68,8 @@ function NotificationPage() {
     };
 
     const onClickNotification = (path) => {
-        if (path) navigate(path)
-    }
+        if (path) navigate(path);
+    };
 
     if (isLoading) return <Loading />;
     if (error) return <Box>{error.message}</Box>;
@@ -71,8 +79,8 @@ function NotificationPage() {
             {/* 헤더 */}
             <Box
                 sx={{
-                    px: 2,
-                    py: 1.5,
+                    px: 1.5,
+                    pb: 1.5,
                     borderBottom: "1px solid",
                     borderColor: "divider",
                     bgcolor: "background.paper",
@@ -90,118 +98,102 @@ function NotificationPage() {
             </Box>
 
             {/* 스크롤 영역 */}
-            <Box
-                sx={{
-                    flex: 1,
-                    overflowY: "auto",
-                    px: 2,
-                    py: 1.5,
-                }}>
-                <Stack spacing={1.2}>
-                    {notifications?.length ? (
-                        notifications.map((n) => (
-                            <Paper
-                                key={n.notificationId}
-                                elevation={0}
-                                onClick={() => onClickNotification(n.path)}
-                                sx={{
-                                    p: 1.5,
-                                    borderRadius: 2,
-                                    border: "1px solid",
-                                    borderColor: "divider",
-                                    bgcolor: "background.paper",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    gap: 1.5,
-                                    cursor: "pointer",
-                                }}>
-                                <Avatar
-                                    src={n?.profileImg}
-                                    sx={{
-                                        width: 56,
-                                        height: 56,
-                                        fontWeight: 800,
-                                        bgcolor: "grey.200",
-                                    }}>
-                                </Avatar>
-                                {/* 텍스트 */}
-                                <Box sx={{ flex: 1, minWidth: 0 }}>
-                                    {n.title && (
+            <List>
+                {notifications?.length ? (
+                    notifications.map((n) => (
+                        <Box key={n.notificationId}>
+                            <ListItem sx={{px: 0}}>
+                                <ListItemButton
+                                    onClick={() => onClickNotification(n.path)}
+                                    sx={{ borderRadius: 3, pl: 1 }}>
+                                    <Avatar
+                                        src={n?.profileImg}
+                                        sx={{
+                                            width: 56,
+                                            height: 56,
+                                        }}></Avatar>
+                                    {/* 텍스트 */}
+                                    <Box
+                                        sx={{
+                                            pl: 2,
+                                            flex: 1,
+                                            minWidth: 0,
+                                        }}>
+                                        {n.title && (
+                                            <Typography
+                                                variant="subtitle2"
+                                                sx={{
+                                                    fontWeight: 800,
+                                                    lineHeight: 1.2,
+                                                    mb: 0.3,
+                                                    overflow: "hidden",
+                                                    textOverflow: "ellipsis",
+                                                    whiteSpace: "nowrap",
+                                                }}>
+                                                {n.title}
+                                            </Typography>
+                                        )}
+
                                         <Typography
-                                            variant="subtitle2"
+                                            variant="body2"
                                             sx={{
-                                                fontWeight: 800,
-                                                lineHeight: 1.2,
-                                                mb: 0.3,
+                                                color: "text.secondary",
+                                                lineHeight: 1.35,
+                                                display: "-webkit-box",
+                                                WebkitLineClamp: 2,
+                                                WebkitBoxOrient: "vertical",
                                                 overflow: "hidden",
-                                                textOverflow: "ellipsis",
-                                                whiteSpace: "nowrap",
                                             }}>
-                                            {n.title}
+                                            {n.message}
                                         </Typography>
-                                    )}
 
-                                    <Typography
-                                        variant="body2"
-                                        sx={{
-                                            color: "text.secondary",
-                                            lineHeight: 1.35,
-                                            display: "-webkit-box",
-                                            WebkitLineClamp: 2,
-                                            WebkitBoxOrient: "vertical",
-                                            overflow: "hidden",
+                                        <Typography
+                                            variant="caption"
+                                            sx={{
+                                                color: "text.disabled",
+                                                display: "block",
+                                            }}>
+                                            {timeAgo(n.createDt)}
+                                        </Typography>
+                                    </Box>
+
+                                    {/* 삭제 버튼 */}
+                                    <IconButton
+                                        onMouseDown={(e) => e.stopPropagation()}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            onDeleteOne(n.notificationId);
                                         }}>
-                                        {n.message}
-                                    </Typography>
+                                        <CloseRoundedIcon fontSize="small" />
+                                    </IconButton>
+                                </ListItemButton>
+                            </ListItem>
 
-                                    <Typography
-                                        variant="caption"
-                                        sx={{
-                                            color: "text.disabled",
-                                            display: "block",
-                                        }}>
-                                        {timeAgo(n.createDt)}
-                                    </Typography>
-                                </Box>
-
-                                {/* 삭제 버튼 */}
-                                <IconButton
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        onDeleteOne(n.notificationId);
-                                    }}
-                                    sx={{
-                                        borderRadius: 2,
-                                        borderColor: "divider",
-                                        bgcolor: "grey.50",
-                                    }}>
-                                    <CloseRoundedIcon fontSize="small" />
-                                </IconButton>
-                            </Paper>
-                        ))
-                    ) : (
-                        <Paper
-                            elevation={0}
-                            sx={{
-                                p: 3,
-                                borderRadius: 2,
-                                border: "1px dashed",
-                                borderColor: "divider",
-                                bgcolor: "background.paper",
-                                textAlign: "center",
-                            }}>
-                            <Typography sx={{ fontWeight: 800 }}>
-                                알림이 없어요
-                            </Typography>
-                            <Typography
-                                variant="body2"
-                                sx={{ color: "text.secondary", mt: 0.5 }}>
-                                새로운 활동이 생기면 여기에 표시됩니다.
-                            </Typography>
-                        </Paper>
-                    )}
-                </Stack>
-            </Box>
+                            <Divider variant="middle" />
+                        </Box>
+                    ))
+                ) : (
+                    <Paper
+                        elevation={0}
+                        sx={{
+                            p: 3,
+                            borderRadius: 2,
+                            border: "1px dashed",
+                            borderColor: "divider",
+                            bgcolor: "background.paper",
+                            textAlign: "center",
+                        }}>
+                        <Typography sx={{ fontWeight: 800 }}>
+                            알림이 없어요
+                        </Typography>
+                        <Typography
+                            variant="body2"
+                            sx={{ color: "text.secondary", mt: 0.5 }}>
+                            새로운 활동이 생기면 여기에 표시됩니다.
+                        </Typography>
+                    </Paper>
+                )}
+            </List>
 
             {/* 전체 삭제 fixed */}
             <DeleteButtonModal />

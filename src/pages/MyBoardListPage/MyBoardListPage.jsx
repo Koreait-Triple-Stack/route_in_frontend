@@ -1,14 +1,9 @@
-import {
-    Container,
-    Stack,
-    Typography,
-    Box,
-    Divider,
-} from "@mui/material";
+import { Container, Stack, Typography, Box, Divider } from "@mui/material";
 import { usePrincipalState } from "../../store/usePrincipalState";
 import { getBoardListByUserId } from "../../apis/board/boardService";
 import { useQuery } from "@tanstack/react-query";
 import PostCard from "../BoardListPage/PostCard";
+import Loading from "../../components/Loading";
 
 function MyBoardListPage() {
     const { principal } = usePrincipalState();
@@ -22,7 +17,7 @@ function MyBoardListPage() {
 
     const respData = response?.data || [];
 
-    if (isLoading) return <div>로딩중...</div>;
+    if (isLoading) return <Loading />;
 
     return (
         <Container>

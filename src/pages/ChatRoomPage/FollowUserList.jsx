@@ -1,11 +1,18 @@
-import React, { useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import React, { useMemo } from "react";
 import { usePrincipalState } from "../../store/usePrincipalState";
 import Loading from "../../components/Loading";
 import ErrorComponent from "../../components/ErrorComponent";
 import { useQuery } from "@tanstack/react-query";
-import { Box, Container, Stack } from "@mui/system";
-import { Avatar, Paper, Typography, Checkbox, List, ListItem, ListItemButton } from "@mui/material";
+import { Box } from "@mui/system";
+import {
+    Avatar,
+    Typography,
+    Checkbox,
+    List,
+    ListItem,
+    ListItemButton,
+    Divider,
+} from "@mui/material";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
@@ -14,9 +21,10 @@ function FollowUserList({
     queryFn,
     emptyText = "목록이 없습니다.",
     mode,
-    selectedIds,
-    setSelectedIds,
+    userIds,
+    setUserIds,
     participantIds,
+    setUsernames,
 }) {
     const { principal } = usePrincipalState();
 
@@ -38,11 +46,19 @@ function FollowUserList({
     });
 
     const handleToggle = (user) => {
-        setSelectedIds((prev) => {
+        setUserIds((prev) => {
             if (prev.includes(user.userId)) {
                 return prev.filter((i) => i !== user.userId);
             } else {
                 return [...prev, user.userId];
+            }
+        });
+
+        setUsernames((prev) => {
+            if (prev.includes(user.username)) {
+                return prev.filter((i) => i !== user.username);
+            } else {
+                return [...prev, user.username];
             }
         });
     };
@@ -63,76 +79,69 @@ function FollowUserList({
                         u?.profileImg ??
                         u?.profileUrl ??
                         undefined;
-                    const isSelected = selectedIds.includes(u?.userId);
+                    const isSelected = userIds.includes(u?.userId);
 
                     return (
-                        <ListItem
-                            key={u?.userId ?? `${mode}-${idx}`}
-                            onClick={() => {
-                                if (u?.userId) handleToggle(u);
-                            }}>
-                            <ListItemButton
-                                sx={{
-                                    borderRadius: 3,
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "space-between",
-                                    gap: 2,
+                        <Box key={u?.userId ?? `${mode}-${idx}`}>
+                            <ListItem
+                                onClick={() => {
+                                    if (u?.userId) handleToggle(u);
                                 }}>
-                                {/* 왼쪽: 프로필 정보 */}
-                                <Box
+                                <ListItemButton
                                     sx={{
+                                        borderRadius: 3,
                                         display: "flex",
                                         alignItems: "center",
+                                        justifyContent: "space-between",
                                         gap: 2,
                                     }}>
-                                    <Avatar
-                                        src={profileSrc}
-                                        alt={u?.username ?? "profile"}
-                                        sx={{ width: 36, height: 36 }}
-                                    />
+                                    {/* 왼쪽: 프로필 정보 */}
                                     <Box
                                         sx={{
                                             display: "flex",
-                                            flexDirection: "column",
+                                            alignItems: "center",
+                                            gap: 2,
                                         }}>
-                                        <Typography variant="h6">
-                                            {u?.username}
-                                        </Typography>
-                                    </Box>
-                                </Box>
-
-                                {/* 오른쪽: 카카오톡 스타일 체크박스 */}
-                                <Checkbox
-                                    checked={isSelected}
-                                    sx={{ pointerEvents: "none" }}
-                                    icon={
-                                        <RadioButtonUncheckedIcon
-                                            sx={{
-                                                color: "#ddd",
-                                            }}
+                                        <Avatar
+                                            src={profileSrc}
+                                            alt={u?.username ?? "profile"}
+                                            sx={{ width: 36, height: 36 }}
                                         />
-                                    }
-                                    checkedIcon={
                                         <Box
                                             sx={{
-                                                borderRadius: "50%",
                                                 display: "flex",
-                                                alignItems: "center",
-                                                justifyContent: "center",
-                                                width: "1.5rem",
-                                                height: "1.5rem",
+                                                flexDirection: "column",
                                             }}>
+                                            <Typography variant="h6">
+                                                {u?.username}
+                                            </Typography>
+                                        </Box>
+                                    </Box>
+
+                                    {/* 오른쪽: 카카오톡 스타일 체크박스 */}
+                                    <Checkbox
+                                        checked={isSelected}
+                                        sx={{ pointerEvents: "none" }}
+                                        icon={
+                                            <RadioButtonUncheckedIcon
+                                                sx={{
+                                                    color: "#ddd",
+                                                }}
+                                            />
+                                        }
+                                        checkedIcon={
                                             <CheckCircleIcon
                                                 sx={{
                                                     color: "primary.main",
                                                 }}
                                             />
-                                        </Box>
-                                    }
-                                />
-                            </ListItemButton>
-                        </ListItem>
+                                        }
+                                    />
+                                </ListItemButton>
+                            </ListItem>
+
+                            <Divider variant="middle" />
+                        </Box>
                     );
                 })
             ) : (

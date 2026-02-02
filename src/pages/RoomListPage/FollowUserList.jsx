@@ -5,7 +5,16 @@ import Loading from "../../components/Loading";
 import ErrorComponent from "../../components/ErrorComponent";
 import { useQuery } from "@tanstack/react-query";
 import { Box, Container, Stack } from "@mui/system";
-import { Avatar, Paper, Typography, Checkbox, List, ListItem, ListItemButton } from "@mui/material";
+import {
+    Avatar,
+    Paper,
+    Typography,
+    Checkbox,
+    List,
+    ListItem,
+    ListItemButton,
+    Divider,
+} from "@mui/material";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
@@ -16,7 +25,7 @@ function FollowUserList({
     mode,
     selectedIds,
     setSelectedIds,
-    setTitle,
+    setUsernames,
 }) {
     const { principal } = usePrincipalState();
     const { userId: userIdParam } = useParams();
@@ -48,7 +57,7 @@ function FollowUserList({
                 return [...prev, user.userId];
             }
         });
-        setTitle((prev) => {
+        setUsernames((prev) => {
             if (prev.includes(user.username)) {
                 return prev.filter((i) => i !== user.username);
             } else {
@@ -76,74 +85,65 @@ function FollowUserList({
                     const isSelected = selectedIds.includes(u?.userId);
 
                     return (
-                        <ListItem
-                            key={u?.userId ?? `${mode}-${idx}`}>
-                            <ListItemButton
-                                onClick={() => {
-                                    if (u?.userId) handleToggle(u);
-                                }}
-                                sx={{
-                                    borderRadius: 3,
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "space-between",
-                                    gap: 2,
-                                }}>
-                                {/* 왼쪽: 프로필 정보 */}
-                                <Box
+                        <Box key={u?.userId}>
+                            <ListItem key={u?.userId ?? `${mode}-${idx}`}>
+                                <ListItemButton
+                                    onClick={() => {
+                                        if (u?.userId) handleToggle(u);
+                                    }}
                                     sx={{
+                                        borderRadius: 3,
                                         display: "flex",
                                         alignItems: "center",
+                                        justifyContent: "space-between",
                                         gap: 2,
                                     }}>
-                                    <Avatar
-                                        src={profileSrc}
-                                        alt={u?.username ?? "profile"}
-                                        sx={{ width: 36, height: 36 }}
-                                    />
+                                    {/* 왼쪽: 프로필 정보 */}
                                     <Box
                                         sx={{
                                             display: "flex",
-                                            flexDirection: "column",
+                                            alignItems: "center",
+                                            gap: 2,
                                         }}>
-                                        <Typography variant="h6">
-                                            {u?.username}
-                                        </Typography>
-                                    </Box>
-                                </Box>
-
-                                {/* 오른쪽: 카카오톡 스타일 체크박스 */}
-                                <Checkbox
-                                    checked={isSelected}
-                                    sx={{ pointerEvents: "none" }}
-                                    icon={
-                                        <RadioButtonUncheckedIcon
-                                            sx={{
-                                                color: "#ddd",
-                                                fontSize: "1.5rem",
-                                            }}
+                                        <Avatar
+                                            src={profileSrc}
+                                            alt={u?.username ?? "profile"}
+                                            sx={{ width: 36, height: 36 }}
                                         />
-                                    }
-                                    checkedIcon={
                                         <Box
                                             sx={{
-                                                borderRadius: "50%",
                                                 display: "flex",
-                                                alignItems: "center",
-                                                justifyContent: "center",
-                                                width: "1.5rem",
-                                                height: "1.5rem",
+                                                flexDirection: "column",
                                             }}>
+                                            <Typography sx={{ fontSize: 20 }}>
+                                                {u?.username}
+                                            </Typography>
+                                        </Box>
+                                    </Box>
+
+                                    <Checkbox
+                                        checked={isSelected}
+                                        sx={{ pointerEvents: "none" }}
+                                        icon={
+                                            <RadioButtonUncheckedIcon
+                                                sx={{
+                                                    color: "#ddd",
+                                                    fontSize: "1.5rem",
+                                                }}
+                                            />
+                                        }
+                                        checkedIcon={
                                             <CheckCircleIcon
                                                 sx={{
                                                     color: "primary.main",
                                                 }}
                                             />
-                                        </Box>
-                                    }
-                                />
-                            </ListItemButton>
-                        </ListItem>
+                                        }
+                                    />
+                                </ListItemButton>
+                            </ListItem>
+                            <Divider variant="middle" component="li" />
+                        </Box>
                     );
                 })
             ) : (
