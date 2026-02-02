@@ -78,3 +78,15 @@ export const countUnreadChatByUserIdRequest = async (userId) => {
     if (result.data.status !== "success") throw new Error(result.data.message);
     return result.data;
 };
+
+export const muteNotificationRequest = async (data) => {
+    const result = await instance.post(`/chat/mute/notification`, data);
+    if (result.data.status !== "success") throw new Error(result.data.message);
+    return result.data;
+};
+
+export const changeRoomFavoriteRequest = async (data) => {
+    const result = await instance.post(`/chat/change/favorite`, data);
+    if (result.data.status !== "success") throw new Error(result.data.message);
+    return result.data;
+};

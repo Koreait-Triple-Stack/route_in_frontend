@@ -13,7 +13,9 @@ import {
 } from "@mui/material";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
+    changeRoomFavoriteRequest,
     changeRoomTitleRequest,
+    muteNotificationRequest,
     quitRoomRequest,
 } from "../../apis/chat/chatApi";
 import { useToastStore } from "../../store/useToastStore";
@@ -34,6 +36,32 @@ function MenuModal({
     const [title, setTitle] = useState("");
     const titleMutation = useMutation({
         mutationFn: changeRoomTitleRequest,
+        onSuccess: (resp) => {
+            show(resp.message, "success");
+            queryClient.invalidateQueries({
+                queryKey: ["getRoomListByUserIdRequest", principal.userId],
+            });
+        },
+        onError: (resp) => {
+            show(resp.message, "error");
+        },
+    });
+
+    const favoriteMutation = useMutation({
+        mutationFn: changeRoomFavoriteRequest,
+        onSuccess: (resp) => {
+            show(resp.message, "success");
+            queryClient.invalidateQueries({
+                queryKey: ["getRoomListByUserIdRequest", principal.userId],
+            });
+        },
+        onError: (resp) => {
+            show(resp.message, "error");
+        },
+    });
+
+    const muteMutation = useMutation({
+        mutationFn: muteNotificationRequest,
         onSuccess: (resp) => {
             show(resp.message, "success");
             queryClient.invalidateQueries({
@@ -67,7 +95,6 @@ function MenuModal({
     }, [selectedRoom]);
 
     const handleChangeTitle = () => {
-        console.log(selectedRoom);
         if (!title.trim()) {
             show("한 글자 이상 입력해 주세요", "error");
             return;
@@ -77,6 +104,26 @@ function MenuModal({
             roomId: selectedRoom.roomId,
             userId: selectedRoom.userId,
             title,
+        });
+
+        handleClose();
+    };
+
+    const handleFavorite = () => {
+        favoriteMutation.mutate({
+            userId: selectedRoom.userId,
+            roomId: selectedRoom.roomId,
+            favorite: selectedRoom.favorite
+        })
+
+        handleClose();
+    }
+
+    const handleMute = () => {
+        muteMutation.mutate({
+            userId: selectedRoom.userId,
+            roomId: selectedRoom.roomId,
+            muteNotification: selectedRoom.muteNotification,
         });
 
         handleClose();
@@ -119,8 +166,8 @@ function MenuModal({
                     }}>
                     채팅방 이름 설정
                 </MenuItem>
-                <MenuItem onClick={handleClose}>즐겨찾기에 추가</MenuItem>
-                <MenuItem onClick={handleClose}>채팅방 알림 끄기</MenuItem>
+                <MenuItem onClick={handleFavorite}>즐겨찾기에 추가</MenuItem>
+                <MenuItem onClick={handleMute}>채팅방 알림 끄기</MenuItem>
                 <Divider />
                 <MenuItem
                     onClick={() => {
