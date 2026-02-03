@@ -1,24 +1,17 @@
 import {
-    AppBar,
-    Drawer,
     IconButton,
     TextField,
-    Toolbar,
     Typography,
 } from "@mui/material";
 import { Box, Stack } from "@mui/system";
-import React, { useState } from "react";
+import { useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
-import ExpandLess from "@mui/icons-material/ExpandLess";
-import ExpandMore from "@mui/icons-material/ExpandMore";
-import SettingsIcon from "@mui/icons-material/Settings";
 import SearchIcon from "@mui/icons-material/Search";
 
 function RoomListHeader({
     setSearchInputValue,
     searchInputValue,
 }) {
-    const [isSetting, setIsSetting] = useState(false);
     const [isSearch, setIsSearch] = useState(false);
 
     const searchOnClickHandler = () => {
@@ -48,35 +41,7 @@ function RoomListHeader({
                         sx={{ color: "#000" }}>
                         <SearchIcon />
                     </IconButton>
-                    {/* <IconButton
-                        size="large"
-                        onClick={() => setIsSetting(!isSetting)}
-                        sx={{ color: "#000", pr: 0 }}>
-                        <SettingsIcon />
-                        {isSetting ? <ExpandLess /> : <ExpandMore />}
-                    </IconButton> */}
                 </Box>
-                {/* <Drawer
-                        anchor="top"
-                        open={isSetting}
-                        onClose={() => setIsSetting(false)}
-                        variant="persistent"
-                        sx={{
-                            "& .MuiDrawer-root": {
-                                position: "absolute",
-                                zIndex: 1300,
-                                right: 0,
-                                top: 0,
-                                height: "100%",
-                            },
-                            "& .MuiDrawer-paper": {
-                                position: "absolute",
-                                width: "80%",
-                                height: "100%",
-                                boxSizing: "border-box",
-                                borderLeft: "1px solid #ddd",
-                            },
-                        }}></Drawer> */}
             </Box>
 
             {isSearch && (

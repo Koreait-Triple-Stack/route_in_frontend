@@ -95,7 +95,6 @@ function FollowUserList({
                                         justifyContent: "space-between",
                                         gap: 2,
                                     }}>
-                                    {/* 왼쪽: 프로필 정보 */}
                                     <Box
                                         sx={{
                                             display: "flex",
@@ -118,7 +117,6 @@ function FollowUserList({
                                         </Box>
                                     </Box>
 
-                                    {/* 오른쪽: 카카오톡 스타일 체크박스 */}
                                     <Checkbox
                                         checked={isSelected}
                                         sx={{ pointerEvents: "none" }}

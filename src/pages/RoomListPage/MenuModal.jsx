@@ -17,10 +17,10 @@ import {
     changeRoomTitleRequest,
     muteNotificationRequest,
     quitRoomRequest,
+    readRoomRequest,
 } from "../../apis/chat/chatApi";
 import { useToastStore } from "../../store/useToastStore";
 import { usePrincipalState } from "../../store/usePrincipalState";
-import DialogComponent from "../../components/DialogComponent";
 
 function MenuModal({
     contextMenu,
@@ -34,6 +34,20 @@ function MenuModal({
     const [openChangeTitle, setOpenChangeTitle] = useState();
     const [openLeaveRoom, setOpenLeaveRoom] = useState();
     const [title, setTitle] = useState("");
+
+    const readMutaition = useMutation({
+        mutationFn: readRoomRequest,
+        onSuccess: (resp) => {
+            show(resp.message, "success");
+            queryClient.invalidateQueries({
+                queryKey: ["getRoomListByUserIdRequest", principal.userId],
+            });
+        },
+        onError: (resp) => {
+            show(resp.message, "error");
+        },
+    });
+
     const titleMutation = useMutation({
         mutationFn: changeRoomTitleRequest,
         onSuccess: (resp) => {
@@ -94,6 +108,16 @@ function MenuModal({
         setTitle(selectedRoom.title);
     }, [selectedRoom]);
 
+    const handleRead = () => {
+        readMutaition.mutate({
+            roomId: selectedRoom.roomId,
+            userId: selectedRoom.userId,
+            lastMessageId: selectedRoom.lastMessageId,
+        });
+
+        handleClose();
+    };
+
     const handleChangeTitle = () => {
         if (!title.trim()) {
             show("한 글자 이상 입력해 주세요", "error");
@@ -113,11 +137,11 @@ function MenuModal({
         favoriteMutation.mutate({
             userId: selectedRoom.userId,
             roomId: selectedRoom.roomId,
-            favorite: selectedRoom.favorite
-        })
+            favorite: selectedRoom.favorite,
+        });
 
         handleClose();
-    }
+    };
 
     const handleMute = () => {
         muteMutation.mutate({
@@ -140,9 +164,11 @@ function MenuModal({
 
     const handleClose = () => {
         setContextMenu(null);
-        setSelectedRoom(null);
         setOpenChangeTitle(false);
         setOpenLeaveRoom(false);
+        setTimeout(() => {
+            setSelectedRoom(null);
+        }, 120);
     };
 
     return (
@@ -159,6 +185,7 @@ function MenuModal({
                 PaperProps={{
                     style: { width: 200 },
                 }}>
+                <MenuItem onClick={handleRead}>읽음 처리</MenuItem>
                 <MenuItem
                     onClick={() => {
                         setOpenChangeTitle(true);
@@ -166,8 +193,13 @@ function MenuModal({
                     }}>
                     채팅방 이름 설정
                 </MenuItem>
-                <MenuItem onClick={handleFavorite}>즐겨찾기에 추가</MenuItem>
-                <MenuItem onClick={handleMute}>채팅방 알림 끄기</MenuItem>
+                <MenuItem onClick={handleFavorite}>
+                    즐겨찾기 {selectedRoom?.favorite ? "삭제" : "추가"}
+                </MenuItem>
+                <MenuItem onClick={handleMute}>
+                    채팅방 알림{" "}
+                    {selectedRoom?.muteNotification ? "끄기" : "켜기"}
+                </MenuItem>
                 <Divider />
                 <MenuItem
                     onClick={() => {

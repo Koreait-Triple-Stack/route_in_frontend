@@ -1,7 +1,18 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Container, Paper, Typography, Box, TextField, Button, MenuItem, Select, FormControl, FormHelperText, InputAdornment, Stack, ToggleButtonGroup, ToggleButton } from "@mui/material";
-import { useDaumPostcodePopup } from "react-daum-postcode"; // 라이브러리 import
+import {
+    Container,
+    Paper,
+    Typography,
+    Box,
+    TextField,
+    Button,
+    InputAdornment,
+    Stack,
+    ToggleButtonGroup,
+    ToggleButton,
+} from "@mui/material";
+import { useDaumPostcodePopup } from "react-daum-postcode";
 import { oAuth2Signup } from "../../apis/oAuth2/oAuth2Service";
 import { useMutation } from "@tanstack/react-query";
 import { Grid } from "@mui/system";
@@ -21,7 +32,6 @@ const OAuth2SignupPage = () => {
         },
     });
 
-    // 1. 주소 검색 팝업 훅 설정
     const open = useDaumPostcodePopup();
 
     const [formData, setFormData] = useState({
@@ -74,11 +84,12 @@ const OAuth2SignupPage = () => {
     const handleSignup = async () => {
         const newErrors = {};
 
-        if (!formData.username.trim()) newErrors.username = "닉네임을 입력해주세요.";
-        if (formData.birthDate.length !== 8) newErrors.birthDate = "생년월일 8자리를 입력해주세요.";
+        if (!formData.username.trim())
+            newErrors.username = "닉네임을 입력해주세요.";
+        if (formData.birthDate.length !== 8)
+            newErrors.birthDate = "생년월일 8자리를 입력해주세요.";
         if (!formData.gender) newErrors.gender = "성별을 선택해주세요.";
 
-        // [수정] 주소 유효성 검사 (우편번호나 상세주소 체크)
         if (!formData.zipCode || !formData.baseAddress) {
             newErrors.address = "주소를 검색해주세요.";
         } else if (!formData.detailAddress.trim()) {
@@ -118,12 +129,20 @@ const OAuth2SignupPage = () => {
 
     return (
         <Container>
-            <Paper elevation={0} sx={{ p: 4, borderRadius: 4, border: "1px solid #eee" }}>
-                <Typography variant="h5" align="center" sx={{ mb: 4, fontWeight: 700 }}>
+            <Paper
+                elevation={0}
+                sx={{ p: 4, borderRadius: 4, border: "1px solid #eee" }}>
+                <Typography
+                    variant="h5"
+                    align="center"
+                    sx={{ mb: 4, fontWeight: 700 }}>
                     회원가입
                 </Typography>
 
-                <Box component="form" noValidate sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                <Box
+                    component="form"
+                    noValidate
+                    sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
                     <Box>
                         <Label required>닉네임</Label>
                         <TextField
@@ -163,7 +182,10 @@ const OAuth2SignupPage = () => {
 
                     <Box>
                         <Label required>성별</Label>
-                        <ToggleButtonGroup value={formData.gender} exclusive onChange={handleInputChange}>
+                        <ToggleButtonGroup
+                            value={formData.gender}
+                            exclusive
+                            onChange={handleInputChange}>
                             <Grid container spacing={1}>
                                 <ToggleButton name="gender" value="남성">
                                     남성
@@ -175,11 +197,9 @@ const OAuth2SignupPage = () => {
                         </ToggleButtonGroup>
                     </Box>
 
-                    {/* [수정된 부분] 주소 입력 영역 (우편번호, 기본주소, 상세주소) */}
                     <Box>
                         <Label required>주소</Label>
                         <Stack spacing={1}>
-                            {/* 우편번호 + 검색 버튼 */}
                             <Stack direction="row" spacing={1}>
                                 <TextField
                                     placeholder="우편번호"
@@ -188,7 +208,6 @@ const OAuth2SignupPage = () => {
                                     onClick={handleAddressSearch}
                                     size="small"
                                     fullWidth
-                                    // 사용자가 직접 수정 못하게 readOnly 설정
                                     InputProps={{
                                         readOnly: true,
                                         sx: {
@@ -205,13 +224,11 @@ const OAuth2SignupPage = () => {
                                         borderRadius: 2,
                                         whiteSpace: "nowrap",
                                         minWidth: "80px",
-                                    }}
-                                >
+                                    }}>
                                     주소 검색
                                 </Button>
                             </Stack>
 
-                            {/* 기본 주소 */}
                             <TextField
                                 fullWidth
                                 placeholder="기본 주소"
@@ -226,7 +243,6 @@ const OAuth2SignupPage = () => {
                                 error={!!errors.address}
                             />
 
-                            {/* 상세 주소 */}
                             <TextField
                                 fullWidth
                                 name="detailAddress"
@@ -241,7 +257,7 @@ const OAuth2SignupPage = () => {
                                     },
                                 }}
                                 error={!!errors.detailAddress}
-                                helperText={errors.detailAddress} // 에러 메시지는 상세주소 밑에 표시
+                                helperText={errors.detailAddress}
                             />
                         </Stack>
                     </Box>
@@ -259,7 +275,11 @@ const OAuth2SignupPage = () => {
                             variant="outlined"
                             size="small"
                             InputProps={{
-                                endAdornment: <InputAdornment position="end">cm</InputAdornment>,
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        cm
+                                    </InputAdornment>
+                                ),
                                 sx: { borderRadius: 2 },
                             }}
                         />
@@ -278,7 +298,11 @@ const OAuth2SignupPage = () => {
                             variant="outlined"
                             size="small"
                             InputProps={{
-                                endAdornment: <InputAdornment position="end">kg</InputAdornment>,
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        kg
+                                    </InputAdornment>
+                                ),
                                 sx: { borderRadius: 2 },
                             }}
                         />
@@ -297,8 +321,7 @@ const OAuth2SignupPage = () => {
                             fontSize: "1rem",
                             bgcolor: "#2563eb",
                             "&:hover": { bgcolor: "#1d4ed8" },
-                        }}
-                    >
+                        }}>
                         가입하기
                     </Button>
                 </Box>

@@ -87,7 +87,6 @@ function ChatRoomPage() {
                 overflowX: "hidden",
                 width: "100%",
             }}>
-            {/* 🟦 상단 헤더 */}
             <Box
                 sx={{
                     display: "flex",
