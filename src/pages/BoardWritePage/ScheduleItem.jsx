@@ -58,8 +58,10 @@ const ScheduleItem = ({ dayEng, day, routines, active, onReset, onSave }) => {
     return (
         <Paper
             variant="outlined"
+            // 루틴 작성 페이지 요일 작성 칸
             sx={{
                 p: 2,
+                borderRadius: 5,
                 bgcolor: active ? "#f0f7ff" : "white",
                 borderColor: active ? "primary.light" : "grey.300",
             }}>
