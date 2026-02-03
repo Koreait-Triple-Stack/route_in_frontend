@@ -16,3 +16,7 @@ export const moduleStyle = {
     flexDirection: "column",
     width: "100%",
 };
+
+export const BUTTON_COLOR = {
+    background: "linear-gradient(135deg, #2563eb, #22c55e)",
+};

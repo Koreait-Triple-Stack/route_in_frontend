@@ -10,7 +10,7 @@ export const usePrincipalState = create((set, get) => ({
     logout: () => {
         localStorage.removeItem("AccessToken");
         set({ isLoggedIn: false, principal: null, loading: false });
-        window.location.href = "/oauth2/signin";
+        window.location.href = "/";
     },
     setLoading: (loading) =>
         set({

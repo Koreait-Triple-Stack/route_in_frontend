@@ -63,6 +63,33 @@ function NotificationListener() {
                 }
             }
 
+            if (payloadType === "CHAT_MUTE") {
+                queryClient.invalidateQueries({
+                    queryKey: ["getRoomListByUserIdRequest", principal.userId],
+                });
+
+                queryClient.invalidateQueries({
+                    queryKey: [
+                        "countUnreadChatByUserIdRequest",
+                        principal.userId,
+                    ],
+                });
+
+                if (
+                    payloadRoomId != null &&
+                    activeRoomId != null &&
+                    Number(payloadRoomId) === Number(activeRoomId)
+                ) {
+                    queryClient.invalidateQueries({
+                        queryKey: [
+                            "getMessageListInfiniteRequest",
+                            { roomId: Number(payloadRoomId), limit: 20 },
+                        ],
+                    });
+                }
+                return;
+            }
+
             if (payloadType === "MESSAGE") {
                 if (payloadRoomId != null) {
                     queryClient.invalidateQueries({

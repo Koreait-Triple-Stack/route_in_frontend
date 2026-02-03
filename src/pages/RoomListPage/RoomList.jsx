@@ -7,7 +7,7 @@ import {
     ListItemText,
     Typography,
 } from "@mui/material";
-import { Box, Container, Stack } from "@mui/system";
+import { Box } from "@mui/system";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { timeAgo } from "../../apis/utils/time";
@@ -24,10 +24,9 @@ function RoomList({ roomList }) {
         navigate(`/chat/room/${id}`);
     };
 
-    // ✅ [핵심] 꾹 누르기(모바일) or 우클릭(PC) 핸들러
     const handleContextMenu = (event, room) => {
-        event.preventDefault(); // 브라우저 기본 메뉴(복사/인쇄 등)가 안 뜨게 막음!
-        setSelectedRoom(room); // 어떤 채팅방을 눌렀는지 저장
+        event.preventDefault();
+        setSelectedRoom(room);
         setContextMenu(
             contextMenu === null
                 ? {
@@ -98,12 +97,17 @@ function RoomList({ roomList }) {
                                 sx={{
                                     display: "flex",
                                     flexDirection: "column",
-                                    alignItems: "center",
-                                    ml: 1,
+                                    alignItems: "end",
                                     mb: 2.5,
-                                    minWidth: "60px",
+                                    minWidth: 60,
                                 }}>
-                                <Box sx={{display: "flex", justifyContent:"end", minWidth: 50, gap: 1}}>
+                                <Box
+                                    sx={{
+                                        display: "flex",
+                                        justifyContent: "end",
+                                        minWidth: 60,
+                                        gap: 1,
+                                    }}>
                                     {room.favorite && (
                                         <StarIcon
                                             fontSize="small"
@@ -130,21 +134,30 @@ function RoomList({ roomList }) {
                                         {timeAgo(room.lastMessageDt)}
                                     </Typography>
                                 </Box>
-                                {room.unreadCnt > 0 && (
-                                    <Badge
-                                        badgeContent={room.unreadCnt}
-                                        color="error"
-                                        sx={{
-                                            "& .MuiBadge-badge": {
-                                                fontSize: "0.7rem",
-                                                height: 18,
-                                                minWidth: 18,
-                                                mt: 1,
-                                                bgcolor: "#fa5a5a",
-                                            },
-                                        }}
-                                    />
-                                )}
+                                <Box
+                                    sx={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "end",
+                                        minWidth: 60,
+                                    }}>
+                                    {room.unreadCnt > 0 && (
+                                        <Badge
+                                            badgeContent={room.unreadCnt}
+                                            color="error"
+                                            sx={{
+                                                "& .MuiBadge-badge": {
+                                                    fontSize: "0.7rem",
+                                                    height: 18,
+                                                    minWidth: 18,
+                                                    mt: 1,
+                                                    mr: 2,
+                                                    bgcolor: "#fa5a5a",
+                                                },
+                                            }}
+                                        />
+                                    )}
+                                </Box>
                             </Box>
                         </ListItemButton>
                     ))}

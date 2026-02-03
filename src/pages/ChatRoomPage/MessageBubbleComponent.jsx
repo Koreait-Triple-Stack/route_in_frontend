@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import UserAvatarLink from "../../components/UserAvatarLink";
 import { Box, flex } from "@mui/system";
-import { Badge, Button, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import { usePrincipalState } from "../../store/usePrincipalState";
 import MessageModal from "./MessageModal";
 
@@ -30,8 +30,8 @@ function MessageBubbleComponent({ message }) {
     const [contextMenuMes, setContextMenuMes] = useState(null);
     const [selectedMessage, setSelectedMessage] = useState(null);
     const handleContextMenu = (event, message) => {
-        event.preventDefault(); // 브라우저 기본 메뉴(복사/인쇄 등)가 안 뜨게 막음!
-        setSelectedMessage(message); // 어떤 채팅방을 눌렀는지 저장
+        event.preventDefault();
+        setSelectedMessage(message);
         setContextMenuMes(
             contextMenuMes === null
                 ? {
@@ -46,7 +46,7 @@ function MessageBubbleComponent({ message }) {
         <Box
             sx={{
                 display: "flex",
-                flexDirection: isMe ? "row-reverse" : "row", // 내꺼면 오른쪽, 남이면 왼쪽
+                flexDirection: isMe ? "row-reverse" : "row",
                 alignItems: "flex-start",
                 mb: 2,
                 width: "100%",
@@ -86,7 +86,6 @@ function MessageBubbleComponent({ message }) {
                         alignItems: isMe ? "flex-end" : "flex-start",
                         ml: 1,
                     }}>
-                    {/* 상대방 이름 */}
                     {!isMe && (
                         <Typography
                             variant="caption"
@@ -95,14 +94,12 @@ function MessageBubbleComponent({ message }) {
                         </Typography>
                     )}
 
-                    {/* 말풍선과 시간 배치 */}
                     <Box
                         sx={{
                             display: "flex",
-                            flexDirection: isMe ? "row-reverse" : "row", // 시간 위치 조정을 위해
-                            alignItems: "flex-end", // 말풍선 하단에 시간 정렬
+                            flexDirection: isMe ? "row-reverse" : "row",
+                            alignItems: "flex-end",
                         }}>
-                        {/* 💬 말풍선 */}
                         <Box
                             onContextMenu={(e) => {
                                 handleContextMenu(e, message);
@@ -113,13 +110,16 @@ function MessageBubbleComponent({ message }) {
                                 p: "10px 14px",
                                 borderRadius: isMe
                                     ? "15px 0px 15px 15px"
-                                    : "0px 15px 15px 15px", // 꼬리 모양 흉내
-                                maxWidth: "70vw", // 화면의 70%까지만 차지
+                                    : "0px 15px 15px 15px",
+
+                                maxWidth: 250,
+                                whiteSpace: "pre-wrap",
+                                wordBreak: "break-word",
+                                overflowWrap: "break-word",
+
                                 boxShadow: "0 1px 1px rgba(0,0,0,0.1)",
-                                wordBreak: "normal",
                                 fontSize: "0.95rem",
                                 lineHeight: 1.5,
-                                whiteSpace: "pre-wrap",
                             }}>
                             {content}
                         </Box>
@@ -133,7 +133,6 @@ function MessageBubbleComponent({ message }) {
                                 mx: 0.5,
                                 height: "100%",
                             }}>
-                            {/* 안읽은 표시 (Badge 대신 Box나 Typography로 직접 구현이 위치 잡기 더 쉽습니다) */}
                             {unreadCnt > 0 && (
                                 <Box
                                     sx={{
@@ -150,7 +149,6 @@ function MessageBubbleComponent({ message }) {
                                 </Box>
                             )}
 
-                            {/* 시간 표시 */}
                             <Typography
                                 variant="caption"
                                 sx={{

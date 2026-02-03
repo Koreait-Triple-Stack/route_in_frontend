@@ -1,7 +1,7 @@
 import IconButton from "@mui/material/IconButton";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-import { Box, Container, Stack } from "@mui/system";
+import { Box, Container } from "@mui/system";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import DeleteButtonModal from "./DeleteButtonModal";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -19,9 +19,7 @@ import {
     Divider,
     List,
     ListItem,
-    ListItemAvatar,
     ListItemButton,
-    ListItemText,
 } from "@mui/material";
 
 function NotificationPage() {
@@ -49,7 +47,6 @@ function NotificationPage() {
         }
     }, [isLoading, response]);
 
-    // 알림 삭제
     const mutation = useMutation({
         mutationFn: (notificationId) =>
             deleteNotificationByNotificationId(notificationId),
@@ -102,7 +99,7 @@ function NotificationPage() {
                 {notifications?.length ? (
                     notifications.map((n) => (
                         <Box key={n.notificationId}>
-                            <ListItem sx={{px: 0}}>
+                            <ListItem sx={{ px: 0 }}>
                                 <ListItemButton
                                     onClick={() => onClickNotification(n.path)}
                                     sx={{ borderRadius: 3, pl: 1 }}>
@@ -143,6 +140,7 @@ function NotificationPage() {
                                                 WebkitLineClamp: 2,
                                                 WebkitBoxOrient: "vertical",
                                                 overflow: "hidden",
+                                                textOverflow: "ellipsis",
                                             }}>
                                             {n.message}
                                         </Typography>

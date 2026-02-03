@@ -6,6 +6,7 @@ import DirectionsRunIcon from "@mui/icons-material/DirectionsRun";
 import FitnessCenterIcon from "@mui/icons-material/FitnessCenter";
 import CloseIcon from "@mui/icons-material/Close";
 import CreateOutlinedIcon from "@mui/icons-material/CreateOutlined";
+import { BUTTON_COLOR } from "../../constants/design";
 
 function WriteDial() {
     const [open, setOpen] = useState(false);
@@ -36,10 +37,9 @@ function WriteDial() {
                 "& .MuiFab-root": {
                     width: 52,
                     height: 52,
-                    bgcolor: "primary.main",
+                    bgcolor: BUTTON_COLOR,
                     color: "#fff",
                     boxShadow: "0 12px 30px rgba(0,0,0,0.18)",
-                    "&:hover": { bgcolor: "primary.main" },
                 },
                 "& .MuiSpeedDialAction-fab": {
                     width: 52,

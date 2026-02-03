@@ -58,7 +58,6 @@ function MessageBubble({ roomId }) {
         const el = scrollerRef.current;
         if (!el) return;
 
-        // ⭐ 맨 위 닿으면 과거 로딩
         if (el.scrollTop <= 20 && hasNextPage && !isFetchingNextPage) {
             prevScrollHeightRef.current = el.scrollHeight;
             needAdjustRef.current = true;
@@ -66,7 +65,6 @@ function MessageBubble({ roomId }) {
         }
     };
 
-    // ⭐ 과거 prepend 후 스크롤 위치 유지
     useEffect(() => {
         const el = scrollerRef.current;
         if (!el) return;
@@ -80,25 +78,21 @@ function MessageBubble({ roomId }) {
         prevScrollHeightRef.current = 0;
     }, [messageList.length]);
 
-    // ⭐ 초기 1회 + 새 메시지 & 아래 보고 있을 때만 auto-scroll
     useLayoutEffect(() => {
         const el = scrollerRef.current;
         if (!el) return;
 
-        // ✅ 과거 메시지 prepend(무한스크롤) 직후엔 절대 맨 아래로 보내지 않음
         if (needAdjustRef.current) return;
 
         const nearBottomNow =
-            el.scrollHeight - (el.scrollTop + el.clientHeight) < 120; // threshold는 80~200 적당히
+            el.scrollHeight - (el.scrollTop + el.clientHeight) < 120;
 
-        // ✅ 1) 최초 1회 무조건 맨 아래
         if (!didInitScrollRef.current && messageList.length > 0) {
             didInitScrollRef.current = true;
             scrollToBottom();
             return;
         }
 
-        // ✅ 2) 새 메시지로 길이가 늘어났을 때, "지금도" 아래 근처면 자동 스크롤
         if (nearBottomNow) {
             scrollToBottom();
         }

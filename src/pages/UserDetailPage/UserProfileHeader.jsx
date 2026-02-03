@@ -62,7 +62,7 @@ export default function UserProfileHeader({
                         sx={{
                             width: 56,
                             height: 56,
-                            bgcolor: "grey.200", // ✅ 로딩 중 배경
+                            bgcolor: "grey.200",
                             "& img": { objectFit: "cover" },
                         }}
                     />

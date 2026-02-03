@@ -6,8 +6,6 @@ import {
     Container,
     Divider,
     List,
-    Paper,
-    Stack,
     Typography,
 } from "@mui/material";
 
@@ -36,7 +34,6 @@ export default function UserDetailPage() {
     const enabledFollow =
         myUserId > 0 && profileUserId > 0 && myUserId !== profileUserId;
 
-    // 내 페이지면 강제이동
     useEffect(() => {
         if (isMe) navigate("/mypage", { replace: true });
     }, [isMe, navigate]);
@@ -47,7 +44,6 @@ export default function UserDetailPage() {
         data: userResp,
         isLoading,
         isError,
-        error,
     } = useQuery({
         queryKey: ["getUserByUserId", profileUserId],
         queryFn: () => getUserByUserId(profileUserId),
@@ -90,7 +86,6 @@ export default function UserDetailPage() {
 
             <Divider />
 
-            {/* Boards */}
             <Box sx={{ px: 2, py: 2 }}>
                 <Typography sx={{ fontWeight: 900, fontSize: 14, mb: 1.2 }}>
                     작성한 게시글

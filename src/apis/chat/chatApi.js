@@ -90,3 +90,9 @@ export const changeRoomFavoriteRequest = async (data) => {
     if (result.data.status !== "success") throw new Error(result.data.message);
     return result.data;
 };
+
+export const readRoomRequest = async (data) => {
+    const result = await instance.post(`/chat/read/room`, data);
+    if (result.data.status !== "success") throw new Error(result.data.message);
+    return result.data;
+};
