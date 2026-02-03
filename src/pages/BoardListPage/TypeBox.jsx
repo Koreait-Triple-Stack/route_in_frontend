@@ -28,20 +28,24 @@ function TypeBox({ checked, setChecked, form, setForm, setTags }) {
                 alignItems: "center",
                 pb: 1,
                 pl: 0.8,
-            }}>
+            }}
+        >
             <ToggleButtonGroup
                 value={form.type}
                 size="small"
                 exclusive
                 onChange={inputChangeHandler}
-                sx={{}}>
+                sx={{}}
+            >
                 <Stack direction={"row"} spacing={0.6}>
                     <ToggleButton
                         name="type"
                         value="ALL"
                         sx={{
-                            color: "primary.main",
-                            borderColor: "primary.main",
+                            minHeight: 25,
+                            lineHeight: 1,
+                            fontWeight: 600,
+                            bgcolor: "#fff",
                             "&.Mui-selected": {
                                 bgcolor: "primary.main",
                                 color: "#fff",
@@ -54,15 +58,16 @@ function TypeBox({ checked, setChecked, form, setForm, setTags }) {
                                 color: "#fff",
                                 bgcolor: "primary.main",
                             },
-                        }}>
+                        }}
+                    >
                         전체
                     </ToggleButton>
                     <ToggleButton
                         name="type"
                         value="COURSE"
                         sx={{
-                            color: "primary.main",
-                            borderColor: "primary.main",
+                            fontWeight: 600,
+                            bgcolor: "#fff",
                             "&.Mui-selected": {
                                 bgcolor: "primary.main",
                                 color: "#fff",
@@ -75,15 +80,16 @@ function TypeBox({ checked, setChecked, form, setForm, setTags }) {
                                 color: "#fff",
                                 bgcolor: "primary.main",
                             },
-                        }}>
+                        }}
+                    >
                         러닝코스
                     </ToggleButton>
                     <ToggleButton
                         name="type"
                         value="ROUTINE"
                         sx={{
-                            color: "primary.main",
-                            borderColor: "primary.main",
+                            fontWeight: 600,
+                            bgcolor: "#fff",
                             "&.Mui-selected": {
                                 bgcolor: "primary.main",
                                 color: "#fff",
@@ -96,7 +102,8 @@ function TypeBox({ checked, setChecked, form, setForm, setTags }) {
                                 color: "#fff",
                                 bgcolor: "primary.main",
                             },
-                        }}>
+                        }}
+                    >
                         운동루틴
                     </ToggleButton>
                 </Stack>
@@ -108,7 +115,8 @@ function TypeBox({ checked, setChecked, form, setForm, setTags }) {
                     justifyContent: "center",
                     alignItems: "center",
                     gap: 1,
-                }}>
+                }}
+            >
                 <FormControl size="small">
                     <Select
                         name="sort"
@@ -145,7 +153,8 @@ function TypeBox({ checked, setChecked, form, setForm, setTags }) {
                                     },
                                 },
                             },
-                        }}>
+                        }}
+                    >
                         <MenuItem value="LATEST">최신순</MenuItem>
                         <MenuItem value="RECOMMEND">추천순</MenuItem>
                     </Select>
@@ -171,7 +180,8 @@ function TypeBox({ checked, setChecked, form, setForm, setTags }) {
                             bgcolor: "primary.dark",
                             color: "#fff",
                         },
-                    }}>
+                    }}
+                >
                     <FilterAltOutlinedIcon />
                 </ToggleButton>
             </Box>

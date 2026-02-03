@@ -1,7 +1,6 @@
 import {
     Avatar,
     Chip,
-    Divider,
     ListItem,
     ListItemButton,
     Typography,
@@ -11,38 +10,18 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { timeAgo } from "../../apis/utils/time";
-
+import { boardTagChipSx, recommendChipSx } from "../../constants/design";
+import { boardCardSx } from "../../constants/design";
 function PostCard({ board }) {
     const year = new Date().getFullYear();
     const navigate = useNavigate();
-    const tagSx = {
-        color: board.type === "COURSE" ? "primary.dark" : "white",
-        bgcolor: board.type === "COURSE" ? "transparent" : "primary.main",
-        border: "1px solid",
-        borderColor: board.type === "COURSE" ? "primary.dark" : "transparent",
-    };
 
     return (
         <>
-           
-            <ListItem sx={{ px: 0, mb: 1}}>
+            <ListItem sx={{ px: 0, mb: 1 }}>
                 <ListItemButton
                     onClick={() => navigate(`/board/detail/${board.boardId}`)}
-                    sx={{
-                        borderRadius: 3,
-                        px: 2,
-                        py: 2,
-                        bgcolor: "background.paper",
-                        boxShadow: 1,
-                        border: "1px solid",
-                        borderColor: "divider",
-                        transition:
-                            "transform 120ms ease, box-shadow 120ms ease",
-                        "&:hover": {
-                            transform: "translateY(-2px)",
-                            boxShadow: 3,
-                        },
-                    }}
+                    sx={boardCardSx}
                 >
                     <Stack sx={{ width: "100%" }} spacing={1.5}>
                         <Box
@@ -64,31 +43,13 @@ function PostCard({ board }) {
                                             : "운동루틴"
                                     }
                                     size="small"
-                                    sx={tagSx}
+                                    sx={boardTagChipSx(board.type)}
                                 />
                                 <Chip
                                     size="small"
                                     icon={<FavoriteIcon />}
                                     label={`추천 ${board.recommendCnt}`}
-                                    sx={{
-                                        px: 0.8,
-                                        bgcolor: "transparent",
-                                        borderRadius: "999px",
-                                        border: "1px solid",
-                                        borderColor: "divider",
-
-                                        "& .MuiChip-icon": {
-                                            fontSize: 18,
-                                            color: "#ff4d4f",
-                                            ml: 0.5,
-                                        },
-                                        "& .MuiChip-label": {
-                                            fontSize: 13,
-                                            fontWeight: 900,
-                                            px: 1,
-                                            color: "text.primary",
-                                        },
-                                    }}
+                                    sx={recommendChipSx}
                                 />
                             </Stack>
 
@@ -139,7 +100,7 @@ function PostCard({ board }) {
                                         key={i}
                                         label={m}
                                         size="small"
-                                        sx={tagSx}
+                                        sx={boardTagChipSx(board.type)}
                                     />
                                 ))}
                             </Stack>
@@ -148,20 +109,18 @@ function PostCard({ board }) {
                                 <Chip
                                     label={board.tags[0]}
                                     size="small"
-                                    sx={tagSx}
+                                    sx={boardTagChipSx(board.type)}
                                 />
                                 <Chip
                                     label={`${Math.round((board.tags[1] ?? 0) / 100) / 10} km`}
                                     size="small"
-                                    sx={tagSx}
+                                    sx={boardTagChipSx(board.type)}
                                 />
                             </Stack>
                         )}
                     </Stack>
                 </ListItemButton>
             </ListItem>
-
-           
         </>
     );
 }

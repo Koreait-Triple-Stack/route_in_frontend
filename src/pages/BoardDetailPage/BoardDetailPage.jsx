@@ -76,7 +76,8 @@ function BoardDetailPage() {
                 sx={{
                     overflow: "hidden",
                     bgcolor: "transparent",
-                }}>
+                }}
+            >
                 {/* 상단 헤더 */}
                 <Header
                     boardData={boardData}
@@ -95,7 +96,7 @@ function BoardDetailPage() {
                                 <Chip key={index} label={tag} />
                             ))}
                         </Grid>
-                        <Divider />
+
                         <RoutineList routines={boardData.routines} />
                     </>
                 )}

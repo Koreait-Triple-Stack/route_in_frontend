@@ -9,7 +9,7 @@ import { ClipLoader } from "react-spinners";
 import WriteDial from "./WriteDial";
 import Loading from "../../components/Loading";
 import { List, Paper, Typography } from "@mui/material";
-
+import { THEME } from "../../constants/design";
 function BoardListPage() {
     const [form, setForm] = useState({
         type: "ALL",
@@ -73,49 +73,63 @@ function BoardListPage() {
     if (isLoading) return <Loading />;
 
     return (
-        <Container>
-            <TypeBox
-                checked={checked}
-                setChecked={setChecked}
-                form={form}
-                setForm={setForm}
-                setTags={setTags}
-            />
-            {checked && (
-                <FilterBox form={form} setForm={setForm} setTags={setTags} />
-            )}
-            
-            <List sx={{p: 0}}>
-                {boardList.map((board) => (
-                    <PostCard key={board.boardId} board={board} />
-                ))}
-                <Box sx={{ height: 1 }} ref={bottomRef} />
-            </List>
+        // 게시판 배경 색
+        <Box sx={{ minHeight: "100dvh", py: 2 }}>
+            <Container>
+                <Typography
+                    sx={{ fontSize: 22, fontWeight: 900, mb: 1, px: 0.8 }}
+                >
+                    게시판
+                </Typography>
+                <TypeBox
+                    checked={checked}
+                    setChecked={setChecked}
+                    form={form}
+                    setForm={setForm}
+                    setTags={setTags}
+                />
 
-            {isFetchingNextPage && (
-                <Box sx={{display: "flex", justifyContent: "center"}}>
-                    <ClipLoader />
-                </Box>
-            )}
-            {!hasNextPage && (
-                <Paper
-                    elevation={0}
-                    sx={{
-                        p: 3,
-                        borderRadius: 2,
-                        border: "1px dashed",
-                        borderColor: "divider",
-                        bgcolor: "background.paper",
-                        textAlign: "center",
-                    }}>
-                    <Typography sx={{ fontWeight: 800 }}>
-                        마지막 페이지 입니다
-                    </Typography>
-                </Paper>
-            )}
+                {checked && (
+                    <FilterBox
+                        form={form}
+                        setForm={setForm}
+                        setTags={setTags}
+                    />
+                )}
 
-            <WriteDial />
-        </Container>
+                <List sx={{ p: 0 }}>
+                    {boardList.map((board) => (
+                        <PostCard key={board.boardId} board={board} />
+                    ))}
+                    <Box sx={{ height: 1 }} ref={bottomRef} />
+                </List>
+
+                {isFetchingNextPage && (
+                    <Box sx={{ display: "flex", justifyContent: "center" }}>
+                        <ClipLoader />
+                    </Box>
+                )}
+                {!hasNextPage && (
+                    <Paper
+                        elevation={0}
+                        sx={{
+                            p: 3,
+                            borderRadius: 2,
+                            border: "1px dashed",
+                            borderColor: "divider",
+                            bgcolor: "background.paper",
+                            textAlign: "center",
+                        }}
+                    >
+                        <Typography sx={{ fontWeight: 800 }}>
+                            마지막 페이지 입니다
+                        </Typography>
+                    </Paper>
+                )}
+
+                <WriteDial />
+            </Container>
+        </Box>
     );
 }
 
