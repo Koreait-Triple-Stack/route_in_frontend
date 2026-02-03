@@ -8,7 +8,6 @@ import {
     DialogTitle,
     Divider,
     Drawer,
-    Grow,
     IconButton,
     List,
     ListItem,

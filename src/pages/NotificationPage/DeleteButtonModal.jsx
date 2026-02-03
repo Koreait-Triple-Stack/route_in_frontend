@@ -34,10 +34,10 @@ function DeleteButtonModal() {
                 sx={{
                     position: "fixed",
                     right: 16,
-                    bottom: 56 + 16, // BottomNav(56) 위로 16px
+                    bottom: 56 + 16,
                     zIndex: 1300,
                     px: 1,
-                    pointerEvents: "none", // ✅ 박스는 클릭 막고
+                    pointerEvents: "none",
                 }}>
                 <Box
                     sx={{
@@ -91,7 +91,7 @@ function DeleteButtonModal() {
                         variant="contained"
                         color="error"
                         onClick={() => {
-                            onDeleteAll(); // ✅ 너가 가진 전체삭제 함수
+                            onDeleteAll();
                             setOpenDeleteAll(false);
                         }}
                         sx={{ borderRadius: 2, py: 1.1, fontWeight: 900 }}>

@@ -13,10 +13,12 @@ import { useQuery } from "@tanstack/react-query";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import { countUnreadChatByUserIdRequest } from "../apis/chat/chatApi";
 
+export const NAV_H = 56;
+
 function BasicBottomNav() {
     const location = useLocation();
     const navigate = useNavigate();
-    const { principal } = usePrincipalState();
+    const { principal, isLoggedIn } = usePrincipalState();
     const { data: notificationResp } = useQuery({
         queryFn: () => countUnreadNotificationByUserId(principal.userId),
         queryKey: ["countUnreadNotificationByUserId", principal?.userId],
@@ -37,11 +39,10 @@ function BasicBottomNav() {
                 left: "50%",
                 transform: "translateX(-50%)",
                 width: "100%",
-                height: 56,
+                height: NAV_H,
                 zIndex: (theme) => theme.zIndex.appBar,
                 pb: "env(safe-area-inset-bottom)",
-            }}
-            elevation={3}>
+            }}>
             <BottomNavigation
                 value={value}
                 onChange={(event, newValue) => {
@@ -68,7 +69,7 @@ function BasicBottomNav() {
                 />
                 <BottomNavigationAction
                     label="홈"
-                    value="/"
+                    value={isLoggedIn ? "/main" : "/"}
                     icon={<HomeOutlinedIcon />}
                 />
                 <BottomNavigationAction

@@ -1,4 +1,4 @@
-import React, { use, useState } from "react";
+import React, { useState } from "react";
 import {
     Box,
     TextField,
@@ -24,6 +24,7 @@ import { useNavigate } from "react-router-dom";
 import { useToastStore } from "../../store/useToastStore";
 import { usePrincipalState } from "../../store/usePrincipalState";
 import AddIcon from "@mui/icons-material/Add";
+import { BUTTON_COLOR } from "../../constants/design";
 
 function NewChatDialog({ isNewChat, setIsNewChat }) {
     const { show } = useToastStore();
@@ -70,10 +71,10 @@ function NewChatDialog({ isNewChat, setIsNewChat }) {
                 sx={{
                     position: "fixed",
                     right: 16,
-                    bottom: 56 + 16, // BottomNav(56) 위로 16px
+                    bottom: 56 + 16,
                     zIndex: 1300,
                     px: 1,
-                    pointerEvents: "none", // ✅ 박스는 클릭 막고
+                    pointerEvents: "none",
                 }}>
                 <Box
                     sx={{
@@ -86,10 +87,10 @@ function NewChatDialog({ isNewChat, setIsNewChat }) {
                         sx={{
                             width: 52,
                             height: 52,
-                            bgcolor: "primary.main",
+                            bgcolor: BUTTON_COLOR,
                             color: "#fff",
                             boxShadow: "0 12px 30px rgba(0,0,0,0.18)",
-                            "&:hover": { bgcolor: "primary.dark" },
+                            // "&:hover": { bgcolor: "primary.dark" },
                         }}>
                         <AddIcon />
                     </Fab>

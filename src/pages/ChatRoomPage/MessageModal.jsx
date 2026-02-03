@@ -105,7 +105,7 @@ function MessageModal({
                 }
                 slotProps={{
                     list: {
-                        sx: { minWidth: 75, py: 0.5 }, // ✅ 여기서 가로/패딩
+                        sx: { minWidth: 75, py: 0.5 },
                     },
                 }}>
                 <MenuItem

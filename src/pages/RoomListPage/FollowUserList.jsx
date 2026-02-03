@@ -1,13 +1,12 @@
-import React, { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { usePrincipalState } from "../../store/usePrincipalState";
 import Loading from "../../components/Loading";
 import ErrorComponent from "../../components/ErrorComponent";
 import { useQuery } from "@tanstack/react-query";
-import { Box, Container, Stack } from "@mui/system";
+import { Box } from "@mui/system";
 import {
     Avatar,
-    Paper,
     Typography,
     Checkbox,
     List,
