@@ -1,9 +1,7 @@
-import { fontWeight } from "@mui/system";
-
 export const THEME = {
     bg: "#F0F4F8",
     paper: "#FFFFFF",
-    accent: "#0f76e4",
+    accent: "#237ee0",
     point: "#5856D6", // 퍼플 블루
 };
 
@@ -34,7 +32,8 @@ export const boardTagChipSx = (type) => ({
 
 // 추천 Chip
 export const recommendChipSx = {
-    height: 24,
+    minWidth: 72,
+    height: 32,
     bgcolor: "background.paper",
     border: "1px solid",
     borderColor: "divider",
@@ -52,20 +51,31 @@ export const recommendChipSx = {
 
 // PostCard스타일
 export const boardCardSx = {
-    borderRadius: 4,
-    px: 1.5,
+    position: "relative",
+    borderRadius: 5,
+    px: 2,
     py: 2,
+    bgcolor: "background.paper",
+    border: "1px solid",
+    borderColor: "rgba(15,23,42,0.06)",
+    boxShadow: "0 12px 28px rgba(15,23,42,0.10)",
+    overflow: "hidden",
+    transition: "transform 160ms ease, box-shadow 160ms ease",
 
-    bgcolor: "#FFFFFF",
-    border: "1px solid rgba(15,23,42,0.08)",
-    boxShadow: "0 1px 2px rgba(15,23,42,0.06)",
+    // 상단 컬러바 (최신 느낌)
+    "&::before": {
+        content: '""',
+        position: "absolute",
+        left: 0,
+        top: 0,
+        height: 4,
+        width: "100%",
+        background: "linear-gradient(90deg, #2563eb, #22c55e)",
+    },
 
-    transition:
-        "transform 140ms ease, box-shadow 140ms ease, border-color 140ms ease",
     "&:hover": {
-        transform: "translateY(-1px)",
-        borderColor: "rgba(15,23,42,0.14)",
-        boxShadow: "0 10px 24px rgba(15,23,42,0.10)",
+        transform: "translateY(-2px)",
+        boxShadow: "0 18px 40px rgba(15,23,42,0.14)",
     },
 };
 
@@ -124,6 +134,33 @@ export const boardFilterBtnSx = {
         color: "#fff",
         "&:hover": { bgcolor: "primary.dark" },
     },
+};
 export const BUTTON_COLOR = {
     background: "linear-gradient(135deg, #2563eb, #22c55e)",
+};
+
+// 최신순 메뉴
+export const selectMenuPaperSx = {
+    mt: 1,
+    borderRadius: 2,
+    border: "1px solid",
+    borderColor: "divider",
+    boxShadow: "0 10px 24px rgba(15,23,42,0.12)",
+    overflow: "hidden",
+    "& .MuiList-root": { py: 0.5 },
+    "& .MuiMenuItem-root": {
+        fontSize: 13,
+        minHeight: 38,
+        px: 1.6,
+        mx: 0.6,
+        my: 0.3,
+        borderRadius: 1,
+        "&:hover": { bgcolor: "action.hover" },
+        "&.Mui-selected": {
+            bgcolor: "primary.main",
+            color: "#fff",
+            fontWeight: 800,
+            "&:hover": { bgcolor: "primary.dark" },
+        },
+    },
 };
