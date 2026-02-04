@@ -1,4 +1,4 @@
-import { Box, Container, Stack } from "@mui/system";
+import { Box, Container } from "@mui/system";
 import { useEffect, useRef, useState } from "react";
 import TypeBox from "./TypeBox";
 import FilterBox from "./FilterBox";
@@ -9,7 +9,6 @@ import { ClipLoader } from "react-spinners";
 import WriteDial from "./WriteDial";
 import Loading from "../../components/Loading";
 import { List, Paper, Typography } from "@mui/material";
-import { THEME } from "../../constants/design";
 function BoardListPage() {
     const [form, setForm] = useState({
         type: "ALL",
@@ -73,63 +72,73 @@ function BoardListPage() {
     if (isLoading) return <Loading />;
 
     return (
-        // 게시판 배경 색
-        <Box sx={{ minHeight: "100dvh", py: 2 }}>
-            <Container>
-                <Typography
-                    sx={{ fontSize: 22, fontWeight: 900, mb: 1, px: 0.8 }}
+        <Container>
+            <Typography sx={{ fontSize: 22, fontWeight: 900, mb: 1, px: 0.8 }}>
+                게시판
+            </Typography>
+            <TypeBox
+                checked={checked}
+                setChecked={setChecked}
+                form={form}
+                setForm={setForm}
+                setTags={setTags}
+            />
+
+            {checked && (
+                <FilterBox form={form} setForm={setForm} setTags={setTags} />
+            )}
+
+            <List sx={{ p: 0 }}>
+                {boardList.map((board) => (
+                    <PostCard key={board.boardId} board={board} />
+                ))}
+                <Box sx={{ height: 1 }} ref={bottomRef} />
+            </List>
+
+            {isFetchingNextPage && (
+                <Box sx={{ display: "flex", justifyContent: "center" }}>
+                    <ClipLoader />
+                </Box>
+            )}
+            {!hasNextPage && (
+                <Box
+                    sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        mt: 2,
+                        mb: 1,
+                    }}
                 >
-                    게시판
-                </Typography>
-                <TypeBox
-                    checked={checked}
-                    setChecked={setChecked}
-                    form={form}
-                    setForm={setForm}
-                    setTags={setTags}
-                />
-
-                {checked && (
-                    <FilterBox
-                        form={form}
-                        setForm={setForm}
-                        setTags={setTags}
-                    />
-                )}
-
-                <List sx={{ p: 0 }}>
-                    {boardList.map((board) => (
-                        <PostCard key={board.boardId} board={board} />
-                    ))}
-                    <Box sx={{ height: 1 }} ref={bottomRef} />
-                </List>
-
-                {isFetchingNextPage && (
-                    <Box sx={{ display: "flex", justifyContent: "center" }}>
-                        <ClipLoader />
-                    </Box>
-                )}
-                {!hasNextPage && (
                     <Paper
                         elevation={0}
                         sx={{
-                            p: 3,
-                            borderRadius: 2,
-                            border: "1px dashed",
+                            px: 27,
+                            py: 2,
+                            borderRadius: "999px",
+                            border: "1px solid",
                             borderColor: "divider",
                             bgcolor: "background.paper",
-                            textAlign: "center",
+                            boxShadow: "0 6px 18px rgba(15,23,42,0.08)",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 0.8,
                         }}
                     >
-                        <Typography sx={{ fontWeight: 800 }}>
-                            마지막 페이지 입니다
+                        <Typography
+                            sx={{
+                                fontWeight: 800,
+                                fontSize: 13,
+                                color: "text.secondary",
+                            }}
+                        >
+                            마지막 페이지입니다
                         </Typography>
                     </Paper>
-                )}
+                </Box>
+            )}
 
-                <WriteDial />
-            </Container>
-        </Box>
+            <WriteDial />
+        </Container>
     );
 }
 

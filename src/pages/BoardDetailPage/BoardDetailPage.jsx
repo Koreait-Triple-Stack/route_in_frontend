@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Chip, Divider, Paper } from "@mui/material";
+import { Box, Chip, Divider } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Container, Grid, Stack } from "@mui/system";
@@ -78,7 +78,6 @@ function BoardDetailPage() {
                     bgcolor: "transparent",
                 }}
             >
-                {/* 상단 헤더 */}
                 <Header
                     boardData={boardData}
                     setOpenCopy={setOpenCopy}
