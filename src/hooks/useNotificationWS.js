@@ -87,7 +87,6 @@ export function useNotificationWS({ enabled, token, onMessage, roomId }) {
         };
     }, [enabled, token]);
 
-    // ✅ roomId 또는 연결 상태가 바뀌면 구독 보장
     useEffect(() => {
         const client = clientRef.current;
         if (!client || !isConnected) return;

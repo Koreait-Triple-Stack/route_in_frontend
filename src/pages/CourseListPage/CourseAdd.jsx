@@ -10,6 +10,7 @@ import { useCourseMap } from "../../hooks/useCourseMap";
 import { buildPayload, coordToRegionWithGeocoder } from "../../apis/course/courseMapper";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import CourseMiniBar from "./CourseMiniBar";
+import { NAV_H } from "../../components/BasicBottomNav";
 
 function CourseAdd({ userId, boardId, isAdd }) {
     const { mapRef, kakaoObj, points, distanceM, map, undo, clear } = useCourseMap();
@@ -61,17 +62,15 @@ function CourseAdd({ userId, boardId, isAdd }) {
                 top: 0,
                 left: 0,
                 right: 0,
-                bottom: 56, // ✅ 네비 높이만큼 제외
+                bottom: NAV_H + 20,
                 display: "flex",
                 justifyContent: "center",
                 zIndex: 1400,
             }}
         >
             <Container disableGutters sx={{ position: "relative" }}>
-                {/* 지도 */}
                 <Box ref={mapRef} sx={{ width: "100%", height: "100%", zIndex: 10, overflow: "hidden" }} />
 
-                {/* 미니바 + 확장 패널 */}
                 <Paper
                     elevation={10}
                     sx={{
@@ -97,7 +96,6 @@ function CourseAdd({ userId, boardId, isAdd }) {
                                 onSearch={search.runSearch}
                                 onSelectResult={(item) => {
                                     search.moveToResult(item);
-                                    // 원하면 클릭 시 접기:
                                     setPanelOpen(false);
                                 }}
                             />

@@ -10,6 +10,8 @@ import { Fab, Typography } from "@mui/material";
 import { usePrincipalState } from "../../store/usePrincipalState";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteNotificationByUserId } from "../../apis/notification/notificationService";
+import { BUTTON_COLOR } from "../../constants/design";
+import { NAV_H } from "../../components/BasicBottomNav";
 
 function DeleteButtonModal() {
     const { principal } = usePrincipalState();
@@ -34,7 +36,7 @@ function DeleteButtonModal() {
                 sx={{
                     position: "fixed",
                     right: 16,
-                    bottom: 56 + 16,
+                    bottom: NAV_H + 20,
                     zIndex: 1300,
                     px: 1,
                     pointerEvents: "none",
@@ -50,10 +52,9 @@ function DeleteButtonModal() {
                         sx={{
                             width: 52,
                             height: 52,
-                            bgcolor: "primary.main",
+                            bgcolor: BUTTON_COLOR,
                             color: "#fff",
                             boxShadow: "0 12px 30px rgba(0,0,0,0.18)",
-                            "&:hover": { bgcolor: "primary.dark" },
                         }}>
                         <DeleteOutlineRoundedIcon />
                     </Fab>

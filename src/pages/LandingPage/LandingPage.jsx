@@ -1,4 +1,3 @@
-import React, { useEffect } from "react";
 import {
     Box,
     Button,
@@ -10,27 +9,31 @@ import {
     Card,
     CardContent,
 } from "@mui/material";
-import { useLocation, useNavigate, useNavigationType } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import MapRoundedIcon from "@mui/icons-material/MapRounded";
 import AutoAwesomeRoundedIcon from "@mui/icons-material/AutoAwesomeRounded";
 import WhatshotRoundedIcon from "@mui/icons-material/WhatshotRounded";
 import FavoriteRoundedIcon from "@mui/icons-material/FavoriteRounded";
 import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
 import { usePrincipalState } from "../../store/usePrincipalState";
+import SigninDialog from "./SigninDialog";
+import { useEffect, useState } from "react";
 
 export default function LandingPage() {
     const navigate = useNavigate();
     const { isLoggedIn } = usePrincipalState();
+    const [openDialog, setOpenDialog] = useState();
 
-    if (isLoggedIn) {
-        navigate("/main");
-    }
+    useEffect(() => {
+        if (isLoggedIn) {
+            navigate("/main");
+        }
+    }, [isLoggedIn]);
 
     return (
-        <Container sx={{ py: { xs: 6, md: 9 } }}>
+        <Container sx={{ py: { xs: 4, md: 6 } }}>
             <Grid container spacing={4} alignItems="center">
-                {/* 좌측 텍스트 */}
-                <Grid item xs={12} md={6}>
+                <Grid>
                     <Stack spacing={2}>
                         <Stack
                             direction="row"
@@ -96,24 +99,16 @@ export default function LandingPage() {
                             <Button
                                 size="large"
                                 variant="contained"
-                                onClick={() => navigate("/oauth2/signin")}
+                                onClick={() => setOpenDialog(true)}
                                 endIcon={<ArrowForwardRoundedIcon />}
                                 sx={primaryBtn}>
                                 로그인하고 시작
-                            </Button>
-                            <Button
-                                size="large"
-                                variant="outlined"
-                                onClick={() => navigate("/oauth2/signup")}
-                                sx={secondaryBtn}>
-                                회원가입
                             </Button>
                         </Stack>
                     </Stack>
                 </Grid>
 
-                {/* 우측 카드 프리뷰 */}
-                <Grid item xs={12} md={6}>
+                <Grid>
                     <Stack spacing={2}>
                         <PreviewCard />
                         <Stack
@@ -133,6 +128,11 @@ export default function LandingPage() {
                     </Stack>
                 </Grid>
             </Grid>
+
+            <SigninDialog
+                openDialog={openDialog}
+                setOpenDialog={setOpenDialog}
+            />
         </Container>
     );
 }
@@ -267,15 +267,5 @@ const primaryBtn = {
         transform: "translateY(-2px)",
         boxShadow: "0 20px 50px rgba(37,99,235,0.24)",
     },
-    transition: "all .18s ease",
-};
-
-const secondaryBtn = {
-    py: 1.6,
-    px: 2.4,
-    borderRadius: "16px",
-    fontWeight: 900,
-    borderWidth: "1.5px",
-    "&:hover": { borderWidth: "1.5px", transform: "translateY(-2px)" },
     transition: "all .18s ease",
 };

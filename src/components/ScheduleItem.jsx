@@ -49,9 +49,9 @@ const ScheduleItem = ({ dayEng, day, routines, active, onReset, onSave }) => {
     };
 
     const THEME = {
-        accent: "#3f98f8", // 너무 진하지도, 연하지도 않은 세련된 미디엄 블루
-        text: "#0F172A", // 텍스트 대비 향상
-        activeBg: "#F0F9FF", // 활성화 시 은은한 배경
+        accent: "#3f98f8", 
+        text: "#0F172A",
+        activeBg: "#F0F9FF",
     };
 
     return (
@@ -67,7 +67,6 @@ const ScheduleItem = ({ dayEng, day, routines, active, onReset, onSave }) => {
             }}
         >
             <Box sx={{ display: "flex", alignItems: "center", gap: 2.5 }}>
-                {/* 요일 포인트 영역 (원형 디자인으로 변경) */}
                 <Box
                     sx={{
                         width: 30,

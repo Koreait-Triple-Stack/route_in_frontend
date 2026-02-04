@@ -1,79 +1,90 @@
 import {
+    Collapse,
     IconButton,
     TextField,
     Typography,
+    InputAdornment,
 } from "@mui/material";
 import { Box, Stack } from "@mui/system";
 import { useState } from "react";
-import CloseIcon from "@mui/icons-material/Close";
-import SearchIcon from "@mui/icons-material/Search";
+import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
+import EditRoundedIcon from "@mui/icons-material/EditRounded";
 
 function RoomListHeader({
     setSearchInputValue,
     searchInputValue,
+    setIsNewChat,
 }) {
     const [isSearch, setIsSearch] = useState(false);
 
-    const searchOnClickHandler = () => {
-        setIsSearch(!isSearch);
+    const toggleSearch = () => {
+        setIsSearch((prev) => !prev);
         setSearchInputValue("");
     };
 
     return (
-        <Box sx={{ flexShrink: 0 }}>
-            <Box
-                sx={{
-                    pl: 1.5,
-                    display: "flex",
-                    justifyContent: "space-between",
-                    flexDirection: "row",
-                    width: "100%",
-                }}>
-                <Box sx={{ display: "flex", alignItems: "center" }}>
-                    <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-                        채팅
-                    </Typography>
-                </Box>
-                <Box>
-                    <IconButton
-                        size="large"
-                        onClick={searchOnClickHandler}
-                        sx={{ color: "#000" }}>
-                        <SearchIcon />
-                    </IconButton>
-                </Box>
-            </Box>
+        <Box
+            sx={{
+                position: "sticky",
+                top: 0,
+                zIndex: 20,
+                px: 1.5,
+                pt: 2,
+                pb: 1.5,
+                borderBottom: "1px solid",
+                borderColor: "divider",
+                bgcolor: "background.paper",
+                backdropFilter: "blur(8px)",
+                transition: "top .22s ease",
+            }}>
+            <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="space-between">
+                <Typography
+                    variant="h5"
+                    sx={{ fontWeight: 900, letterSpacing: -0.4 }}>
+                    채팅
+                </Typography>
 
-            {isSearch && (
-                <Box
-                    display="flex"
-                    alignContent="space-between"
-                    alignItems="center"
-                    sx={{ width: "100%", pl: 1, py: 1 }}>
-                    <Stack
-                        direction="row"
-                        alignItems="center"
-                        sx={{
-                            width: "100%",
-                            height: "100%",
-                        }}>
-                        <SearchIcon />
-                        <TextField
-                            multiline
-                            variant="standard"
-                            value={searchInputValue}
-                            placeholder="채팅방, 참여자 검색"
-                            onChange={(e) =>
-                                setSearchInputValue(e.target.value)
-                            }
-                            sx={{ mb: 0.5, ml: 1, width: "90%" }}
-                        />
-                    </Stack>
-                    <IconButton>
-                        <CloseIcon onClick={() => setIsSearch(false)} />
+                <Stack direction="row" spacing={0.5} alignItems="center">
+                    <IconButton
+                        onClick={toggleSearch}>
+                        {isSearch ? (
+                            <CloseRoundedIcon />
+                        ) : (
+                            <SearchRoundedIcon />
+                        )}
                     </IconButton>
+                </Stack>
+            </Stack>
+
+            <Collapse in={isSearch}>
+                <Box sx={{ mt: 1.2 }}>
+                    <TextField
+                        value={searchInputValue}
+                        onChange={(e) => setSearchInputValue(e.target.value)}
+                        placeholder="채팅방, 참여자 검색"
+                        fullWidth
+                        size="small"
+                        variant="outlined"
+                        InputProps={{
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <SearchRoundedIcon fontSize="small" />
+                                </InputAdornment>
+                            ),
+                        }}
+                        sx={{
+                            "& .MuiOutlinedInput-root": {
+                                borderRadius: 999,
+                                bgcolor: "action.hover",
+                            },
+                        }}
+                    />
                 </Box>
-            )}
+            </Collapse>
         </Box>
     );
 }
