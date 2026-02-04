@@ -12,12 +12,11 @@ export function useCourseMap({
     fitPadding = 72,
     enableClickAdd = true,
 } = {}) {
-    // ✅ cleanup 안정화를 위한 ref (중요)
     const kakaoObjRef = useRef(null);
     const mapObjRef = useRef(null);
     const [containerEl, setContainerEl] = useState(null);
     const mapRef = useCallback((node) => {
-        setContainerEl(node); // node가 바뀌면 여기로 들어옴
+        setContainerEl(node);
     }, []);
 
     const [kakaoObj, setKakaoObj] = useState(null);
@@ -26,7 +25,6 @@ export function useCourseMap({
     const [points, setPoints] = useState([]);
     const [distanceM, setDistanceM] = useState(0);
 
-    // const mapRef = useRef(null);
     const polylineRef = useRef(null);
     const startMarkerRef = useRef(null);
     const endMarkerRef = useRef(null);
@@ -65,7 +63,6 @@ export function useCourseMap({
         return new kakao.maps.MarkerImage(src, size, option);
     };
 
-    // ✅ deps 문제 없게 useCallback으로 고정
     const clearMapObjects = useCallback(() => {
         if (polylineRef.current) {
             polylineRef.current.setMap(null);
@@ -157,7 +154,6 @@ export function useCourseMap({
         clearMapObjects,
     ]);
 
-
     // 2) 지도 클릭 -> 포인트 추가
     useEffect(() => {
         if (!kakaoObj || !map) return;
@@ -203,7 +199,6 @@ export function useCourseMap({
         const startImg = createMarkerImage(kakaoObj, startMarkerColor);
         const endImg = createMarkerImage(kakaoObj, endMarkerColor);
 
-        // START marker
         if (!startMarkerRef.current) {
             startMarkerRef.current = new kakaoObj.maps.Marker({
                 position: startPos,
@@ -216,7 +211,6 @@ export function useCourseMap({
             startMarkerRef.current.setImage(startImg);
         }
 
-        // START label
         const startLabelHtml = `
       <div style="
         pointer-events:none;
@@ -243,7 +237,6 @@ export function useCourseMap({
             startLabelRef.current.setPosition(startPos);
         }
 
-        // END marker/label
         if (points.length === 1) {
             setDistanceM(0);
             if (endMarkerRef.current) {

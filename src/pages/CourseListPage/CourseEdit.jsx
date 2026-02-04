@@ -1,6 +1,9 @@
 import { useCourseMap } from "../../hooks/useCourseMap";
 import { useEffect, useState } from "react";
-import { buildUpdatePayload, coordToRegionWithGeocoder } from "../../apis/course/courseMapper";
+import {
+    buildUpdatePayload,
+    coordToRegionWithGeocoder,
+} from "../../apis/course/courseMapper";
 import { updateCourse } from "../../apis/course/courseService";
 import { Box, Container, Stack } from "@mui/system";
 import { useKakaoPlaceSearch } from "../../hooks/useKakaoPlaceSearch";
@@ -10,10 +13,12 @@ import CoursePanel from "./CoursePanel";
 import PlaceSearchPanel from "./PlaceSearchPanel";
 import CourseSavePanel from "./CourseSavePanel";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { NAV_H } from "../../components/BasicBottomNav";
+import Loading from "../../components/Loading";
 
 function CourseEdit({ course, userId, isEditing }) {
-
-    const { mapRef, kakaoObj, points, setPoints, distanceM, map, undo, clear } = useCourseMap();
+    const { mapRef, kakaoObj, points, setPoints, distanceM, map, undo, clear } =
+        useCourseMap();
 
     const [panelOpen, setPanelOpen] = useState(false);
     const [region, setRegion] = useState(null);
@@ -27,7 +32,7 @@ function CourseEdit({ course, userId, isEditing }) {
         mutationKey: ["updateCourse"],
         mutationFn: (data) => updateCourse(data),
         onSuccess: (response) => {
-            queryClient.invalidateQueries(["getCourseListByUserId", userId])
+            queryClient.invalidateQueries(["getCourseListByUserId", userId]);
             setCourseName("");
             clear();
             alert(response.message);
@@ -37,7 +42,6 @@ function CourseEdit({ course, userId, isEditing }) {
         },
     });
 
-    // points 저장
     useEffect(() => {
         setCourseName(course.courseName);
         setPoints(
@@ -48,7 +52,6 @@ function CourseEdit({ course, userId, isEditing }) {
         );
     }, [course]);
 
-    // center로 이동
     useEffect(() => {
         if (!kakaoObj || !map || !course) return;
 
@@ -68,7 +71,11 @@ function CourseEdit({ course, userId, isEditing }) {
         let regionInfo = region;
 
         if (!regionInfo && points[0]) {
-            regionInfo = await coordToRegionWithGeocoder(kakaoObj, points[0].lat, points[0].lng);
+            regionInfo = await coordToRegionWithGeocoder(
+                kakaoObj,
+                points[0].lat,
+                points[0].lng,
+            );
             setRegion(regionInfo);
         }
 
@@ -84,22 +91,11 @@ function CourseEdit({ course, userId, isEditing }) {
 
         mutation.mutate(payload);
 
-        isEditing(false)
+        isEditing(false);
     };
 
     if (!course) {
-        return (
-            <Box
-                sx={{
-                    width: "100vw",
-                    height: "100vh",
-                    display: "grid",
-                    placeItems: "center",
-                }}
-            >
-                로딩중...
-            </Box>
-        );
+        return <Loading />;
     }
 
     return (
@@ -109,17 +105,22 @@ function CourseEdit({ course, userId, isEditing }) {
                 top: 0,
                 left: 0,
                 right: 0,
-                bottom: 56, // ✅ 네비 높이만큼 제외
+                bottom: NAV_H + 20,
                 display: "flex",
                 justifyContent: "center",
                 zIndex: 1400,
-            }}
-        >
+            }}>
             <Container disableGutters sx={{ position: "relative" }}>
-                {/* 지도 */}
-                <Box ref={mapRef} sx={{ width: "100%", height: "100%", zIndex: 10, overflow: "hidden" }} />
+                <Box
+                    ref={mapRef}
+                    sx={{
+                        width: "100%",
+                        height: "100%",
+                        zIndex: 10,
+                        overflow: "hidden",
+                    }}
+                />
 
-                {/* 미니바 + 확장 패널 */}
                 <Paper
                     elevation={10}
                     sx={{
@@ -130,9 +131,15 @@ function CourseEdit({ course, userId, isEditing }) {
                         width: 360,
                         borderRadius: 2,
                         overflow: "hidden",
-                    }}
-                >
-                    <CourseMiniBar pointsCount={points.length} distanceM={distanceM} onUndo={undo} onClear={clear} panelOpen={panelOpen} onTogglePanel={() => setPanelOpen((v) => !v)} />
+                    }}>
+                    <CourseMiniBar
+                        pointsCount={points.length}
+                        distanceM={distanceM}
+                        onUndo={undo}
+                        onClear={clear}
+                        panelOpen={panelOpen}
+                        onTogglePanel={() => setPanelOpen((v) => !v)}
+                    />
 
                     <CoursePanel open={panelOpen}>
                         <Stack spacing={2} sx={{ p: 2 }}>
@@ -151,7 +158,15 @@ function CourseEdit({ course, userId, isEditing }) {
 
                             <Divider />
 
-                            <CourseSavePanel courseName={courseName} setCourseName={setCourseName} onSave={handleUpdate} disabled={courseName.length < 1 || points.length < 2} onCancel={isEditing} />
+                            <CourseSavePanel
+                                courseName={courseName}
+                                setCourseName={setCourseName}
+                                onSave={handleUpdate}
+                                disabled={
+                                    courseName.length < 1 || points.length < 2
+                                }
+                                onCancel={isEditing}
+                            />
                         </Stack>
                     </CoursePanel>
                 </Paper>

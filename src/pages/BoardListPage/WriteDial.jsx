@@ -7,6 +7,7 @@ import FitnessCenterIcon from "@mui/icons-material/FitnessCenter";
 import CloseIcon from "@mui/icons-material/Close";
 import CreateOutlinedIcon from "@mui/icons-material/CreateOutlined";
 import { BUTTON_COLOR } from "../../constants/design";
+import { NAV_H } from "../../components/BasicBottomNav";
 
 function WriteDial() {
     const [open, setOpen] = useState(false);
@@ -31,7 +32,7 @@ function WriteDial() {
             sx={{
                 position: "fixed",
                 right: 16,
-                bottom: 56 + 16,
+                bottom: NAV_H + 20,
                 zIndex: 1300,
 
                 "& .MuiFab-root": {

@@ -35,7 +35,7 @@ export const coordToRegionWithGeocoder = (kakao, lat, lng) =>
             if (!addr) return resolve(null);
 
             resolve({
-                region: addr.address_name, // 필요하면 같이 저장
+                region: addr.address_name,
             });
         });
     });

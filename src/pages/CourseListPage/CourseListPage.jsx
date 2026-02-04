@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Box, Container, Stack } from "@mui/system";
 import { usePrincipalState } from "../../store/usePrincipalState";
 import {
@@ -60,7 +60,7 @@ function CourseListPage() {
                         ...old,
                         data: old.data.map((c) => ({
                             ...c,
-                            favorite: wasFav ? false : c.courseId === courseId, // ✅ 이미 즐겨찾기면 해제, 아니면 그거만 true
+                            favorite: wasFav ? false : c.courseId === courseId,
                         })),
                     };
                 },
