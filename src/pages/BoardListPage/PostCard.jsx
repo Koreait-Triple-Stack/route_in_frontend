@@ -1,6 +1,7 @@
 import {
     Avatar,
     Chip,
+    Divider,
     ListItem,
     ListItemButton,
     Typography,
@@ -92,7 +93,7 @@ function PostCard({ board }) {
                                 대
                             </Typography>
                         </Stack>
-
+                        <Divider />
                         {board.type === "ROUTINE" ? (
                             <Stack direction="row" spacing={1} flexWrap="wrap">
                                 {board.tags.map((m, i) => (

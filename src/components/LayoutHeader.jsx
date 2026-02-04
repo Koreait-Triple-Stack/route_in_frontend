@@ -1,21 +1,35 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Box, Button, Container, Stack, Typography } from "@mui/material";
+import {
+    Badge,
+    Box,
+    Container,
+    IconButton,
+    Stack,
+    Typography,
+} from "@mui/material";
 import DirectionsRunRoundedIcon from "@mui/icons-material/DirectionsRunRounded";
-import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
 import { useNavigate } from "react-router-dom";
+import { FiBell } from "react-icons/fi";
+import { countUnreadNotificationByUserId } from "../apis/notification/notificationService";
+import { useQuery } from "@tanstack/react-query";
+import { usePrincipalState } from "../store/usePrincipalState";
 
 export const HEADER_H = 64;
 
 export default function LayoutHeader({ scrollTargetId = "app-scroll" }) {
     const navigate = useNavigate();
-    const [hidden, setHidden] = useState(false);
-    const lastYRef = useRef(0);
-    const tickingRef = useRef(false);
+    const { principal } = usePrincipalState();
+    const [offset, setOffset] = useState(0);
+    const rafRef = useRef(null);
+
+    const { data: notificationResp } = useQuery({
+        queryFn: () => countUnreadNotificationByUserId(principal.userId),
+        queryKey: ["countUnreadNotificationByUserId", principal?.userId],
+        enabled: !!principal?.userId,
+    });
 
     useEffect(() => {
         const el = document.getElementById(scrollTargetId);
-
-        // ✅ 스크롤 컨테이너 못 찾으면(예: 랜딩에서 레이아웃 다를 때) window로 fallback
         const target = el || window;
 
         const getY = () => {
@@ -23,30 +37,32 @@ export default function LayoutHeader({ scrollTargetId = "app-scroll" }) {
             return target.scrollTop || 0;
         };
 
-        lastYRef.current = getY();
-
-        const onScroll = () => {
+        const apply = () => {
             const y = getY();
+            const clamped = Math.max(0, Math.min(HEADER_H, y));
+            setOffset(clamped);
 
-            if (!tickingRef.current) {
-                tickingRef.current = true;
-                requestAnimationFrame(() => {
-                    const lastY = lastYRef.current;
-                    const goingDown = y > lastY;
-                    const nearTop = y < 24;
-
-                    if (nearTop) setHidden(false);
-                    else setHidden(goingDown);
-
-                    lastYRef.current = y;
-                    tickingRef.current = false;
-                });
+            if (el) {
+                el.style.setProperty(
+                    "--header-offset",
+                    `${HEADER_H - clamped}px`,
+                );
             }
+            rafRef.current = null;
         };
 
-        // ✅ app-scroll이면 target에, window면 window에
+        const onScroll = () => {
+            if (rafRef.current) return;
+            rafRef.current = requestAnimationFrame(apply);
+        };
+
+        apply();
+
         target.addEventListener("scroll", onScroll, { passive: true });
-        return () => target.removeEventListener("scroll", onScroll);
+        return () => {
+            target.removeEventListener("scroll", onScroll);
+            if (rafRef.current) cancelAnimationFrame(rafRef.current);
+        };
     }, [scrollTargetId]);
 
     return (
@@ -58,13 +74,15 @@ export default function LayoutHeader({ scrollTargetId = "app-scroll" }) {
                 right: 0,
                 height: HEADER_H,
                 zIndex: 1300,
-                transform: hidden ? "translateY(-110%)" : "translateY(0)",
-                transition: "transform .22s ease",
+                transform: `translateY(-${offset}px)`,
+                transition: "transform 0s",
                 backgroundColor: "#FFF",
                 pointerEvents: "none",
+                borderBottom: "1px solid",
+                borderColor: "divider",
             }}>
             <Container
-                maxWidth="md"
+                maxWidth="sm"
                 sx={{
                     height: "100%",
                     display: "flex",
@@ -101,39 +119,11 @@ export default function LayoutHeader({ scrollTargetId = "app-scroll" }) {
                     </Typography>
                 </Stack>
 
-                {/* <Stack direction="row" spacing={1}>
-                    <Button
-                        variant="text"
-                        sx={{
-                            fontWeight: 800,
-                            color: "#0f172a",
-                            "&:hover": {
-                                backgroundColor: "rgba(15,23,42,0.06)",
-                            },
-                        }}
-                        onClick={() => navigate("/oauth2/signin")}>
-                        로그인
-                    </Button>
-                    <Button
-                        variant="contained"
-                        endIcon={<ArrowForwardRoundedIcon />}
-                        sx={{
-                            borderRadius: "14px",
-                            px: 2,
-                            fontWeight: 900,
-                            background:
-                                "linear-gradient(135deg, #2563eb, #1d4ed8)",
-                            boxShadow: "0 14px 30px rgba(37,99,235,0.20)",
-                            "&:hover": {
-                                transform: "translateY(-1px)",
-                                boxShadow: "0 18px 36px rgba(37,99,235,0.26)",
-                            },
-                            transition: "all .18s ease",
-                        }}
-                        onClick={() => navigate("/oauth2/signup")}>
-                        시작하기
-                    </Button>
-                </Stack> */}
+                <IconButton onClick={() => navigate("/notification")}>
+                    <Badge badgeContent={notificationResp?.data} color="error">
+                        <FiBell />
+                    </Badge>
+                </IconButton>
             </Container>
         </Box>
     );

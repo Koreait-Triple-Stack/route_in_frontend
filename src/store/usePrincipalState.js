@@ -17,7 +17,6 @@ export const usePrincipalState = create((set, get) => ({
             loading: loading,
         }),
 
-    // 출석 다시 안띄우게 하기
     AttendanceChecked: () =>
         set((state) =>
             state.principal

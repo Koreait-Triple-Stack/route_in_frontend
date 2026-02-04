@@ -2,165 +2,123 @@ import {
     Avatar,
     Badge,
     List,
-    ListItemAvatar,
     ListItemButton,
-    ListItemText,
     Typography,
+    Paper,
 } from "@mui/material";
 import { Box } from "@mui/system";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { timeAgo } from "../../apis/utils/time";
 import MenuModal from "./MenuModal";
-import StarIcon from "@mui/icons-material/Star";
-import NotificationsOffIcon from "@mui/icons-material/NotificationsOff";
+import StarRoundedIcon from "@mui/icons-material/StarRounded";
+import NotificationsOffRoundedIcon from "@mui/icons-material/NotificationsOffRounded";
 
 function RoomList({ roomList }) {
     const navigate = useNavigate();
     const [contextMenu, setContextMenu] = useState(null);
     const [selectedRoom, setSelectedRoom] = useState(null);
 
-    const handleChatClick = (id) => {
-        navigate(`/chat/room/${id}`);
-    };
+    const handleChatClick = (id) => navigate(`/chat/room/${id}`);
 
     const handleContextMenu = (event, room) => {
         event.preventDefault();
         setSelectedRoom(room);
         setContextMenu(
             contextMenu === null
-                ? {
-                      mouseX: event.clientX + 2,
-                      mouseY: event.clientY - 6,
-                  }
+                ? { mouseX: event.clientX + 2, mouseY: event.clientY - 6 }
                 : null,
         );
     };
 
     return (
-        <Box sx={{ px: 0, flex: 1, overflowY: "auto" }}>
-            <List
-                sx={{
-                    px: 0,
-                    width: "100%",
-                    bgcolor: "background.paper",
-                    overflowY: "auto",
-                }}>
-                {roomList &&
-                    roomList?.map((room) => (
+        <Box sx={{ px: 0 }}>
+            <List sx={{ px: 1, pt: 1 }}>
+                {roomList?.map((room) => (
+                    <Paper
+                        key={room.roomId}
+                        elevation={0}
+                        sx={{
+                            mb: 1.2,
+                            borderRadius: 3,
+                            border: "1px solid",
+                            borderColor: "divider",
+                            overflow: "hidden",
+                            bgcolor: "background.paper",
+                        }}>
                         <ListItemButton
-                            display="flex"
-                            key={room.roomId}
-                            alignItems="center"
                             onClick={() => handleChatClick(room.roomId)}
                             onContextMenu={(e) => handleContextMenu(e, room)}
-                            sx={{ py: 1.5, px: 1, borderRadius: 4 }}>
-                            <ListItemAvatar sx={{ minWidth: 0, margin: 0 }}>
-                                <Avatar
-                                    src={room.profileImg}
-                                    sx={{
-                                        width: 50,
-                                        height: 50,
-                                    }}
-                                />
-                            </ListItemAvatar>
-                            <ListItemText
-                                primary={
-                                    <Typography
-                                        variant="body1"
-                                        sx={{
-                                            fontWeight: "bold",
-                                            fontSize: "1rem",
-                                            color: "#000",
-                                        }}>
-                                        {room.title}
-                                    </Typography>
-                                }
-                                secondary={
-                                    <Typography
-                                        variant="body2"
-                                        sx={{
-                                            display: "block",
-                                            color: "#777",
-                                            fontSize: "0.9rem",
-                                            whiteSpace: "nowrap",
-                                            overflow: "hidden",
-                                            textOverflow: "ellipsis",
-                                            maxWidth: "220px",
-                                        }}>
-                                        {room.lastMessage}
-                                    </Typography>
-                                }
-                                sx={{ my: 0, px: 1 }}
+                            sx={{
+                                p: 1.5,
+                                gap: 1.5,
+                                alignItems: "flex-start",
+                                "&:hover": {
+                                    bgcolor: "action.hover",
+                                },
+                                transition: "0.15s",
+                            }}>
+                            <Avatar
+                                src={room.profileImg}
+                                sx={{ width: 52, height: 52, mt: 0.2 }}
                             />
+
+                            {/* middle */}
+                            <Box sx={{ flex: 1, minWidth: 0 }}>
+                                <StackTitle
+                                    title={room.title}
+                                    favorite={room.favorite}
+                                    mute={room.muteNotification}
+                                />
+
+                                <Typography
+                                    variant="body2"
+                                    sx={{
+                                        mt: 0.4,
+                                        color: "text.secondary",
+                                        display: "-webkit-box",
+                                        WebkitLineClamp: 2,
+                                        WebkitBoxOrient: "vertical",
+                                        overflow: "hidden",
+                                    }}>
+                                    {room.lastMessage || " "}
+                                </Typography>
+                            </Box>
+
+                            {/* right meta */}
                             <Box
                                 sx={{
                                     display: "flex",
                                     flexDirection: "column",
-                                    alignItems: "end",
-                                    mb: 2.5,
-                                    minWidth: 60,
+                                    alignItems: "flex-end",
+                                    justifyContent: "space-between",
+                                    minWidth: 76,
+                                    height: 52,
+                                    pt: 0.2,
                                 }}>
-                                <Box
-                                    sx={{
-                                        display: "flex",
-                                        justifyContent: "end",
-                                        minWidth: 60,
-                                        gap: 1,
-                                    }}>
-                                    {room.favorite && (
-                                        <StarIcon
-                                            fontSize="small"
-                                            sx={{
-                                                color: "warning.light",
-                                            }}
-                                        />
-                                    )}
-                                    {room.muteNotification && (
-                                        <NotificationsOffIcon
-                                            fontSize="small"
-                                            sx={{
-                                                color: "grey",
-                                            }}
-                                        />
-                                    )}
-                                    <Typography
-                                        variant="caption"
+                                <Typography
+                                    variant="caption"
+                                    sx={{ color: "text.disabled" }}>
+                                    {timeAgo(room.lastMessageDt)}
+                                </Typography>
+
+                                {room.unreadCnt > 0 && (
+                                    <Badge
+                                        badgeContent={room.unreadCnt}
+                                        color="error"
                                         sx={{
-                                            color: "#999",
-                                            fontSize: "0.75rem",
-                                            mb: 0.5,
-                                        }}>
-                                        {timeAgo(room.lastMessageDt)}
-                                    </Typography>
-                                </Box>
-                                <Box
-                                    sx={{
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "end",
-                                        minWidth: 60,
-                                    }}>
-                                    {room.unreadCnt > 0 && (
-                                        <Badge
-                                            badgeContent={room.unreadCnt}
-                                            color="error"
-                                            sx={{
-                                                "& .MuiBadge-badge": {
-                                                    fontSize: "0.7rem",
-                                                    height: 18,
-                                                    minWidth: 18,
-                                                    mt: 1,
-                                                    mr: 2,
-                                                    bgcolor: "#fa5a5a",
-                                                },
-                                            }}
-                                        />
-                                    )}
-                                </Box>
+                                            "& .MuiBadge-badge": {
+                                                fontSize: "0.72rem",
+                                                height: 18,
+                                                minWidth: 18,
+                                            },
+                                        }}
+                                    />
+                                )}
                             </Box>
                         </ListItemButton>
-                    ))}
+                    </Paper>
+                ))}
             </List>
 
             <MenuModal
@@ -169,6 +127,44 @@ function RoomList({ roomList }) {
                 selectedRoom={selectedRoom}
                 setSelectedRoom={setSelectedRoom}
             />
+        </Box>
+    );
+}
+
+function StackTitle({ title, favorite, mute }) {
+    return (
+        <Box
+            sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 0.6,
+                minWidth: 0,
+            }}>
+            <Typography
+                variant="body1"
+                sx={{
+                    fontWeight: 900,
+                    letterSpacing: -0.2,
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                    minWidth: 0,
+                }}>
+                {title}
+            </Typography>
+
+            {favorite && (
+                <StarRoundedIcon
+                    fontSize="small"
+                    sx={{ color: "warning.main" }}
+                />
+            )}
+            {mute && (
+                <NotificationsOffRoundedIcon
+                    fontSize="small"
+                    sx={{ color: "text.disabled" }}
+                />
+            )}
         </Box>
     );
 }

@@ -27,7 +27,6 @@ function CourseAdd({ userId, boardId }) {
         mutationKey: ["addCourse"],
         mutationFn: (data) => addCourse(data),
         onSuccess: (response) => {
-            // queryClient.invalidateQueries(["", ""])
             setCourseName("");
             clear();
             alert(response.message);
@@ -58,10 +57,8 @@ function CourseAdd({ userId, boardId }) {
 
     return (
         <Box sx={{ width: "100%", height: "100%", position: "relative" }}>
-            {/* 지도 */}
             <Box ref={mapRef} sx={{ width: "100%", height: "100%", zIndex: 10, overflow: "hidden" }} />
 
-            {/* 미니바 + 확장 패널 */}
             <Paper
                 elevation={10}
                 sx={{
@@ -93,7 +90,6 @@ function CourseAdd({ userId, boardId }) {
                             onSearch={search.runSearch}
                             onSelectResult={(item) => {
                                 search.moveToResult(item);
-                                // 원하면 클릭 시 접기:
                                 setPanelOpen(false);
                             }}
                         />

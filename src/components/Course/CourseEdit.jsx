@@ -25,15 +25,12 @@ function CourseEdit({ course, userId, boardId, isEditing }) {
     const [region, setRegion] = useState(null);
     const [courseName, setCourseName] = useState("");
 
-    const queryClient = useQueryClient();
-
     const search = useKakaoPlaceSearch(kakaoObj, map);
 
     const mutation = useMutation({
         mutationKey: ["updateCourse"],
         mutationFn: (data) => updateCourse(data),
         onSuccess: (response) => {
-            // queryClient.invalidateQueries(["", ""])
             setCourseName("");
             clear();
             alert(response.message);
@@ -43,7 +40,6 @@ function CourseEdit({ course, userId, boardId, isEditing }) {
         },
     });
 
-    // points 저장
     useEffect(() => {
         setCourseName(course.courseName)
         setPoints(
@@ -54,7 +50,6 @@ function CourseEdit({ course, userId, boardId, isEditing }) {
         );
     }, [course]);
 
-    // center로 이동
     useEffect(() => {
         if (!kakaoObj || !map || !course) return;
 

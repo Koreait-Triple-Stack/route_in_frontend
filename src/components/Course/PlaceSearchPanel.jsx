@@ -48,9 +48,9 @@ export default function PlaceSearchPanel({
                     disabled={loading}
                     startIcon={<SearchIcon />}
                     sx={{
-                        flexShrink: 0, // ✅ 버튼이 눌려서 작아지지 않게
+                        flexShrink: 0, 
                         whiteSpace: "nowrap",
-                        minWidth: 88, // ✅ 최소 너비 고정(원하는 값으로 조절)
+                        minWidth: 88, 
                     }}>
                     {loading ? "중..." : "검색"}
                 </Button>

@@ -7,7 +7,11 @@ import {
 } from "@mui/material";
 import { Box, Stack } from "@mui/system";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
-
+import {
+    boardSortSelectSx,
+    boardTypeBtnSx,
+    selectMenuPaperSx,
+} from "../../constants/design";
 function TypeBox({ checked, setChecked, form, setForm, setTags }) {
     const inputChangeHandler = (e) => {
         setTags([]);
@@ -38,71 +42,20 @@ function TypeBox({ checked, setChecked, form, setForm, setTags }) {
                 sx={{}}
             >
                 <Stack direction={"row"} spacing={0.6}>
-                    <ToggleButton
-                        name="type"
-                        value="ALL"
-                        sx={{
-                            minHeight: 25,
-                            lineHeight: 1,
-                            fontWeight: 600,
-                            bgcolor: "#fff",
-                            "&.Mui-selected": {
-                                bgcolor: "primary.main",
-                                color: "#fff",
-                                "&:hover": {
-                                    color: "#fff",
-                                    bgcolor: "primary.main",
-                                },
-                            },
-                            "&:hover": {
-                                color: "#fff",
-                                bgcolor: "primary.main",
-                            },
-                        }}
-                    >
+                    <ToggleButton name="type" value="ALL" sx={boardTypeBtnSx}>
                         전체
                     </ToggleButton>
                     <ToggleButton
                         name="type"
                         value="COURSE"
-                        sx={{
-                            fontWeight: 600,
-                            bgcolor: "#fff",
-                            "&.Mui-selected": {
-                                bgcolor: "primary.main",
-                                color: "#fff",
-                                "&:hover": {
-                                    color: "#fff",
-                                    bgcolor: "primary.main",
-                                },
-                            },
-                            "&:hover": {
-                                color: "#fff",
-                                bgcolor: "primary.main",
-                            },
-                        }}
+                        sx={boardTypeBtnSx}
                     >
                         러닝코스
                     </ToggleButton>
                     <ToggleButton
                         name="type"
                         value="ROUTINE"
-                        sx={{
-                            fontWeight: 600,
-                            bgcolor: "#fff",
-                            "&.Mui-selected": {
-                                bgcolor: "primary.main",
-                                color: "#fff",
-                                "&:hover": {
-                                    color: "#fff",
-                                    bgcolor: "primary.main",
-                                },
-                            },
-                            "&:hover": {
-                                color: "#fff",
-                                bgcolor: "primary.main",
-                            },
-                        }}
+                        sx={boardTypeBtnSx}
                     >
                         운동루틴
                     </ToggleButton>
@@ -123,37 +76,8 @@ function TypeBox({ checked, setChecked, form, setForm, setTags }) {
                         value={form.sort}
                         onChange={inputChangeHandler}
                         displayEmpty
-                        sx={{
-                            fontSize: 14,
-                            color: "primary.main",
-
-                            // ✅ 기본 테두리
-                            "& .MuiOutlinedInput-notchedOutline": {
-                                borderColor: "primary.main",
-                            },
-
-                            // ✅ hover
-                            "&:hover .MuiOutlinedInput-notchedOutline": {
-                                borderColor: "primary.main",
-                            },
-
-                            // ✅ focus
-                            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                                borderColor: "primary.main",
-                            },
-
-                            "& .MuiSelect-icon": { fontSize: 18 },
-                        }}
-                        MenuProps={{
-                            PaperProps: {
-                                sx: {
-                                    "& .MuiMenuItem-root": {
-                                        fontSize: 13,
-                                        minHeight: 36,
-                                    },
-                                },
-                            },
-                        }}
+                        sx={boardSortSelectSx}
+                        MenuProps={{ PaperProps: { sx: selectMenuPaperSx } }}
                     >
                         <MenuItem value="LATEST">최신순</MenuItem>
                         <MenuItem value="RECOMMEND">추천순</MenuItem>
@@ -165,22 +89,7 @@ function TypeBox({ checked, setChecked, form, setForm, setTags }) {
                     value="checked"
                     selected={checked}
                     onChange={() => setChecked((prev) => !prev)}
-                    sx={{
-                        color: "primary.main",
-                        borderColor: "primary.main",
-                        "&.Mui-selected": {
-                            bgcolor: "primary.main",
-                            color: "#fff",
-                            "&:hover": {
-                                bgcolor: "primary.dark",
-                                color: "#fff",
-                            },
-                        },
-                        "&:hover": {
-                            bgcolor: "primary.dark",
-                            color: "#fff",
-                        },
-                    }}
+                    sx={boardTypeBtnSx}
                 >
                     <FilterAltOutlinedIcon />
                 </ToggleButton>

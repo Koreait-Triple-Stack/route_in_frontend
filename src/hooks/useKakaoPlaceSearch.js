@@ -6,7 +6,7 @@ export function useKakaoPlaceSearch(kakaoObj, map) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
-    const markerRef = useRef(null); // ✅ 핑(마커) 1개 유지용
+    const markerRef = useRef(null);
 
     const runSearch = () => {
         if (!kakaoObj || !map) return;
@@ -42,13 +42,10 @@ export function useKakaoPlaceSearch(kakaoObj, map) {
         const lng = Number(item.x);
         const pos = new kakaoObj.maps.LatLng(lat, lng);
 
-        // ✅ (1) 레벨 조정: 원하는 줌으로 고정
-        map.setLevel(3, { animate: true }); // 숫자 낮을수록 확대 (원하는 값으로 조절)
+        map.setLevel(3, { animate: true });
 
-        // ✅ (2) 지도 이동
         map.panTo(pos);
 
-        // ✅ (3) 기존 핑 제거 후 새로 찍기 (항상 1개만)
         if (markerRef.current) {
             markerRef.current.setMap(null);
             markerRef.current = null;
@@ -80,6 +77,6 @@ export function useKakaoPlaceSearch(kakaoObj, map) {
         moveToResult,
         setResults,
         setError,
-        clearMarker, // 필요시 외부에서 핑 제거 가능
+        clearMarker,
     };
 }
