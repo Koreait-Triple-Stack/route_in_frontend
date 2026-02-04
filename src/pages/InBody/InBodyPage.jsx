@@ -32,6 +32,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Container } from "@mui/system";
 import { addInBody, deleteInBody, getInBodyListByUserId } from "../../apis/inBody/inBodyService";
 import Loading from "../../components/Loading";
+import { useToastStore } from "../../store/useToastStore";
 
 const CustomizedLabel = (props) => {
     const { x, y, stroke, value } = props;
@@ -50,6 +51,7 @@ const CustomizedLabel = (props) => {
 };
 
 export default function InbodyChartWithActions() {
+    const {show} = useToastStore();
     const { principal } = usePrincipalState();
     const [addOpen, setAddOpen] = useState(false);
     const [deleteOpen, setDeleteOpen] = useState(false);
@@ -73,26 +75,26 @@ export default function InbodyChartWithActions() {
 
     const addMutation = useMutation({
         mutationFn: addInBody,
-        onSuccess: () => {
+        onSuccess: (resp) => {
             queryClient.invalidateQueries(["getInBodyListByUserId", principal.userId])
-            alert("추가되었습니다.");
+            show(resp.message, "success");
             handleAddClose();
         },
         onError: (error) => {
-            alert(error.message);
+            show(error.message, "error");
         },
     });
 
     const deleteMutation = useMutation({
         mutationFn: deleteInBody,
-        onSuccess: () => {
+        onSuccess: (resp) => {
             queryClient.invalidateQueries(["getInBodyListByUserId", principal.userId])
-            alert("삭제되었습니다.");
+            show(resp.message, "success");
             handleAddClose();
             handleDeleteClose();
         },
         onError: (error) => {
-            alert(error.message);
+            show(error.message, "error");
         },
     });
 
@@ -118,7 +120,7 @@ export default function InbodyChartWithActions() {
 
     const handleAddData = () => {
         if (!inputValues.bodyWeight || !inputValues.skeletalMuscleMass || !inputValues.bodyFatMass) {
-            alert("모든 정보를 입력해주세요.");
+            show("모든 정보를 입력해주세요.", "error");
             return;
         }
 
@@ -134,8 +136,6 @@ export default function InbodyChartWithActions() {
     };
 
     const handleDeleteData = (inBodyId) => {
-        if (!window.confirm("정말 삭제하시겠습니까?")) return;
-
         const data = {
             inBodyId: inBodyId,
             userId: principal?.userId,
