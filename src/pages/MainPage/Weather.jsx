@@ -5,6 +5,8 @@ import { getWeather } from "../../apis/weather/weatherService";
 import ErrorComponent from "../../components/ErrorComponent";
 import { MoonLoader } from "react-spinners";
 
+const DEFAULT_SEOUL = { lat: 37.5665, lon: 126.9780 };
+
 function Loading() {
     return (
         <Box
@@ -28,6 +30,7 @@ function Weather() {
     useEffect(() => {
         if (!navigator.geolocation) {
             setLocationError("위치 정보를 지원하지 않는 브라우저입니다.");
+            setCoords(DEFAULT_SEOUL);
             return;
         }
 
