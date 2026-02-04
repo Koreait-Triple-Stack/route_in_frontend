@@ -61,7 +61,7 @@ export default function ProfileCard({ user, open, onToggleOpen, onNavigate, onSe
     };
 
     return (
-        <Box sx={{ bgcolor: THEME.bgLight, minHeight: "100vh" }}>
+        <Box sx={{ bgcolor: THEME.bgLight }}>
             <Box
                 sx={{
                     background: "linear-gradient(135deg, #3B82F6 0%, #10B981 100%)",
