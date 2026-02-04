@@ -1,16 +1,8 @@
-import {
-    Collapse,
-    Divider,
-    List,
-    ListItemButton,
-    ListItemIcon,
-    ListItemText,
-    ListSubheader,
-} from "@mui/material";
+import { Collapse, Divider, List, ListItemButton, ListItemIcon, ListItemText, Box, Typography } from "@mui/material";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
+import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 import MonitorHeartOutlinedIcon from "@mui/icons-material/MonitorHeartOutlined";
-import ProfileHeader from "./ProfileHeader";
 import FollowStats from "./FollowStats";
 import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined";
 import RouteOutlinedIcon from "@mui/icons-material/RouteOutlined";
@@ -22,185 +14,165 @@ import PersonOffOutlinedIcon from "@mui/icons-material/PersonOffOutlined";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
 
-export default function ProfileCard({
-    user,
-    open,
-    onToggleOpen,
-    onNavigate,
-    onSetActiveView,
-    onLogout,
-}) {
-    const itemSx = {
-        px: 2,
-        py: 1.2,
-        "& .MuiListItemIcon-root": { minWidth: 40, color: "text.secondary" },
-        "&:hover": { bgcolor: "action.hover" },
-        borderRadius: 1.5,
-        mx: 1,
-        my: 0.5,
+export default function ProfileCard({ user, open, onToggleOpen, onNavigate, onSetActiveView, onLogout }) {
+    const THEME = {
+        primary: "#60A5FA", 
+        secondary: "#86EFAC", 
+        bgLight: "#F8FAFC", 
+        textMain: "#1E293B", 
+        textSub: "#94A3B8", 
+        divider: "#F1F5F9",
+        error: "#F43F5E",
     };
-    const subItemSx = {
-        ...itemSx,
-        pl: 4,
-        bgcolor: "transparent",
-        "&:hover": { bgcolor: "action.hover" },
+
+    const iconBoxSx = (color) => ({
+        minWidth: 40,
+        height: 40,
+        borderRadius: "12px",
+        bgcolor: `${color}10`, 
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        mr: 2,
+        transition: "transform 0.2s",
+        "& svg": { fontSize: 22, color: color },
+    });
+
+    const itemSx = {
+        px: 3,
+        py: 2,
+        bgcolor: "white",
+        "&:hover": {
+            bgcolor: "#F1F5F9",
+            "& .icon-box": { transform: "scale(1.1)" },
+        },
+        transition: "all 0.2s",
+    };
+
+    const subheaderSx = {
+        px: 3,
+        pt: 3,
+        pb: 1,
+        color: THEME.textSub,
+        fontWeight: 800,
+        fontSize: "0.7rem",
+        letterSpacing: "0.1em",
+        textTransform: "uppercase",
     };
 
     return (
-        <List
-            sx={{
-                position: "relative",
-                width: "100%",
-                bgcolor: "background.paper",
-                overflow: "hidden",
-            }}
-            component="nav"
-            aria-labelledby="profile"
-            subheader={
-                <ListSubheader
-                    component="div"
-                    id="profile"
-                    sx={{
-                        bgcolor: "transparent",
-                        pb: 1,
-                        fontSize: 18,
-                        fontWeight: 700,
-                        color: "text.primary",
-                        borderBottom: "1px solid",
-                        borderColor: "divider",
-                    }}
-                >
-                    마이 프로필
-                </ListSubheader>
-            }
-        >
-            <ProfileHeader user={user} />
-
-            <FollowStats
-                followerCnt={user?.followerCnt}
-                followingCnt={user?.followingCnt}
-                onFollower={() => onNavigate("/mypage/follower")}
-                onFollowing={() => onNavigate("/mypage/following")}
-            />
-
-            <Divider />
-
-            <ListItemButton
-                sx={itemSx}
-                onClick={() => onNavigate("/mypage/inbody")}
-            >
-                <ListItemIcon>
-                    <MonitorHeartOutlinedIcon />
-                </ListItemIcon>
-                <ListItemText primary="인바디 기록 추가/삭제" />
-            </ListItemButton>
-
-            <ListItemButton
-                sx={itemSx}
-                onClick={() => onNavigate("/mypage/board")}
-            >
-                <ListItemIcon>
-                    <ArticleOutlinedIcon />
-                </ListItemIcon>
-                <ListItemText primary="작성한 게시물 관리" />
-            </ListItemButton>
-
-            <ListItemButton
-                sx={itemSx}
-                onClick={() => onNavigate("/mypage/course")}
-            >
-                <ListItemIcon>
-                    <RouteOutlinedIcon />
-                </ListItemIcon>
-                <ListItemText primary="나만의 코스 수정" />
-            </ListItemButton>
-
-            <ListItemButton
-                sx={itemSx}
-                onClick={() => onSetActiveView("calendar")}
-            >
-                <ListItemIcon>
-                    <CalendarTodayOutlinedIcon />
-                </ListItemIcon>
-                <ListItemText primary="출석 달력" />
-            </ListItemButton>
-
-            <Divider sx={{ my: 1 }} />
-
-            <ListItemButton sx={itemSx} onClick={onToggleOpen}>
-                <ListItemIcon>
-                    <ManageAccountsOutlinedIcon />
-                </ListItemIcon>
-                <ListItemText primary="개인정보 수정" />
-                {open ? <ExpandLess /> : <ExpandMore />}
-            </ListItemButton>
-
-            <Collapse in={open} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding sx={{ px: 1 }}>
-                    <ListItemButton
-                        sx={subItemSx}
-                        onClick={() => onSetActiveView("username")}
-                    >
-                        <ListItemIcon>
-                            <BadgeOutlinedIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="닉네임 변경" />
-                    </ListItemButton>
-
-                    <ListItemButton
-                        sx={subItemSx}
-                        onClick={() => onSetActiveView("address")}
-                    >
-                        <ListItemIcon>
-                            <HomeOutlinedIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="주소 변경" />
-                    </ListItemButton>
-
-                    <ListItemButton
-                        sx={subItemSx}
-                        onClick={() => onSetActiveView("bodyInfo")}
-                    >
-                        <ListItemIcon>
-                            <HeightOutlinedIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="키/몸무게 변경" />
-                    </ListItemButton>
-
-                    <ListItemButton
-                        sx={subItemSx}
-                        onClick={() => onSetActiveView("withdraw")}
-                    >
-                        <ListItemIcon>
-                            <PersonOffOutlinedIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="회원 탈퇴" />
-                    </ListItemButton>
-                </List>
-            </Collapse>
-
-            <Divider sx={{ my: 1 }} />
-
-            <ListItemButton
+        <Box sx={{ bgcolor: THEME.bgLight, minHeight: "100vh" }}>
+            <Box
                 sx={{
-                    ...itemSx,
-                    "& .MuiListItemIcon-root": {
-                        minWidth: 40,
-                        color: "error.main",
+                    background: "linear-gradient(135deg, #3B82F6 0%, #10B981 100%)",
+                    borderRadius: "20px",
+                    boxShadow: "0 10px 30px rgba(37, 99, 235, 0.15)",
+                    position: "relative",
+                    overflow: "hidden",
+                    mx: 2,
+                    "&::after": {
+                        content: '""',
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        background: "linear-gradient(to bottom, rgba(255,255,255,0.15), rgba(0,0,0,0.05))",
+                        pointerEvents: "none",
                     },
-                    "& .MuiListItemText-primary": {
-                        color: "error.main",
-                        fontWeight: 700,
-                    },
-                    "&:hover": { bgcolor: "rgba(211,47,47,0.08)" },
                 }}
-                onClick={onLogout}
             >
-                <ListItemIcon>
-                    <LogoutOutlinedIcon />
-                </ListItemIcon>
-                <ListItemText primary="로그아웃" />
-            </ListItemButton>
-        </List>
+                <Box sx={{ position: "relative", zIndex: 1 }}>
+                    <FollowStats
+                        user={user}
+                        followerCnt={user?.followerCnt}
+                        followingCnt={user?.followingCnt}
+                        onFollower={() => onNavigate("/mypage/follower")}
+                        onFollowing={() => onNavigate("/mypage/following")}
+                    />
+                </Box>
+            </Box>
+
+            {/* 나의 활동 섹션 */}
+            <Typography sx={subheaderSx}>나의 활동</Typography>
+            <List disablePadding sx={{ mx: 2, borderRadius: "20px", overflow: "hidden", boxShadow: "0 4px 15px rgba(0,0,0,0.03)" }}>
+                <MenuLink icon={<MonitorHeartOutlinedIcon />} label="인바디 기록" color={THEME.primary} onClick={() => onNavigate("/mypage/inbody")} />
+                <Divider sx={{ borderColor: THEME.divider }} />
+                <MenuLink icon={<ArticleOutlinedIcon />} label="작성한 게시물" color={THEME.primary} onClick={() => onNavigate("/mypage/board")} />
+                <Divider sx={{ borderColor: THEME.divider }} />
+                <MenuLink icon={<RouteOutlinedIcon />} label="나만의 코스 관리" color={THEME.secondary} onClick={() => onNavigate("/mypage/course")} />
+                <Divider sx={{ borderColor: THEME.divider }} />
+                <MenuLink icon={<CalendarTodayOutlinedIcon />} label="출석 달력" onClick={() => onSetActiveView("calendar")} />
+            </List>
+
+            {/* 계정 및 설정 섹션 */}
+            <Typography sx={subheaderSx}>계정 및 설정</Typography>
+            <Box sx={{ mx: 2, borderRadius: "20px", overflow: "hidden", boxShadow: "0 4px 15px rgba(0,0,0,0.03)", bgcolor: "white", mb: 4 }}>
+                <ListItemButton sx={itemSx} onClick={onToggleOpen}>
+                    <Box className="icon-box" sx={iconBoxSx("#64748B")}>
+                        <ManageAccountsOutlinedIcon />
+                    </Box>
+                    <ListItemText primary="개인정보 수정" primaryTypographyProps={{ fontWeight: 700, color: THEME.textMain }} />
+                    {open ? <ExpandLess sx={{ color: THEME.textSub }} /> : <ExpandMore sx={{ color: THEME.textSub }} />}
+                </ListItemButton>
+
+                <Collapse in={open} timeout="auto" unmountOnExit sx={{ bgcolor: "#F8FAFC" }}>
+                    <SubMenuLink icon={<BadgeOutlinedIcon />} label="닉네임 변경" onClick={() => onSetActiveView("username")} />
+                    <SubMenuLink icon={<HomeOutlinedIcon />} label="주소 변경" onClick={() => onSetActiveView("address")} />
+                    <SubMenuLink icon={<HeightOutlinedIcon />} label="키/몸무게 변경" onClick={() => onSetActiveView("bodyInfo")} />
+                    <SubMenuLink icon={<PersonOffOutlinedIcon />} label="회원 탈퇴" onClick={() => onSetActiveView("withdraw")} />
+                </Collapse>
+
+                <Divider sx={{ borderColor: THEME.divider }} />
+
+                <ListItemButton sx={itemSx} onClick={onLogout}>
+                    <Box className="icon-box" sx={iconBoxSx(THEME.error)}>
+                        <LogoutOutlinedIcon />
+                    </Box>
+                    <ListItemText primary="로그아웃" primaryTypographyProps={{ fontWeight: 800, color: THEME.error }} />
+                </ListItemButton>
+            </Box>
+        </Box>
     );
+
+    function MenuLink({ icon, label, color, onClick, badge }) {
+        return (
+            <ListItemButton sx={itemSx} onClick={onClick}>
+                <Box className="icon-box" sx={iconBoxSx(color)}>
+                    {icon}
+                </Box>
+                <ListItemText primary={label} primaryTypographyProps={{ fontWeight: 700, color: THEME.textMain, fontSize: "0.95rem" }} />
+                {badge && (
+                    <Box
+                        sx={{
+                            bgcolor: THEME.error,
+                            color: "white",
+                            borderRadius: "10px",
+                            px: 1,
+                            py: 0.2,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            fontSize: "10px",
+                            fontWeight: 800,
+                            mr: 1,
+                        }}
+                    >
+                        {badge}
+                    </Box>
+                )}
+                <ChevronRightRoundedIcon sx={{ color: "#CBD5E1", fontSize: 20 }} />
+            </ListItemButton>
+        );
+    }
+
+    function SubMenuLink({ icon, label, onClick }) {
+        return (
+            <ListItemButton sx={{ px: 4, py: 1.5, "&:hover": { bgcolor: "#F1F5F9" } }} onClick={onClick}>
+                <ListItemIcon sx={{ minWidth: 40, color: "#94A3B8" }}>{icon}</ListItemIcon>
+                <ListItemText primary={label} primaryTypographyProps={{ fontSize: "0.9rem", color: "#64748B", fontWeight: 600 }} />
+                <ChevronRightRoundedIcon sx={{ color: "#E2E8F0", fontSize: 18 }} />
+            </ListItemButton>
+        );
+    }
 }

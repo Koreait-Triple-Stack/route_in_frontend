@@ -124,6 +124,7 @@ export const boardFilterBtnSx = {
         color: "#fff",
         "&:hover": { bgcolor: "primary.dark" },
     },
+}
 export const BUTTON_COLOR = {
     background: "linear-gradient(135deg, #2563eb, #22c55e)",
 };
