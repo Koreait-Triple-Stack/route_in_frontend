@@ -1,98 +1,149 @@
-import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
-import BottomNavigationAction from "@mui/material/BottomNavigationAction";
-import BottomNavigation from "@mui/material/BottomNavigation";
-import Paper from "@mui/material/Paper";
-import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
-import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
-import FilterFramesOutlinedIcon from "@mui/icons-material/FilterFramesOutlined";
+import {
+    BottomNavigation,
+    BottomNavigationAction,
+    Paper,
+    Badge,
+    Box,
+} from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Badge } from "@mui/material";
-import { countUnreadNotificationByUserId } from "../apis/notification/notificationService";
-import { usePrincipalState } from "../store/usePrincipalState";
 import { useQuery } from "@tanstack/react-query";
-import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
+import { usePrincipalState } from "../store/usePrincipalState";
 import { countUnreadChatByUserIdRequest } from "../apis/chat/chatApi";
+import { FiHome, FiMessageCircle, FiUser, FiEdit3 } from "react-icons/fi";
+import { motion } from "framer-motion";
+import { RiWechat2Line } from "react-icons/ri";
 
-export const NAV_H = 56;
+export const NAV_H = 64;
 
-function BasicBottomNav() {
+function normalizeValue(pathname) {
+    if (pathname.startsWith("/board")) return "/board";
+    if (pathname.startsWith("/chat")) return "/chat";
+    if (pathname.startsWith("/mypage")) return "/mypage";
+    if (pathname.startsWith("/main")) return "/main";
+    return "/";
+}
+
+export default function BasicBottomNav() {
     const location = useLocation();
-    const navigate = useNavigate();
-    const { principal, isLoggedIn } = usePrincipalState();
-    const { data: notificationResp } = useQuery({
-        queryFn: () => countUnreadNotificationByUserId(principal.userId),
-        queryKey: ["countUnreadNotificationByUserId", principal?.userId],
-        staleTime: 30000,
-    });
+    const { principal } = usePrincipalState();
+
     const { data: chatResp } = useQuery({
         queryFn: () => countUnreadChatByUserIdRequest(principal.userId),
         queryKey: ["countUnreadChatByUserIdRequest", principal?.userId],
     });
 
-    const value = location.pathname;
+    const value = normalizeValue(location.pathname);
 
     return (
         <Paper
+            elevation={0}
             sx={{
                 position: "fixed",
-                bottom: 0,
+                bottom: 10,
                 left: "50%",
                 transform: "translateX(-50%)",
-                width: "100%",
+                width: "calc(100% - 24px)",
+                maxWidth: 500,
                 height: NAV_H,
-                zIndex: (theme) => theme.zIndex.appBar,
-                pb: "env(safe-area-inset-bottom)",
+                borderRadius: 24,
+                border: "1px solid rgba(15,23,42,0.08)",
+                backgroundColor: "rgba(255,255,255,0.9)",
+                boxShadow: "0 12px 40px rgba(15,23,42,0.15)",
+                backdropFilter: "blur(12px)",
+                overflow: "hidden",
+                zIndex: (theme) => theme.zIndex.modal - 1,
             }}>
             <BottomNavigation
                 value={value}
-                onChange={(event, newValue) => {
-                    navigate(newValue);
-                }}
-                showLabels>
-                <BottomNavigationAction
-                    label="게시판"
+                showLabels={false}
+                sx={{ height: "100%", bgcolor: "transparent" }}>
+                <NavItem
+                    value="/main"
+                    selected={value === "/main"}
+                    icon={<FiHome />}
+                />
+                <NavItem
                     value="/board"
-                    icon={<FilterFramesOutlinedIcon />}
+                    selected={value === "/board"}
+                    icon={<FiEdit3 />}
                 />
-                <BottomNavigationAction
-                    label="채팅"
+                <NavItem
                     value="/chat"
+                    selected={value === "/chat"}
                     icon={
-                        <Badge
-                            badgeContent={chatResp?.data}
-                            color="error"
-                            overlap="circular"
-                            showZero={false}>
-                            <ChatBubbleOutlineIcon />
+                        <Badge badgeContent={chatResp?.data} color="error">
+                            <RiWechat2Line />
                         </Badge>
                     }
                 />
-                <BottomNavigationAction
-                    label="홈"
-                    value={isLoggedIn ? "/main" : "/"}
-                    icon={<HomeOutlinedIcon />}
-                />
-                <BottomNavigationAction
-                    label="알림"
-                    value="/notification"
-                    icon={
-                        <Badge
-                            badgeContent={notificationResp?.data}
-                            color="error"
-                            overlap="circular"
-                            showZero={false}>
-                            <NotificationsNoneOutlinedIcon />
-                        </Badge>
-                    }
-                />
-                <BottomNavigationAction
-                    label="마이"
+                <NavItem
                     value="/mypage"
-                    icon={<PersonOutlineOutlinedIcon />}
+                    selected={value === "/mypage"}
+                    icon={<FiUser />}
                 />
             </BottomNavigation>
         </Paper>
     );
 }
 
-export default BasicBottomNav;
+function NavItem({ value, selected, icon }) {
+    const naviagte = useNavigate();
+
+    return (
+        <BottomNavigationAction
+            value={value}
+            onClick={() => naviagte(value)}
+            icon={
+                <Box
+                    sx={{
+                        position: "relative",
+                        width: 46,
+                        height: 46,
+                        borderRadius: 18,
+                        display: "grid",
+                        placeItems: "center",
+                    }}
+                    component={motion.div}
+                    whileTap={{ scale: 0.92 }}
+                    transition={{
+                        type: "spring",
+                        stiffness: 700,
+                        damping: 26,
+                    }}>
+                    {selected && (
+                        <Box
+                            component={motion.div}
+                            layoutId="nav-indicator"
+                            transition={{
+                                type: "spring",
+                                stiffness: 520,
+                                damping: 38,
+                                mass: 0.8,
+                            }}
+                            sx={{
+                                position: "absolute",
+                                inset: 0,
+                                borderRadius: 18,
+                                background: "rgba(37,99,235,0.12)",
+                            }}
+                        />
+                    )}
+
+                    <Box
+                        sx={{
+                            position: "relative",
+                            zIndex: 1,
+                            color: selected ? "#2563eb" : "rgba(15,23,42,0.45)",
+                            "& svg": { fontSize: 22 },
+                        }}>
+                        {icon}
+                    </Box>
+                </Box>
+            }
+            sx={{
+                minWidth: 0,
+                transition: "color .18s ease",
+            }}
+        />
+    );
+}

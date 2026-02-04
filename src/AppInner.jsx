@@ -13,7 +13,15 @@ import { createTheme, ThemeProvider } from "@mui/material";
 function AppInner() {
     const token = localStorage.getItem("AccessToken");
     const { login, setLoading } = usePrincipalState();
-    const theme = createTheme();
+    const theme = createTheme({
+        components: {
+            MuiButtonBase: {
+                defaultProps: {
+                    disableRipple: true,
+                },
+            },
+        },
+    });
     const {
         data: response,
         error,

@@ -1,11 +1,4 @@
-import {
-    Avatar,
-    Backdrop,
-    CircularProgress,
-    Box,
-    IconButton,
-    Typography,
-} from "@mui/material";
+import { Avatar, Backdrop, CircularProgress, Box, IconButton, Typography } from "@mui/material";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToastStore } from "../../store/useToastStore";
 import { useRef, useState } from "react";
@@ -52,20 +45,14 @@ export default function ProfileHeader({ user }) {
     const onClickFileHandler = () => {
         setIsUploading(true);
 
-        const imageRef = ref(
-            storage,
-            `profile-img/${uuid()}_${pendingFile.name.split(".").pop()}`,
-        );
+        const imageRef = ref(storage, `profile-img/${uuid()}_${pendingFile.name.split(".").pop()}`);
         const uploadTask = uploadBytesResumable(imageRef, pendingFile);
 
-        // 업로드 상태 변화를 감지하는 이벤트 리스너를 등록
         uploadTask.on(
             "state_changed",
             (snapshot) => {
-                // const progressPercent = Math.round(
-                //     (snapshot.bytesTransferred / snapshot.totalBytes) * 100,
-                // );
-                // setProgress(progressPercent);
+                const progressPercent = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+                setProgress(progressPercent);
             },
             (error) => {
                 show(error.message);
@@ -73,9 +60,7 @@ export default function ProfileHeader({ user }) {
             },
             async () => {
                 try {
-                    const downloadUrl = await getDownloadURL(
-                        uploadTask.snapshot.ref,
-                    );
+                    const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
                     changeProfileImgMutation.mutate({
                         userId: user.userId,
                         profileImg: downloadUrl,
@@ -98,32 +83,28 @@ export default function ProfileHeader({ user }) {
                 display: "flex",
                 alignItems: "center",
                 gap: 1.5,
-            }}>
+            }}
+        >
             <Box sx={{ position: "relative", display: "inline-block" }}>
                 <IconButton
                     component="label"
                     sx={{
                         p: 0,
                         borderRadius: "50%",
-                    }}>
+                    }}
+                >
                     <Avatar
                         src={user?.profileImg}
-                        alt="profileImg"
+                        alt="profile"
                         sx={{
-                            width: 72,
-                            height: 72,
+                            width: 56,
+                            height: 56,
                             bgcolor: "grey.200",
                             "& img": { objectFit: "cover" },
                         }}
                     />
 
-                    <input
-                        hidden
-                        type="file"
-                        accept="image/*"
-                        ref={imgInputRef}
-                        onChange={onChangeFileHandler}
-                    />
+                    <input hidden type="file" accept="image/*" ref={imgInputRef} onChange={onChangeFileHandler} />
                 </IconButton>
 
                 <Box
@@ -140,10 +121,9 @@ export default function ProfileHeader({ user }) {
                         justifyContent: "center",
                         border: "1px solid #ddd",
                         pointerEvents: "none",
-                    }}>
-                    <CameraAltOutlinedIcon
-                        sx={{ fontSize: 16, color: "grey.700" }}
-                    />
+                    }}
+                >
+                    <CameraAltOutlinedIcon sx={{ fontSize: 16, color: "grey.700" }} />
                 </Box>
             </Box>
 
@@ -153,35 +133,28 @@ export default function ProfileHeader({ user }) {
                     display: "flex",
                     flexDirection: "column",
                     gap: 0.3,
-                }}>
-                <Typography
-                    sx={{ fontSize: 22, fontWeight: 800, lineHeight: 1.1 }}>
-                    {user?.username}
-                </Typography>
+                }}
+            >
+                <Typography sx={{ fontSize: 22, fontWeight: 800, lineHeight: 1.1, color: "#fff" }}>{user?.username}</Typography>
 
                 <Typography
                     sx={{
                         fontSize: 13,
-                        color: "text.secondary",
+                        color: "#fff",
                         whiteSpace: "nowrap",
                         overflow: "hidden",
                         textOverflow: "ellipsis",
-                    }}>
+                    }}
+                >
                     {user?.gender} • {city} {district}
                 </Typography>
 
-                <Typography sx={{ fontSize: 12, color: "text.secondary" }}>
+                <Typography sx={{ fontSize: 12, color: "#fff" }}>
                     {user?.height}cm / {user?.weight}kg
                 </Typography>
             </Box>
 
-            <DialogComponent
-                open={openChange}
-                setOpen={setOpenChange}
-                title={"프로필 이미지 변경"}
-                content={"프로필 이미지를 변경하시겠습니까?"}
-                onClick={onClickFileHandler}
-            />
+            <DialogComponent open={openChange} setOpen={setOpenChange} title={"프로필 이미지 변경"} content={"프로필 이미지를 변경하시겠습니까?"} onClick={onClickFileHandler} />
 
             <Backdrop open={isUploading} sx={{ zIndex: 2000 }}>
                 <CircularProgress />

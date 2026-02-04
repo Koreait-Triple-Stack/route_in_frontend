@@ -11,3 +11,7 @@ export const getTodayRecommendationRequest = async (userId) => {
 export const getAIRespRequest = async (data) => {
     return await instance.post("/ai/question", data);
 };
+
+export const getRecommendationCourseRequest = async () => {
+    return await instance.get("/ai/recommend/course");
+};

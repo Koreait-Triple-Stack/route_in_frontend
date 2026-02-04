@@ -1,4 +1,3 @@
-import React, { useEffect } from "react";
 import {
     Box,
     Button,
@@ -7,30 +6,34 @@ import {
     Grid,
     Stack,
     Typography,
-    Card,
-    CardContent,
 } from "@mui/material";
-import { useLocation, useNavigate, useNavigationType } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import MapRoundedIcon from "@mui/icons-material/MapRounded";
 import AutoAwesomeRoundedIcon from "@mui/icons-material/AutoAwesomeRounded";
 import WhatshotRoundedIcon from "@mui/icons-material/WhatshotRounded";
 import FavoriteRoundedIcon from "@mui/icons-material/FavoriteRounded";
 import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
 import { usePrincipalState } from "../../store/usePrincipalState";
+import SigninDialog from "./SigninDialog";
+import { useEffect, useState } from "react";
+import PreviewCard from "./PreviewCard";
+import FeatureMini from "./FeatureMini";
 
 export default function LandingPage() {
     const navigate = useNavigate();
     const { isLoggedIn } = usePrincipalState();
+    const [openDialog, setOpenDialog] = useState();
 
-    if (isLoggedIn) {
-        navigate("/main");
-    }
+    useEffect(() => {
+        if (isLoggedIn) {
+            navigate("/main");
+        }
+    }, [isLoggedIn]);
 
     return (
-        <Container sx={{ py: { xs: 6, md: 9 } }}>
+        <Container sx={{ py: { xs: 4, md: 6 } }}>
             <Grid container spacing={4} alignItems="center">
-                {/* 좌측 텍스트 */}
-                <Grid item xs={12} md={6}>
+                <Grid>
                     <Stack spacing={2}>
                         <Stack
                             direction="row"
@@ -96,24 +99,31 @@ export default function LandingPage() {
                             <Button
                                 size="large"
                                 variant="contained"
-                                onClick={() => navigate("/oauth2/signin")}
+                                onClick={() => setOpenDialog(true)}
                                 endIcon={<ArrowForwardRoundedIcon />}
-                                sx={primaryBtn}>
+                                sx={{
+                                    py: 1.6,
+                                    px: 2.4,
+                                    borderRadius: "16px",
+                                    fontWeight: 900,
+                                    background:
+                                        "linear-gradient(135deg, #2563eb, #1d4ed8)",
+                                    boxShadow:
+                                        "0 16px 40px rgba(37,99,235,0.18)",
+                                    "&:hover": {
+                                        transform: "translateY(-2px)",
+                                        boxShadow:
+                                            "0 20px 50px rgba(37,99,235,0.24)",
+                                    },
+                                    transition: "all .18s ease",
+                                }}>
                                 로그인하고 시작
-                            </Button>
-                            <Button
-                                size="large"
-                                variant="outlined"
-                                onClick={() => navigate("/oauth2/signup")}
-                                sx={secondaryBtn}>
-                                회원가입
                             </Button>
                         </Stack>
                     </Stack>
                 </Grid>
 
-                {/* 우측 카드 프리뷰 */}
-                <Grid item xs={12} md={6}>
+                <Grid>
                     <Stack spacing={2}>
                         <PreviewCard />
                         <Stack
@@ -133,120 +143,12 @@ export default function LandingPage() {
                     </Stack>
                 </Grid>
             </Grid>
+
+            <SigninDialog
+                openDialog={openDialog}
+                setOpenDialog={setOpenDialog}
+            />
         </Container>
-    );
-}
-
-function PreviewCard() {
-    return (
-        <Card
-            sx={{
-                borderRadius: "24px",
-                backgroundColor: "rgba(255,255,255,0.75)",
-                border: "1px solid rgba(15,23,42,0.10)",
-                boxShadow: "0 20px 60px rgba(15,23,42,0.10)",
-                overflow: "hidden",
-            }}>
-            <CardContent sx={{ p: 2.4 }}>
-                <Stack
-                    direction="row"
-                    alignItems="center"
-                    justifyContent="space-between">
-                    <Stack spacing={0.2}>
-                        <Typography sx={{ fontWeight: 1000 }}>
-                            오늘의 추천 코스
-                        </Typography>
-                        <Typography
-                            variant="caption"
-                            sx={{ color: "rgba(15,23,42,0.60)" }}>
-                            서울 · 한강 러닝
-                        </Typography>
-                    </Stack>
-                    <Chip
-                        size="small"
-                        label="NEW"
-                        sx={{
-                            fontWeight: 900,
-                            color: "#166534",
-                            bgcolor: "rgba(34,197,94,0.15)",
-                            border: "1px solid rgba(34,197,94,0.25)",
-                        }}
-                    />
-                </Stack>
-
-                <Box
-                    sx={{
-                        mt: 2,
-                        height: 190,
-                        borderRadius: "18px",
-                        border: "1px solid rgba(15,23,42,0.10)",
-                        background:
-                            "radial-gradient(700px 280px at 20% 30%, rgba(37,99,235,0.16), transparent 65%)," +
-                            "radial-gradient(600px 260px at 70% 50%, rgba(34,197,94,0.14), transparent 60%)," +
-                            "linear-gradient(135deg, rgba(255,255,255,0.8), rgba(248,250,252,0.9))",
-                    }}
-                />
-                <Stack
-                    direction="row"
-                    spacing={1}
-                    flexWrap="wrap"
-                    useFlexGap
-                    sx={{ mt: 2 }}>
-                    {[
-                        "거리 6.2km",
-                        "예상 38분",
-                        "난이도 보통",
-                        "야경 추천",
-                    ].map((t) => (
-                        <Chip
-                            key={t}
-                            label={t}
-                            sx={{
-                                bgcolor: "rgba(15,23,42,0.04)",
-                                border: "1px solid rgba(15,23,42,0.10)",
-                                fontWeight: 800,
-                            }}
-                        />
-                    ))}
-                </Stack>
-            </CardContent>
-        </Card>
-    );
-}
-
-function FeatureMini({ icon, title, desc }) {
-    return (
-        <Card
-            sx={{
-                flex: 1,
-                borderRadius: "18px",
-                backgroundColor: "rgba(255,255,255,0.75)",
-                border: "1px solid rgba(15,23,42,0.10)",
-                boxShadow: "0 14px 40px rgba(15,23,42,0.08)",
-            }}>
-            <CardContent sx={{ p: 2 }}>
-                <Box
-                    sx={{
-                        width: 40,
-                        height: 40,
-                        borderRadius: "14px",
-                        display: "grid",
-                        placeItems: "center",
-                        background:
-                            "linear-gradient(135deg, rgba(37,99,235,0.16), rgba(34,197,94,0.14))",
-                        border: "1px solid rgba(15,23,42,0.10)",
-                        mb: 1,
-                    }}>
-                    {icon}
-                </Box>
-                <Typography sx={{ fontWeight: 1000 }}>{title}</Typography>
-                <Typography
-                    variant="body2"
-                    sx={{ color: "rgba(15,23,42,0.68)", lineHeight: 1.6 }}>
-                    {desc}
-                </Typography>
-            </CardContent>
-        </Card>
     );
 }
 
@@ -254,28 +156,4 @@ const chipStyle = {
     bgcolor: "rgba(15,23,42,0.04)",
     border: "1px solid rgba(15,23,42,0.10)",
     fontWeight: 800,
-};
-
-const primaryBtn = {
-    py: 1.6,
-    px: 2.4,
-    borderRadius: "16px",
-    fontWeight: 900,
-    background: "linear-gradient(135deg, #2563eb, #1d4ed8)",
-    boxShadow: "0 16px 40px rgba(37,99,235,0.18)",
-    "&:hover": {
-        transform: "translateY(-2px)",
-        boxShadow: "0 20px 50px rgba(37,99,235,0.24)",
-    },
-    transition: "all .18s ease",
-};
-
-const secondaryBtn = {
-    py: 1.6,
-    px: 2.4,
-    borderRadius: "16px",
-    fontWeight: 900,
-    borderWidth: "1.5px",
-    "&:hover": { borderWidth: "1.5px", transform: "translateY(-2px)" },
-    transition: "all .18s ease",
 };

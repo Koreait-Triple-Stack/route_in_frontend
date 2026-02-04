@@ -1,16 +1,65 @@
-# React + Vite
+# 🎨 Route-In Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+운동 커뮤니티 웹 서비스 Route-In의 프론트엔드 레포지토리입니다.
 
-Currently, two official plugins are available:
+React 기반으로 UI/UX 구현 및 실시간 채팅, 지도, 알림 기능을 담당합니다.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## 🛠 Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React
+- MUI
+- React Query
+- Axios
+- WebSocket
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## ⭐ 주요 기능
+
+### 💬 실시간 채팅
+- WebSocket 기반 메시지 송수신
+- unread 메시지 표시
+- 커서 기반 무한 스크롤
+
+### 🔔 알림
+- Snackbar 실시간 알림
+- 클릭 시 해당 페이지 이동
+
+### 🗺 러닝 코스
+- Kakao Map 기반 지도
+- Polyline / Marker 렌더링
+- 즐겨찾기 기능
+
+### 📰 게시글
+- CRUD
+- 댓글 / 대댓글
+- 추천
+- 태그 / 지역 / 거리 필터
+
+### 📅 주간 루틴
+- 요일별 운동 체크
+- 수정 기능
+
+### 🤖 AI 운동 추천
+- 질문 / 답변 UI
+- 추천 결과 표시
+
+### 📊 인바디 그래프
+- 체중 / 골격근 / 체지방 변화 시각화
+
+---
+
+## 📂 폴더 구조 (요약)
+
+src
+|-apis
+|-components
+|-constants
+|-hooks
+|-pages
+|-routers
+∟ store
+
+
