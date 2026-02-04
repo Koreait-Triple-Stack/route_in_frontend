@@ -42,6 +42,9 @@ function MenuModal({
             queryClient.invalidateQueries({
                 queryKey: ["getRoomListByUserIdRequest", principal.userId],
             });
+            queryClient.invalidateQueries({
+                queryKey: ["countUnreadChatByUserIdRequest", principal.userId],
+            });
         },
         onError: (resp) => {
             show(resp.message, "error");
@@ -198,7 +201,7 @@ function MenuModal({
                 </MenuItem>
                 <MenuItem onClick={handleMute}>
                     채팅방 알림{" "}
-                    {selectedRoom?.muteNotification ? "끄기" : "켜기"}
+                    {selectedRoom?.muteNotification ? "켜기" : "끄기"}
                 </MenuItem>
                 <Divider />
                 <MenuItem

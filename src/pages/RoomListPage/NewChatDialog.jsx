@@ -16,7 +16,7 @@ import {
     getFollowingUserList,
 } from "../../apis/follow/followService";
 import SearchIcon from "@mui/icons-material/Search";
-import { Stack } from "@mui/system";
+import { fontSize, Stack } from "@mui/system";
 import FollowUserList from "./FollowUserList";
 import { useMutation } from "@tanstack/react-query";
 import { addRoomRequest } from "../../apis/chat/chatApi";
@@ -25,6 +25,9 @@ import { useToastStore } from "../../store/useToastStore";
 import { usePrincipalState } from "../../store/usePrincipalState";
 import AddIcon from "@mui/icons-material/Add";
 import { BUTTON_COLOR } from "../../constants/design";
+import { NAV_H } from "../../components/BasicBottomNav";
+import { RiChatAiLine, RiChatSmileAiLine } from "react-icons/ri";
+import { HiOutlineChat } from "react-icons/hi";
 
 function NewChatDialog({ isNewChat, setIsNewChat }) {
     const { show } = useToastStore();
@@ -71,7 +74,7 @@ function NewChatDialog({ isNewChat, setIsNewChat }) {
                 sx={{
                     position: "fixed",
                     right: 16,
-                    bottom: 56 + 16,
+                    bottom: NAV_H + 20,
                     zIndex: 1300,
                     px: 1,
                     pointerEvents: "none",
@@ -90,9 +93,8 @@ function NewChatDialog({ isNewChat, setIsNewChat }) {
                             bgcolor: BUTTON_COLOR,
                             color: "#fff",
                             boxShadow: "0 12px 30px rgba(0,0,0,0.18)",
-                            // "&:hover": { bgcolor: "primary.dark" },
                         }}>
-                        <AddIcon />
+                        <HiOutlineChat size={26} />
                     </Fab>
                 </Box>
             </Box>

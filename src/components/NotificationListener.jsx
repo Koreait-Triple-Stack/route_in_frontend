@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { usePrincipalState } from "../store/usePrincipalState";
 import { useNotificationWS } from "../hooks/useNotificationWS";
@@ -40,12 +40,10 @@ function NotificationListener() {
             const payloadRoomId = payload?.roomId ?? payload?.data?.roomId;
 
             if (payloadType === "CHAT_MESSAGE") {
-                // 1) 채팅목록 갱신(방 밖에서도)
                 queryClient.invalidateQueries({
                     queryKey: ["getRoomListByUserIdRequest", principal.userId],
                 });
 
-                // 2) 내가 그 방 보고 있으면 메시지 리스트도 갱신
                 if (
                     payloadRoomId != null &&
                     activeRoomId != null &&
@@ -58,7 +56,6 @@ function NotificationListener() {
                         ],
                     });
 
-                    // ✅ 방 안이면 토스트는 안 띄우고 종료
                     return;
                 }
             }
@@ -121,7 +118,6 @@ function NotificationListener() {
                 return;
             }
 
-            // ✅ 2) read가 아닌 이벤트만: "현재 보고 있는 방"이면 스낵바만 suppress
             if (
                 payloadRoomId != null &&
                 activeRoomId != null &&
@@ -131,7 +127,6 @@ function NotificationListener() {
             }
 
             if (payloadType === "NOTIFICATION") {
-                // --- 여기서부터는 스낵바 띄우는 일반 알림 처리 ---
                 const id = payload?.notificationId ?? crypto.randomUUID();
                 const title = payload?.title ?? "새 알림";
                 const message = payload?.message ?? "새 알림";
@@ -221,12 +216,10 @@ function NotificationListener() {
                         alignItems: "center",
                         gap: 1.5,
                     }}>
-                    {/* 프로필 이미지 */}
                     <Avatar src={profileImg} sx={{ width: 30, height: 30 }}>
                         {!!profileImg && ""}
                     </Avatar>
 
-                    {/* 제목 + 내용 */}
                     <Box>
                         <Typography fontSize={14} fontWeight={600}>
                             {title || "새 알림"}

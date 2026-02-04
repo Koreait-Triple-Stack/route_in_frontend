@@ -3,7 +3,6 @@ import BasicBottomNav, { NAV_H } from "./BasicBottomNav";
 import { useLocation } from "react-router-dom";
 import LayoutHeader, { HEADER_H } from "./LayoutHeader";
 
-
 export default function AppLayout({ children }) {
     const location = useLocation();
     const isChatRoom = location.pathname.includes("/chat/room");
@@ -12,8 +11,8 @@ export default function AppLayout({ children }) {
         <Box
             sx={{
                 height: "100svh",
-                // ✅ 앱 배경도 깔끔하게 (밝은 톤)
                 background: "linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)",
+                overflow: "hidden",
             }}>
             {!isChatRoom && <LayoutHeader />}
 
@@ -21,12 +20,13 @@ export default function AppLayout({ children }) {
                 <Box
                     id="app-scroll"
                     sx={{
+                        "--header-offset": `${HEADER_H}px`,
                         height: "100%",
+                        minHeight: 0,
                         overflowY: "auto",
-                        pb: `${NAV_H}px`,
-                        // 헤더가 fixed 라면 pt로 밀어줘야 함 (LayoutHeader 구현에 따라)
-                        pt: !isChatRoom ? `${HEADER_H}px` : 0,
-
+                        pb: `${NAV_H + 20}px`,
+                        pt: !isChatRoom ? "var(--header-offset)" : 0,
+                        transition: "padding-top 0s",
                         msOverflowStyle: "none",
                         scrollbarWidth: "none",
                         "&::-webkit-scrollbar": { display: "none" },
@@ -35,7 +35,6 @@ export default function AppLayout({ children }) {
                 </Box>
             </Container>
 
-            {/* ✅ 앱에서만 바텀 네비 */}
             {<BasicBottomNav />}
         </Box>
     );

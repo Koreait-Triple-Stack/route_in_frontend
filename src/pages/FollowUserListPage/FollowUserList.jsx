@@ -1,5 +1,3 @@
-// 공통 컴포넌트
-// src/pages/FollowUserListPage/FollowUserList.jsx
 import React, { useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -98,7 +96,6 @@ export default function FollowUserList({
                                             gap: 2,
                                         }}
                                     >
-                                        {/* 왼쪽: 프로필 정보 */}
                                         <Box
                                             sx={{
                                                 display: "flex",
@@ -126,7 +123,6 @@ export default function FollowUserList({
                                             </Box>
                                         </Box>
 
-                                        {/* 팔로우/언팔로우 버튼  */}
                                         {typeof renderRight === "function" ? (
                                             <Box
                                                 onPointerDown={(e) =>

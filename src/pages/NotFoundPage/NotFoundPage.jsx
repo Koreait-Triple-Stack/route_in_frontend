@@ -29,7 +29,6 @@ function NotFoundPage() {
                     overflow: "hidden",
                     bgcolor: "#F7FAFF",
                 }}>
-                {/* 배경 포인트 원 */}
                 <Box
                     sx={{
                         position: "absolute",
