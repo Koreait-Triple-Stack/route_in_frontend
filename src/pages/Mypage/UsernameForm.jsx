@@ -1,7 +1,18 @@
 import React, { useState } from "react";
-import { TextField, Button, Dialog, DialogTitle, DialogContent, DialogActions, InputAdornment } from "@mui/material";
+import {
+    TextField,
+    Button,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    InputAdornment,
+} from "@mui/material";
 import { useToastStore } from "../../store/useToastStore";
-import { changeUsername, isDuplicatedUsername } from "../../apis/account/accountService";
+import {
+    changeUsername,
+    isDuplicatedUsername,
+} from "../../apis/account/accountService";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const UsernameForm = ({ userId, onClose }) => {
@@ -9,7 +20,7 @@ const UsernameForm = ({ userId, onClose }) => {
     const { show } = useToastStore();
     const [username, setUsername] = useState("");
     const [isDuplicated, setIsDuplicated] = useState(false);
-    const [finalName, setFinalName] = useState("")
+    const [finalName, setFinalName] = useState("");
 
     const handleChange = (e) => {
         setUsername(e.target.value);
@@ -19,7 +30,8 @@ const UsernameForm = ({ userId, onClose }) => {
     };
 
     const updateMutation = useMutation({
-        mutationFn: (username) => changeUsername({ userId: userId, username: username }),
+        mutationFn: (username) =>
+            changeUsername({ userId: userId, username: username }),
         onSuccess: (res) => {
             queryClient.invalidateQueries(["getUserByUserId", userId]);
             show(res.message, "success");
@@ -53,7 +65,11 @@ const UsernameForm = ({ userId, onClose }) => {
                     InputProps={{
                         endAdornment: (
                             <InputAdornment position="end">
-                                <Button onClick={duplicatedHandler} disabled={isDuplicated}>중복확인</Button>
+                                <Button
+                                    onClick={duplicatedHandler}
+                                    disabled={isDuplicated}>
+                                    중복확인
+                                </Button>
                             </InputAdornment>
                         ),
                     }}
@@ -64,7 +80,10 @@ const UsernameForm = ({ userId, onClose }) => {
                 <Button variant="outlined" onClick={onClose}>
                     취소
                 </Button>
-                <Button variant="contained" onClick={() => updateMutation.mutate(username)} disabled={!isDuplicated || username !== finalName}>
+                <Button
+                    variant="contained"
+                    onClick={() => updateMutation.mutate(username)}
+                    disabled={!isDuplicated || username !== finalName}>
                     변경 완료
                 </Button>
             </DialogActions>

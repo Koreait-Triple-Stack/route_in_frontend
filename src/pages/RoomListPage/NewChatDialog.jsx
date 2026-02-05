@@ -16,17 +16,15 @@ import {
     getFollowingUserList,
 } from "../../apis/follow/followService";
 import SearchIcon from "@mui/icons-material/Search";
-import { fontSize, Stack } from "@mui/system";
+import { Stack } from "@mui/system";
 import FollowUserList from "./FollowUserList";
 import { useMutation } from "@tanstack/react-query";
 import { addRoomRequest } from "../../apis/chat/chatApi";
 import { useNavigate } from "react-router-dom";
 import { useToastStore } from "../../store/useToastStore";
 import { usePrincipalState } from "../../store/usePrincipalState";
-import AddIcon from "@mui/icons-material/Add";
 import { BUTTON_COLOR } from "../../constants/design";
 import { NAV_H } from "../../components/BasicBottomNav";
-import { RiChatAiLine, RiChatSmileAiLine } from "react-icons/ri";
 import { HiOutlineChat } from "react-icons/hi";
 
 function NewChatDialog({ isNewChat, setIsNewChat }) {
@@ -183,6 +181,7 @@ function NewChatDialog({ isNewChat, setIsNewChat }) {
 
                     <Stack spacing={2}></Stack>
                 </DialogContent>
+
                 <DialogActions sx={{ p: 2 }}>
                     <Stack direction="row" spacing={2}>
                         <Button

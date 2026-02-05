@@ -1,6 +1,14 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from "@mui/material";
 
-function DialogComponent({open, setOpen, title, content, onClick}) {
+function DialogComponent({
+    open,
+    setOpen,
+    title,
+    content,
+    onClick,
+    color = "primary",
+    ment = "확인",
+}) {
     return (
         <Dialog
             open={open}
@@ -22,6 +30,7 @@ function DialogComponent({open, setOpen, title, content, onClick}) {
                 <Button
                     variant="outlined"
                     onClick={() => setOpen(false)}
+                    color={color}
                     sx={{ borderRadius: 2, py: 1.1, fontWeight: 800 }}>
                     취소
                 </Button>
@@ -29,11 +38,12 @@ function DialogComponent({open, setOpen, title, content, onClick}) {
                 <Button
                     variant="contained"
                     onClick={() => {
-                        onClick()
+                        onClick();
                         setOpen(false);
                     }}
+                    color={color}
                     sx={{ borderRadius: 2, py: 1.1, fontWeight: 900 }}>
-                    확인
+                    {ment}
                 </Button>
             </DialogActions>
         </Dialog>

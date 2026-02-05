@@ -8,7 +8,7 @@ import { getBoardListInfinite } from "../../apis/board/boardService";
 import { ClipLoader } from "react-spinners";
 import WriteDial from "./WriteDial";
 import Loading from "../../components/Loading";
-import { List, Paper, Typography } from "@mui/material";
+import { Collapse, List, Paper, Typography } from "@mui/material";
 function BoardListPage() {
     const [form, setForm] = useState({
         type: "ALL",
@@ -73,9 +73,11 @@ function BoardListPage() {
 
     return (
         <Container>
-            <Typography sx={{ fontSize: 22, fontWeight: 900, mb: 1, px: 0.8 }}>
+            <Typography
+                sx={{ fontSize: 22, fontWeight: 900, mb: 1, px: 1, py: 2 }}>
                 게시판
             </Typography>
+            
             <TypeBox
                 checked={checked}
                 setChecked={setChecked}
@@ -84,9 +86,9 @@ function BoardListPage() {
                 setTags={setTags}
             />
 
-            {checked && (
+            <Collapse in={checked}>
                 <FilterBox form={form} setForm={setForm} setTags={setTags} />
-            )}
+            </Collapse>
 
             <List sx={{ p: 0 }}>
                 {boardList.map((board) => (
@@ -107,30 +109,28 @@ function BoardListPage() {
                         justifyContent: "center",
                         mt: 2,
                         mb: 1,
-                    }}
-                >
+                    }}>
                     <Paper
                         elevation={0}
                         sx={{
-                            px: 27,
                             py: 2,
+                            width: "100%",
                             borderRadius: "999px",
                             border: "1px solid",
                             borderColor: "divider",
                             bgcolor: "background.paper",
                             boxShadow: "0 6px 18px rgba(15,23,42,0.08)",
                             display: "flex",
+                            justifyContent: "center",
                             alignItems: "center",
                             gap: 0.8,
-                        }}
-                    >
+                        }}>
                         <Typography
                             sx={{
                                 fontWeight: 800,
                                 fontSize: 13,
                                 color: "text.secondary",
-                            }}
-                        >
+                            }}>
                             마지막 페이지입니다
                         </Typography>
                     </Paper>
@@ -141,5 +141,4 @@ function BoardListPage() {
         </Container>
     );
 }
-
 export default BoardListPage;

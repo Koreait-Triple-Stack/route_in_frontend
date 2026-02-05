@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
     LineChart,
     Line,
@@ -30,7 +30,11 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { usePrincipalState } from "../../store/usePrincipalState";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Container } from "@mui/system";
-import { addInBody, deleteInBody, getInBodyListByUserId } from "../../apis/inBody/inBodyService";
+import {
+    addInBody,
+    deleteInBody,
+    getInBodyListByUserId,
+} from "../../apis/inBody/inBodyService";
 import Loading from "../../components/Loading";
 import { useToastStore } from "../../store/useToastStore";
 
@@ -51,7 +55,7 @@ const CustomizedLabel = (props) => {
 };
 
 export default function InbodyChartWithActions() {
-    const {show} = useToastStore();
+    const { show } = useToastStore();
     const { principal } = usePrincipalState();
     const [addOpen, setAddOpen] = useState(false);
     const [deleteOpen, setDeleteOpen] = useState(false);
@@ -64,10 +68,7 @@ export default function InbodyChartWithActions() {
         monthDt: "",
     });
 
-    const {
-        data: response,
-        isLoading,
-    } = useQuery({
+    const { data: response, isLoading } = useQuery({
         queryFn: () => getInBodyListByUserId(principal.userId),
         queryKey: ["getInBodyListByUserId", principal.userId],
         staleTime: 30000,
@@ -76,7 +77,10 @@ export default function InbodyChartWithActions() {
     const addMutation = useMutation({
         mutationFn: addInBody,
         onSuccess: (resp) => {
-            queryClient.invalidateQueries(["getInBodyListByUserId", principal.userId])
+            queryClient.invalidateQueries([
+                "getInBodyListByUserId",
+                principal.userId,
+            ]);
             show(resp.message, "success");
             handleAddClose();
         },
@@ -88,7 +92,10 @@ export default function InbodyChartWithActions() {
     const deleteMutation = useMutation({
         mutationFn: deleteInBody,
         onSuccess: (resp) => {
-            queryClient.invalidateQueries(["getInBodyListByUserId", principal.userId])
+            queryClient.invalidateQueries([
+                "getInBodyListByUserId",
+                principal.userId,
+            ]);
             show(resp.message, "success");
             handleAddClose();
             handleDeleteClose();
@@ -119,7 +126,12 @@ export default function InbodyChartWithActions() {
     };
 
     const handleAddData = () => {
-        if (!inputValues.bodyWeight || !inputValues.skeletalMuscleMass || !inputValues.bodyFatMass || !inputValues.monthDt) {
+        if (
+            !inputValues.bodyWeight ||
+            !inputValues.skeletalMuscleMass ||
+            !inputValues.bodyFatMass || 
+            !inputValues.monthDt
+        ) {
             show("모든 정보를 입력해주세요.", "error");
             return;
         }
@@ -130,20 +142,19 @@ export default function InbodyChartWithActions() {
             skeletalMuscleMass: inputValues.skeletalMuscleMass,
             bodyFatMass: inputValues.bodyFatMass,
             monthDt: inputValues.monthDt,
-        }
+        };
 
-        addMutation.mutate(data)
+        addMutation.mutate(data);
     };
 
     const handleDeleteData = (inBodyId) => {
         const data = {
             inBodyId: inBodyId,
             userId: principal?.userId,
-        }
+        };
 
-        deleteMutation.mutate(data)
+        deleteMutation.mutate(data);
     };
-
 
     if (isLoading) return <Loading />;
 
@@ -159,7 +170,7 @@ export default function InbodyChartWithActions() {
                 direction="row"
                 justifyContent="space-between"
                 alignItems="center"
-                sx={{ mb: 2 }}>
+                sx={{ my: 2 }}>
                 <Typography variant="h6" sx={{ fontWeight: "bold" }}>
                     인바디 변화 기록
                 </Typography>
@@ -315,7 +326,7 @@ export default function InbodyChartWithActions() {
                         />
                     </Stack>
                 </DialogContent>
-                <DialogActions sx={{p: 3}}>
+                <DialogActions sx={{ p: 3 }}>
                     <Button onClick={handleAddClose} variant="outlined">
                         취소
                     </Button>

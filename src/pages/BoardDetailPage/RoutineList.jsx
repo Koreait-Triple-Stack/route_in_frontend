@@ -1,7 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
 import { Box, Stack } from "@mui/system";
-import { getRoutine } from "../../apis/routine/routineService";
-import Loading from "../../components/Loading";
 import { Chip, Paper, Typography } from "@mui/material";
 
 function RoutineList({ routines }) {
@@ -37,6 +34,7 @@ function RoutineList({ routines }) {
                             variant="outlined"
                             sx={{
                                 p: 2,
+                                borderRadius: 5,
                                 bgcolor: dayRoutines > 0 ? "#f0f7ff" : "white",
                                 borderColor:
                                     dayRoutines > 0

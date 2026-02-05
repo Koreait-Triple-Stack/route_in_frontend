@@ -112,6 +112,7 @@ export default function LayoutHeader({ scrollTargetId = "app-scroll" }) {
                     <Typography
                         sx={{
                             fontWeight: 900,
+                            fontSize: 18,
                             letterSpacing: -0.2,
                             color: "#0f172a",
                         }}>

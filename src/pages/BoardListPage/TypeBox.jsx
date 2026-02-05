@@ -7,11 +7,7 @@ import {
 } from "@mui/material";
 import { Box, Stack } from "@mui/system";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
-import {
-    boardSortSelectSx,
-    boardTypeBtnSx,
-    selectMenuPaperSx,
-} from "../../constants/design";
+import { boardSortSelectSx, boardTypeBtnSx } from "../../constants/design";
 function TypeBox({ checked, setChecked, form, setForm, setTags }) {
     const inputChangeHandler = (e) => {
         setTags([]);
@@ -30,17 +26,14 @@ function TypeBox({ checked, setChecked, form, setForm, setTags }) {
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
+                px: 0.5,
                 pb: 1,
-                pl: 0.8,
-            }}
-        >
+            }}>
             <ToggleButtonGroup
                 value={form.type}
                 size="small"
                 exclusive
-                onChange={inputChangeHandler}
-                sx={{}}
-            >
+                onChange={inputChangeHandler}>
                 <Stack direction={"row"} spacing={0.6}>
                     <ToggleButton name="type" value="ALL" sx={boardTypeBtnSx}>
                         전체
@@ -48,15 +41,13 @@ function TypeBox({ checked, setChecked, form, setForm, setTags }) {
                     <ToggleButton
                         name="type"
                         value="COURSE"
-                        sx={boardTypeBtnSx}
-                    >
+                        sx={boardTypeBtnSx}>
                         러닝코스
                     </ToggleButton>
                     <ToggleButton
                         name="type"
                         value="ROUTINE"
-                        sx={boardTypeBtnSx}
-                    >
+                        sx={boardTypeBtnSx}>
                         운동루틴
                     </ToggleButton>
                 </Stack>
@@ -68,8 +59,7 @@ function TypeBox({ checked, setChecked, form, setForm, setTags }) {
                     justifyContent: "center",
                     alignItems: "center",
                     gap: 1,
-                }}
-            >
+                }}>
                 <FormControl size="small">
                     <Select
                         name="sort"
@@ -77,8 +67,36 @@ function TypeBox({ checked, setChecked, form, setForm, setTags }) {
                         onChange={inputChangeHandler}
                         displayEmpty
                         sx={boardSortSelectSx}
-                        MenuProps={{ PaperProps: { sx: selectMenuPaperSx } }}
-                    >
+                        MenuProps={{
+                            PaperProps: {
+                                sx: {
+                                    mt: 1,
+                                    borderRadius: 2,
+                                    border: "1px solid",
+                                    borderColor: "divider",
+                                    boxShadow:
+                                        "0 10px 24px rgba(15,23,42,0.12)",
+                                    overflow: "hidden",
+                                    "& .MuiList-root": { py: 0.5 },
+                                    "& .MuiMenuItem-root": {
+                                        fontSize: 13,
+                                        px: 1,
+                                        mx: 0.6,
+                                        my: 0.3,
+                                        borderRadius: 1,
+                                        "&:hover": { bgcolor: "action.hover" },
+                                        "&.Mui-selected": {
+                                            bgcolor: "primary.main",
+                                            color: "#fff",
+                                            fontWeight: 800,
+                                            "&:hover": {
+                                                bgcolor: "primary.dark",
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        }}>
                         <MenuItem value="LATEST">최신순</MenuItem>
                         <MenuItem value="RECOMMEND">추천순</MenuItem>
                     </Select>
@@ -89,8 +107,7 @@ function TypeBox({ checked, setChecked, form, setForm, setTags }) {
                     value="checked"
                     selected={checked}
                     onChange={() => setChecked((prev) => !prev)}
-                    sx={boardTypeBtnSx}
-                >
+                    sx={boardTypeBtnSx}>
                     <FilterAltOutlinedIcon />
                 </ToggleButton>
             </Box>

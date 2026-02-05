@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { Box, Typography, Stack } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { getCommentListByBoardId } from "../../apis/comment/commentService";
@@ -70,8 +70,6 @@ function CommentSection({ boardId }) {
                             (child) => !child.isDeleted,
                         );
 
-                        // 2. [렌더링 숨김 로직 개선]
-                        // 원댓글이 삭제되었는데, 살아있는 자식도 없다면? -> 아예 숨김 (NULL 반환)
                         if (comment.isDeleted && !hasLiveChild) {
                             return null;
                         }

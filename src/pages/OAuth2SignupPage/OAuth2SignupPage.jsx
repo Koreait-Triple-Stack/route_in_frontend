@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
     Container,
     Paper,
@@ -11,6 +11,7 @@ import {
     Stack,
     ToggleButtonGroup,
     ToggleButton,
+    Divider,
 } from "@mui/material";
 import { useDaumPostcodePopup } from "react-daum-postcode";
 import { oAuth2Signup } from "../../apis/oAuth2/oAuth2Service";
@@ -21,15 +22,15 @@ const OAuth2SignupPage = () => {
     const [searchParams] = useSearchParams();
     const provider = searchParams.get("provider");
     const providerUserId = searchParams.get("providerUserId");
+    const navigate = useNavigate();
+
     const mutation = useMutation({
         mutationFn: (data) => oAuth2Signup(data),
         onSuccess: (response) => {
             alert(response.message);
             window.location.href = "/";
         },
-        onError: (error) => {
-            alert(error);
-        },
+        onError: (error) => alert(error),
     });
 
     const open = useDaumPostcodePopup();
@@ -53,50 +54,45 @@ const OAuth2SignupPage = () => {
             zipCode: data.zonecode,
             baseAddress: data.address,
         }));
-
-        if (errors.address) {
-            setErrors((prev) => ({ ...prev, address: "" }));
-        }
+        if (errors.address) setErrors((prev) => ({ ...prev, address: "" }));
     };
 
-    const handleAddressSearch = () => {
+    const handleAddressSearch = () =>
         open({ onComplete: handleAddressComplete });
-    };
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         let newValue = value;
 
-        if (name === "birthDate") {
+        if (name === "birthDate")
             newValue = value.replace(/[^0-9]/g, "").slice(0, 8);
-        }
+        if (name === "height" || name === "weight")
+            newValue = value.replace(/[^0-9]/g, "").slice(0, 3);
 
-        setFormData((prev) => ({
-            ...prev,
-            [name]: newValue,
-        }));
+        setFormData((prev) => ({ ...prev, [name]: newValue }));
+        if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
+    };
 
-        if (errors[name]) {
-            setErrors((prev) => ({ ...prev, [name]: "" }));
-        }
+    const handleGenderChange = (event, newValue) => {
+        if (!newValue) return;
+        setFormData((prev) => ({ ...prev, gender: newValue }));
+        if (errors.gender) setErrors((prev) => ({ ...prev, gender: "" }));
     };
 
     const handleSignup = async () => {
         const newErrors = {};
-
         if (!formData.username.trim())
             newErrors.username = "닉네임을 입력해주세요.";
         if (formData.birthDate.length !== 8)
             newErrors.birthDate = "생년월일 8자리를 입력해주세요.";
         if (!formData.gender) newErrors.gender = "성별을 선택해주세요.";
 
-        if (!formData.zipCode || !formData.baseAddress) {
+        if (!formData.zipCode || !formData.baseAddress)
             newErrors.address = "주소를 검색해주세요.";
-        } else if (!formData.detailAddress.trim()) {
+        else if (!formData.detailAddress.trim())
             newErrors.detailAddress = "상세주소를 입력해주세요.";
-        }
 
-        if (Object.keys(newErrors).length > 0) {
+        if (Object.keys(newErrors).length) {
             setErrors(newErrors);
             return;
         }
@@ -109,10 +105,10 @@ const OAuth2SignupPage = () => {
             username: formData.username,
             birthDate: formattedBirthDate,
             gender: formData.gender,
-            height: Number(formData.height),
-            weight: Number(formData.weight),
-            provider: provider,
-            providerUserId: providerUserId,
+            height: formData.height ? Number(formData.height) : null,
+            weight: formData.weight ? Number(formData.weight) : null,
+            provider,
+            providerUserId,
             address: {
                 zipCode: formData.zipCode,
                 baseAddress: formData.baseAddress,
@@ -121,28 +117,62 @@ const OAuth2SignupPage = () => {
         });
     };
 
-    const Label = ({ children, required }) => (
-        <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: "bold" }}>
-            {children} {required && <span style={{ color: "#ef4444" }}>*</span>}
-        </Typography>
+    const Label = ({ children, required, helper }) => (
+        <Box
+            sx={{
+                display: "flex",
+                alignItems: "baseline",
+                justifyContent: "space-between",
+                mb: 1,
+            }}>
+            <Typography
+                variant="subtitle2"
+                sx={{ fontWeight: 900, letterSpacing: -0.2 }}>
+                {children}{" "}
+                {required && (
+                    <Box component="span" sx={{ color: "error.main" }}>
+                        *
+                    </Box>
+                )}
+            </Typography>
+            {helper && (
+                <Typography variant="caption" sx={{ color: "text.disabled" }}>
+                    {helper}
+                </Typography>
+            )}
+        </Box>
     );
 
     return (
-        <Container>
+        <Container maxWidth="sm" sx={{ py: 3 }}>
             <Paper
                 elevation={0}
-                sx={{ p: 4, borderRadius: 4, border: "1px solid #eee" }}>
-                <Typography
-                    variant="h5"
-                    align="center"
-                    sx={{ mb: 4, fontWeight: 700 }}>
-                    회원가입
-                </Typography>
+                sx={{
+                    p: 3.5,
+                    borderRadius: 4,
+                    border: "1px solid",
+                    borderColor: "divider",
+                    bgcolor: "background.paper",
+                }}>
+                <Box sx={{ textAlign: "center", mb: 2.5 }}>
+                    <Typography
+                        variant="h5"
+                        sx={{ fontWeight: 900, letterSpacing: -0.4 }}>
+                        회원가입
+                    </Typography>
+                    <Typography
+                        variant="body2"
+                        sx={{ color: "text.secondary", mt: 0.6 }}>
+                        기본 정보를 입력하면 가입이 완료돼요
+                    </Typography>
+                </Box>
+
+                <Divider sx={{ mb: 3 }} />
 
                 <Box
                     component="form"
                     noValidate
-                    sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                    sx={{ display: "flex", flexDirection: "column", gap: 2.6 }}>
                     <Box>
                         <Label required>닉네임</Label>
                         <TextField
@@ -153,30 +183,34 @@ const OAuth2SignupPage = () => {
                             onChange={handleInputChange}
                             error={!!errors.username}
                             helperText={errors.username}
-                            variant="outlined"
                             size="small"
                             sx={{
-                                "& .MuiOutlinedInput-root": { borderRadius: 2 },
+                                "& .MuiOutlinedInput-root": {
+                                    borderRadius: 2.5,
+                                },
                             }}
                         />
                     </Box>
 
                     <Box>
-                        <Label required>생년월일</Label>
+                        <Label required helper="예) 19990101">
+                            생년월일
+                        </Label>
                         <TextField
                             fullWidth
                             name="birthDate"
-                            placeholder="예) 19990101"
+                            placeholder="19990101"
                             value={formData.birthDate}
                             onChange={handleInputChange}
                             error={!!errors.birthDate}
                             helperText={errors.birthDate}
-                            variant="outlined"
                             size="small"
-                            sx={{
-                                "& .MuiOutlinedInput-root": { borderRadius: 2 },
-                            }}
                             inputProps={{ inputMode: "numeric", maxLength: 8 }}
+                            sx={{
+                                "& .MuiOutlinedInput-root": {
+                                    borderRadius: 2.5,
+                                },
+                            }}
                         />
                     </Box>
 
@@ -185,45 +219,75 @@ const OAuth2SignupPage = () => {
                         <ToggleButtonGroup
                             value={formData.gender}
                             exclusive
-                            onChange={handleInputChange}>
-                            <Grid container spacing={1}>
-                                <ToggleButton name="gender" value="남성">
-                                    남성
-                                </ToggleButton>
-                                <ToggleButton name="gender" value="여성">
-                                    여성
-                                </ToggleButton>
-                            </Grid>
+                            onChange={handleGenderChange}
+                            fullWidth
+                            sx={{
+                                width: "100%",
+                                gap: 1,
+                                "& .MuiToggleButton-root": {
+                                    flex: 1,
+                                    borderRadius: 2.5,
+                                    py: 1.1,
+                                    fontWeight: 800,
+                                    borderColor: "divider",
+                                },
+                                "& .MuiToggleButton-root.Mui-selected": {
+                                    bgcolor: "primary.main",
+                                    color: "#fff",
+                                    borderColor: "primary.main",
+                                    "&:hover": { bgcolor: "primary.dark" },
+                                },
+                            }}>
+                            <ToggleButton value="남성">남성</ToggleButton>
+                            <ToggleButton value="여성">여성</ToggleButton>
                         </ToggleButtonGroup>
+                        {errors.gender && (
+                            <Typography
+                                variant="caption"
+                                sx={{
+                                    color: "error.main",
+                                    mt: 0.7,
+                                    display: "block",
+                                }}>
+                                {errors.gender}
+                            </Typography>
+                        )}
                     </Box>
+
+                    <Divider sx={{ my: 0.5 }} />
 
                     <Box>
                         <Label required>주소</Label>
-                        <Stack spacing={1}>
+                        <Stack spacing={1.2}>
                             <Stack direction="row" spacing={1}>
                                 <TextField
                                     placeholder="우편번호"
                                     value={formData.zipCode}
-                                    variant="outlined"
                                     onClick={handleAddressSearch}
                                     size="small"
                                     fullWidth
                                     InputProps={{
                                         readOnly: true,
-                                        sx: {
-                                            borderRadius: 2,
-                                            bgcolor: "#f8f9fa",
+                                    }}
+                                    sx={{
+                                        "& .MuiOutlinedInput-root": {
+                                            borderRadius: 2.5,
+                                            bgcolor: "action.hover",
+                                            cursor: "pointer",
                                         },
                                     }}
                                     error={!!errors.address}
                                 />
+
                                 <Button
-                                    variant="outlined"
+                                    variant="contained"
                                     onClick={handleAddressSearch}
                                     sx={{
-                                        borderRadius: 2,
+                                        borderRadius: 2.5,
                                         whiteSpace: "nowrap",
-                                        minWidth: "80px",
+                                        px: 2,
+                                        boxShadow: "none",
+                                        "&:hover": { boxShadow: "none" },
                                     }}>
                                     주소 검색
                                 </Button>
@@ -234,13 +298,17 @@ const OAuth2SignupPage = () => {
                                 placeholder="기본 주소"
                                 onClick={handleAddressSearch}
                                 value={formData.baseAddress}
-                                variant="outlined"
                                 size="small"
-                                InputProps={{
-                                    readOnly: true,
-                                    sx: { borderRadius: 2, bgcolor: "#f8f9fa" },
+                                InputProps={{ readOnly: true }}
+                                sx={{
+                                    "& .MuiOutlinedInput-root": {
+                                        borderRadius: 2.5,
+                                        bgcolor: "action.hover",
+                                        cursor: "pointer",
+                                    },
                                 }}
                                 error={!!errors.address}
+                                helperText={errors.address}
                             />
 
                             <TextField
@@ -249,11 +317,10 @@ const OAuth2SignupPage = () => {
                                 placeholder="상세 주소를 입력해주세요 (예: 101동 101호)"
                                 value={formData.detailAddress}
                                 onChange={handleInputChange}
-                                variant="outlined"
                                 size="small"
                                 sx={{
                                     "& .MuiOutlinedInput-root": {
-                                        borderRadius: 2,
+                                        borderRadius: 2.5,
                                     },
                                 }}
                                 error={!!errors.detailAddress}
@@ -262,68 +329,110 @@ const OAuth2SignupPage = () => {
                         </Stack>
                     </Box>
 
-                    <Box>
-                        <Label>키 (cm)</Label>
-                        <TextField
-                            fullWidth
-                            name="height"
-                            placeholder="예: 175"
-                            value={formData.height}
-                            onChange={handleInputChange}
-                            error={!!errors.height}
-                            helperText={errors.height}
-                            variant="outlined"
-                            size="small"
-                            InputProps={{
-                                endAdornment: (
-                                    <InputAdornment position="end">
-                                        cm
-                                    </InputAdornment>
-                                ),
-                                sx: { borderRadius: 2 },
-                            }}
-                        />
-                    </Box>
+                    <Divider sx={{ my: 0.5 }} />
 
                     <Box>
-                        <Label>몸무게 (kg)</Label>
-                        <TextField
-                            fullWidth
-                            name="weight"
-                            placeholder="예: 70"
-                            value={formData.weight}
-                            onChange={handleInputChange}
-                            error={!!errors.weight}
-                            helperText={errors.weight}
-                            variant="outlined"
-                            size="small"
-                            InputProps={{
-                                endAdornment: (
-                                    <InputAdornment position="end">
-                                        kg
-                                    </InputAdornment>
-                                ),
-                                sx: { borderRadius: 2 },
-                            }}
-                        />
+                        <Typography
+                            sx={{
+                                fontWeight: 900,
+                                letterSpacing: -0.2,
+                                mb: 1,
+                            }}>
+                            선택 정보
+                        </Typography>
+
+                        <Grid container spacing={1.2}>
+                            <Grid item xs={6}>
+                                <Label>키</Label>
+                                <TextField
+                                    fullWidth
+                                    name="height"
+                                    placeholder="175"
+                                    value={formData.height}
+                                    onChange={handleInputChange}
+                                    size="small"
+                                    InputProps={{
+                                        endAdornment: (
+                                            <InputAdornment position="end">
+                                                cm
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                    sx={{
+                                        "& .MuiOutlinedInput-root": {
+                                            borderRadius: 2.5,
+                                        },
+                                    }}
+                                />
+                            </Grid>
+
+                            <Grid item xs={6}>
+                                <Label>몸무게</Label>
+                                <TextField
+                                    fullWidth
+                                    name="weight"
+                                    placeholder="70"
+                                    value={formData.weight}
+                                    onChange={handleInputChange}
+                                    size="small"
+                                    InputProps={{
+                                        endAdornment: (
+                                            <InputAdornment position="end">
+                                                kg
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                    sx={{
+                                        "& .MuiOutlinedInput-root": {
+                                            borderRadius: 2.5,
+                                        },
+                                    }}
+                                />
+                            </Grid>
+                        </Grid>
                     </Box>
 
-                    <Button
-                        fullWidth
-                        variant="contained"
-                        size="large"
-                        onClick={handleSignup}
-                        sx={{
-                            mt: 2,
-                            py: 1.5,
-                            borderRadius: 2,
-                            fontWeight: "bold",
-                            fontSize: "1rem",
-                            bgcolor: "#2563eb",
-                            "&:hover": { bgcolor: "#1d4ed8" },
-                        }}>
-                        가입하기
-                    </Button>
+                    <Box sx={{ display: "flex", gap: 1 }}>
+                        <Button
+                            fullWidth
+                            variant="outlined"
+                            size="large"
+                            onClick={() => navigate("/")}
+                            sx={{
+                                mt: 1,
+                                py: 1.4,
+                                borderRadius: 2.8,
+                                fontWeight: 900,
+                                letterSpacing: -0.2,
+                                boxShadow: "0 12px 28px rgba(37,99,235,0.22)",
+                                "&:hover": {
+                                    boxShadow:
+                                        "0 14px 30px rgba(37,99,235,0.28)",
+                                },
+                            }}>
+                            취소
+                        </Button>
+                        <Button
+                            fullWidth
+                            variant="contained"
+                            size="large"
+                            onClick={handleSignup}
+                            disabled={mutation.isPending}
+                            sx={{
+                                mt: 1,
+                                py: 1.4,
+                                borderRadius: 2.8,
+                                fontWeight: 900,
+                                letterSpacing: -0.2,
+                                boxShadow: "0 12px 28px rgba(37,99,235,0.22)",
+                                "&:hover": {
+                                    boxShadow:
+                                        "0 14px 30px rgba(37,99,235,0.28)",
+                                },
+                            }}>
+                            {mutation.isPending ? "가입 중..." : "가입하기"}
+                        </Button>
+                    </Box>
                 </Box>
             </Paper>
         </Container>

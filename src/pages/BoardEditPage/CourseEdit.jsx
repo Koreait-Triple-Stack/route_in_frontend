@@ -1,6 +1,9 @@
 import { useCourseMap } from "../../hooks/useCourseMap";
 import { useEffect, useState } from "react";
-import { buildUpdatePayload, coordToRegionWithGeocoder } from "../../apis/course/courseMapper";
+import {
+    buildUpdatePayload,
+    coordToRegionWithGeocoder,
+} from "../../apis/course/courseMapper";
 import { Box, Container, Stack } from "@mui/system";
 import { useKakaoPlaceSearch } from "../../hooks/useKakaoPlaceSearch";
 import { Divider, Paper } from "@mui/material";
@@ -8,9 +11,11 @@ import CourseMiniBar from "../../components/Course/CourseMiniBar";
 import CoursePanel from "../../components/Course/CoursePanel";
 import PlaceSearchPanel from "../../components/Course/PlaceSearchPanel";
 import CourseSavePanel from "../../components/Course/CourseSavePanel";
+import { NAV_H } from "../../components/BasicBottomNav";
 
 function CourseEdit({ course, setCourse, isEditing }) {
-    const { mapRef, kakaoObj, points, setPoints, distanceM, map, undo, clear } = useCourseMap();
+    const { mapRef, kakaoObj, points, setPoints, distanceM, map, undo, clear } =
+        useCourseMap();
 
     const [panelOpen, setPanelOpen] = useState(false);
     const [region, setRegion] = useState(null);
@@ -18,7 +23,6 @@ function CourseEdit({ course, setCourse, isEditing }) {
 
     const search = useKakaoPlaceSearch(kakaoObj, map);
 
-    // points 저장
     useEffect(() => {
         if (!course) return;
         setCourseName(course.courseName);
@@ -30,7 +34,6 @@ function CourseEdit({ course, setCourse, isEditing }) {
         );
     }, [course]);
 
-    // center로 이동
     useEffect(() => {
         if (!kakaoObj || !map || !course) return;
 
@@ -50,7 +53,11 @@ function CourseEdit({ course, setCourse, isEditing }) {
         let regionInfo = region;
 
         if (!regionInfo && points[0]) {
-            regionInfo = await coordToRegionWithGeocoder(kakaoObj, points[0].lat, points[0].lng);
+            regionInfo = await coordToRegionWithGeocoder(
+                kakaoObj,
+                points[0].lat,
+                points[0].lng,
+            );
             setRegion(regionInfo);
         }
 
@@ -63,7 +70,7 @@ function CourseEdit({ course, setCourse, isEditing }) {
 
         setCourse(payload);
 
-        isEditing(false)
+        isEditing(false);
     };
 
     return (
@@ -73,17 +80,22 @@ function CourseEdit({ course, setCourse, isEditing }) {
                 top: 0,
                 left: 0,
                 right: 0,
-                bottom: 56, // ✅ 네비 높이만큼 제외
+                bottom: NAV_H + 20,
                 display: "flex",
                 justifyContent: "center",
                 zIndex: 1400,
-            }}
-        >
+            }}>
             <Container disableGutters sx={{ position: "relative" }}>
-                {/* 지도 */}
-                <Box ref={mapRef} sx={{ width: "100%", height: "100%", zIndex: 10, overflow: "hidden" }} />
+                <Box
+                    ref={mapRef}
+                    sx={{
+                        width: "100%",
+                        height: "100%",
+                        zIndex: 10,
+                        overflow: "hidden",
+                    }}
+                />
 
-                {/* 미니바 + 확장 패널 */}
                 <Paper
                     elevation={10}
                     sx={{
@@ -94,9 +106,15 @@ function CourseEdit({ course, setCourse, isEditing }) {
                         width: 360,
                         borderRadius: 2,
                         overflow: "hidden",
-                    }}
-                >
-                    <CourseMiniBar pointsCount={points.length} distanceM={distanceM} onUndo={undo} onClear={clear} panelOpen={panelOpen} onTogglePanel={() => setPanelOpen((v) => !v)} />
+                    }}>
+                    <CourseMiniBar
+                        pointsCount={points.length}
+                        distanceM={distanceM}
+                        onUndo={undo}
+                        onClear={clear}
+                        panelOpen={panelOpen}
+                        onTogglePanel={() => setPanelOpen((v) => !v)}
+                    />
 
                     <CoursePanel open={panelOpen}>
                         <Stack spacing={2} sx={{ p: 2 }}>
@@ -115,7 +133,15 @@ function CourseEdit({ course, setCourse, isEditing }) {
 
                             <Divider />
 
-                            <CourseSavePanel courseName={courseName} setCourseName={setCourseName} onSave={handleUpdate} disabled={courseName.length < 1 || points.length < 2} onCancel={isEditing} />
+                            <CourseSavePanel
+                                courseName={courseName}
+                                setCourseName={setCourseName}
+                                onSave={handleUpdate}
+                                disabled={
+                                    courseName.length < 1 || points.length < 2
+                                }
+                                onCancel={isEditing}
+                            />
                         </Stack>
                     </CoursePanel>
                 </Paper>

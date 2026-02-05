@@ -1,12 +1,24 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Stack } from "@mui/system";
+import { Box, Stack } from "@mui/system";
 import ScheduleItem from "../../components/ScheduleItem";
-import { getRoutine, removeRoutine, updateRoutine } from "../../apis/routine/routineService";
+import {
+    getRoutine,
+    removeRoutine,
+    updateRoutine,
+} from "../../apis/routine/routineService";
 import Loading from "../../components/Loading";
 import ErrorComponent from "../../components/ErrorComponent";
 
 function RoutineList({ userId }) {
-    const dbDays = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
+    const dbDays = [
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "saturday",
+        "sunday",
+    ];
     const dayMap = {
         monday: "월",
         tuesday: "화",
@@ -19,7 +31,11 @@ function RoutineList({ userId }) {
 
     const queryClient = useQueryClient();
 
-    const { data: response, isLoading, error } = useQuery({
+    const {
+        data: response,
+        isLoading,
+        error,
+    } = useQuery({
         queryKey: ["getRoutine", userId],
         queryFn: () => getRoutine(userId),
         staleTime: 30000,
@@ -53,8 +69,12 @@ function RoutineList({ userId }) {
     };
 
     const handleSave = (localRoutines, dayRoutines) => {
-        const finalIds = localRoutines.map((r) => r.routineId).filter((id) => id !== null);
-        const toDelete = dayRoutines.filter((r) => !finalIds.includes(r.routineId));
+        const finalIds = localRoutines
+            .map((r) => r.routineId)
+            .filter((id) => id !== null);
+        const toDelete = dayRoutines.filter(
+            (r) => !finalIds.includes(r.routineId),
+        );
         const toAdd = localRoutines.filter((r) => r.routineId === null);
         const payload = {
             addRoutines: toAdd,
@@ -68,9 +88,11 @@ function RoutineList({ userId }) {
     if (error) return <ErrorComponent error={error} />;
 
     return (
-        <Stack spacing={2}>
+        <Box sx={{gap: 1}}>
             {dbDays.map((day) => {
-                const dayRoutines = respData.filter((r) => r.weekday.toLowerCase() === day.toLowerCase());
+                const dayRoutines = respData.filter(
+                    (r) => r.weekday.toLowerCase() === day.toLowerCase(),
+                );
                 return (
                     <ScheduleItem
                         key={day}
@@ -79,11 +101,13 @@ function RoutineList({ userId }) {
                         routines={dayRoutines}
                         active={dayRoutines.length > 0}
                         onReset={() => handleReset(day)}
-                        onSave={(localRoutines) => handleSave(localRoutines, dayRoutines)}
+                        onSave={(localRoutines) =>
+                            handleSave(localRoutines, dayRoutines)
+                        }
                     />
                 );
             })}
-        </Stack>
+        </Box>
     );
 }
 

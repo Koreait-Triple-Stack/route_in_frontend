@@ -11,6 +11,7 @@ import { Button, Divider, Typography } from "@mui/material";
 import CourseDetail from "./CourseDetail";
 import CourseAdd from "./CourseAdd";
 import Loading from "../../components/Loading";
+import AddIcon from "@mui/icons-material/Add";
 
 function CourseListPage() {
     const [isAdd, setIsAdd] = useState(false);
@@ -102,25 +103,27 @@ function CourseListPage() {
     const handleAdd = () => {
         setIsAdd(true);
     };
-    
+
     if (isLoading) return <Loading />;
 
     return (
         <Container>
-            <Stack
-                display="flex"
-                flexDirection="row"
-                justifyContent="space-between"
-                alignItems="center"
-                spacing={1}
-                sx={{ mb: 2 }}>
+            <Box
+                sx={{
+                    my: 2,
+                    display: "flex",
+                    justifyContent: "space-between",
+                }}>
                 <Typography variant="h6" sx={{ fontWeight: "bold" }}>
                     코스 리스트 관리
                 </Typography>
-                <Button variant="contained" onClick={handleAdd}>
+                <Button
+                    variant="contained"
+                    startIcon={<AddIcon />}
+                    onClick={handleAdd}>
                     추가
                 </Button>
-            </Stack>
+            </Box>
 
             <Divider sx={{ mb: 3 }} />
 

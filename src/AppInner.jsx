@@ -3,7 +3,7 @@ import { usePrincipalState } from "./store/usePrincipalState";
 import { useEffect } from "react";
 import { getPrincipal } from "./apis/account/accountService";
 import { useQuery } from "@tanstack/react-query";
-import { Box} from "@mui/system";
+import { Box } from "@mui/system";
 import NotificationListener from "./components/NotificationListener";
 import Loading from "./components/Loading";
 import ToastProvider from "./components/ToastProvider";

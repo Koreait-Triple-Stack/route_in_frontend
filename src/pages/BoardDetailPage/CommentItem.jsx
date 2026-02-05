@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import {
     Box,
     Typography,
-    Avatar,
     Stack,
     IconButton,
     Divider,
@@ -150,7 +149,7 @@ function CommentItem({ comment, boardId, isReply = false }) {
                         gap: 2,
                         pl: 2,
                     }}>
-                    <SubdirectoryArrowRightIcon sx={{color: "grey.500"}} />
+                    <SubdirectoryArrowRightIcon sx={{ color: "grey.500" }} />
                     <CommentInput
                         placeholder={`${comment.username}님에게 답글 남기기`}
                         onSubmit={handleReplySubmit}

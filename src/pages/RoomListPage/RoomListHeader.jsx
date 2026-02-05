@@ -9,12 +9,10 @@ import { Box, Stack } from "@mui/system";
 import { useState } from "react";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
-import EditRoundedIcon from "@mui/icons-material/EditRounded";
 
 function RoomListHeader({
     setSearchInputValue,
     searchInputValue,
-    setIsNewChat,
 }) {
     const [isSearch, setIsSearch] = useState(false);
 
