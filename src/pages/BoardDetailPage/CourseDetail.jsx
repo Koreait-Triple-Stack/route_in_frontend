@@ -1,5 +1,5 @@
 import { useCourseMap } from "../../hooks/useCourseMap";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Divider, Paper, Typography } from "@mui/material";
 import { Box, Stack } from "@mui/system";
 import Loading from "../../components/Loading";
@@ -67,7 +67,6 @@ function CourseDetail({ course }) {
                 width: "100%",
                 mx: { xs: 0, sm: "auto" },
             }}>
-            {/* 지도 영역 */}
             <Box
                 sx={{
                     position: "relative",
@@ -84,7 +83,6 @@ function CourseDetail({ course }) {
                 />
             </Box>
             <Box>
-                {/* 코스 정보 영역 */}
                 <Box sx={{ p: { xs: 2, sm: 2 } }}>
                     <Stack spacing={1.2}>
                         <Typography

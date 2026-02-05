@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Box, Container, Stack } from "@mui/system";
 import { Typography, TextField, Button, Paper } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
@@ -158,7 +158,6 @@ function BoardWritePage() {
                         onChange={onChangeHandler}
                     />
 
-                    {/* 버튼 */}
                     <Stack direction="row" spacing={1}>
                         <Button
                             variant="outlined"

@@ -9,7 +9,7 @@ export default function CourseSavePanel({
     onCancel
 }) {
     return (
-        <Stack spacing={1.5} sx={{ height:150 }}>
+        <Stack spacing={1.5}>
             <Typography variant="subtitle2" fontWeight={800}>
                 코스 저장
             </Typography>
@@ -23,22 +23,24 @@ export default function CourseSavePanel({
                 fullWidth
             />
 
-            <Button
-                variant="contained"
-                color="warning"
-                onClick={onSave}
-                disabled={disabled}
-                startIcon={<SaveIcon />}
-                fullWidth>
-            </Button>
+            <Stack direction="row" spacing={1.5}>
+                <Button
+                    variant="contained"
+                    color="warning"
+                    onClick={onSave}
+                    disabled={disabled}
+                    startIcon={<SaveIcon />}
+                    fullWidth></Button>
 
-            <Button
-                size="small"
-                color="error"
-                onClick={onCancel}
-                fullWidth>
+                <Button
+                    size="small"
+                    variant="outlined"
+                    color="error"
+                    onClick={onCancel}
+                    fullWidth>
                     취소
-            </Button>
+                </Button>
+            </Stack>
         </Stack>
     );
 }
