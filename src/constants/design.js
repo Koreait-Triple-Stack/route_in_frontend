@@ -32,7 +32,7 @@ export const boardTagChipSx = (type) => ({
 export const recommendChipSx = {
     minWidth: 72,
     height: 32,
-    bgcolor: "background.paper",
+    bgcolor: "transparent",
     border: "1px solid",
     borderColor: "divider",
     borderRadius: "999px",
@@ -60,6 +60,7 @@ export const boardCardSx = {
     transition: "transform 160ms ease, box-shadow 160ms ease",
 };
 export const boardTypeBtnSx = {
+    px: 1,
     height: 40,
     borderRadius: 3,
     fontWeight: 800,

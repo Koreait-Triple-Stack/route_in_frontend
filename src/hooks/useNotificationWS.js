@@ -10,6 +10,8 @@ export function useNotificationWS({ enabled, token, onMessage, roomId }) {
 
     const [isConnected, setIsConnected] = useState(false);
 
+    const lastPresenceRoomIdRef = useRef(undefined);
+
     useEffect(() => {
         onMessageRef.current = onMessage;
     }, [onMessage]);
@@ -34,9 +36,26 @@ export function useNotificationWS({ enabled, token, onMessage, roomId }) {
         });
     };
 
+    const sendPresence = (client, rid) => {
+        if (!client || !client.connected) return;
+
+        const normalized = rid == null ? null : Number(rid);
+        if (lastPresenceRoomIdRef.current === normalized) return;
+        lastPresenceRoomIdRef.current = normalized;
+
+        try {
+            client.publish({
+                destination: "/app/presence/active",
+                body: JSON.stringify({ roomId: normalized }),
+            });
+        } catch (e) {}
+    };
+
     useEffect(() => {
         if (!enabled || !token) {
             setIsConnected(false);
+            lastPresenceRoomIdRef.current = undefined;
+
             if (clientRef.current) {
                 unsubscribeRoom();
                 unsubscribeNotif();
@@ -65,6 +84,10 @@ export function useNotificationWS({ enabled, token, onMessage, roomId }) {
                         } catch (e) {}
                     },
                 );
+
+                sendPresence(client, roomId);
+
+                subscribeRoom(client, roomId);
             },
 
             onDisconnect: () => {
@@ -84,12 +107,16 @@ export function useNotificationWS({ enabled, token, onMessage, roomId }) {
             unsubscribeNotif();
             client.deactivate();
             clientRef.current = null;
+            lastPresenceRoomIdRef.current = undefined;
         };
     }, [enabled, token]);
 
     useEffect(() => {
         const client = clientRef.current;
         if (!client || !isConnected) return;
+
         subscribeRoom(client, roomId);
+
+        sendPresence(client, roomId);
     }, [roomId, isConnected]);
 }

@@ -1,6 +1,5 @@
 import {
     Avatar,
-    Badge,
     List,
     ListItemButton,
     Typography,
@@ -63,7 +62,6 @@ function RoomList({ roomList }) {
                                 sx={{ width: 52, height: 52, mt: 0.2 }}
                             />
 
-                            {/* middle */}
                             <Box sx={{ flex: 1, minWidth: 0 }}>
                                 <StackTitle
                                     title={room.title}
@@ -77,7 +75,7 @@ function RoomList({ roomList }) {
                                         mt: 0.4,
                                         color: "text.secondary",
                                         display: "-webkit-box",
-                                        WebkitLineClamp: 2,
+                                        WebkitLineClamp: 1,
                                         WebkitBoxOrient: "vertical",
                                         overflow: "hidden",
                                     }}>
@@ -85,16 +83,13 @@ function RoomList({ roomList }) {
                                 </Typography>
                             </Box>
 
-                            {/* right meta */}
                             <Box
                                 sx={{
                                     display: "flex",
                                     flexDirection: "column",
-                                    alignItems: "flex-end",
+                                    alignItems: "center",
                                     justifyContent: "space-between",
-                                    minWidth: 76,
-                                    height: 52,
-                                    pt: 0.2,
+                                    height: 44,
                                 }}>
                                 <Typography
                                     variant="caption"
@@ -103,17 +98,23 @@ function RoomList({ roomList }) {
                                 </Typography>
 
                                 {room.unreadCnt > 0 && (
-                                    <Badge
-                                        badgeContent={room.unreadCnt}
-                                        color="error"
+                                    <Box
                                         sx={{
-                                            "& .MuiBadge-badge": {
-                                                fontSize: "0.72rem",
-                                                height: 18,
-                                                minWidth: 18,
-                                            },
-                                        }}
-                                    />
+                                            bgcolor: "error.main",
+                                            color: "#fff",
+                                            fontSize: "0.72rem",
+                                            minWidth: 18,
+                                            height: 18,
+                                            px: 0.6,
+                                            borderRadius: 999,
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            fontWeight: 600,
+                                            lineHeight: 1,
+                                        }}>
+                                        {room.unreadCnt}
+                                    </Box>
                                 )}
                             </Box>
                         </ListItemButton>
@@ -156,7 +157,7 @@ function StackTitle({ title, favorite, mute }) {
             {favorite && (
                 <StarRoundedIcon
                     fontSize="small"
-                    sx={{ color: "warning.main" }}
+                    sx={{ color: "warning.light" }}
                 />
             )}
             {mute && (

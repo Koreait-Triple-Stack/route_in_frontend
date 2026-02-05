@@ -6,7 +6,7 @@ import {
     ListItemButton,
     Typography,
 } from "@mui/material";
-import { Box, Stack } from "@mui/system";
+import { Box, Grid, Stack } from "@mui/system";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import FavoriteIcon from "@mui/icons-material/Favorite";
@@ -22,21 +22,18 @@ function PostCard({ board }) {
             <ListItem sx={{ px: 0, mb: 1 }}>
                 <ListItemButton
                     onClick={() => navigate(`/board/detail/${board.boardId}`)}
-                    sx={boardCardSx}
-                >
+                    sx={boardCardSx}>
                     <Stack sx={{ width: "100%" }} spacing={1.5}>
                         <Box
                             sx={{
                                 display: "flex",
                                 justifyContent: "space-between",
                                 alignItems: "center",
-                            }}
-                        >
+                            }}>
                             <Stack
                                 direction="row"
                                 spacing={1}
-                                alignItems="center"
-                            >
+                                alignItems="center">
                                 <Chip
                                     label={
                                         board.type === "COURSE"
@@ -57,22 +54,22 @@ function PostCard({ board }) {
                             <Typography
                                 variant="caption"
                                 color="text.secondary"
-                            >
+                                textAlign={"end"}
+                                minWidth={70}>
                                 {timeAgo(board.createDt)}
                             </Typography>
                         </Box>
 
-                        {/* ✅ 제목/본문은 clamp로 리스트 가독성 */}
                         <Typography
                             sx={{
+                                flex: 1,
+                                pl: 0.5,
                                 fontWeight: 800,
-                                lineHeight: 1.25,
                                 display: "-webkit-box",
-                                WebkitLineClamp: 2,
-                                WebkitBoxOrient: "vertical",
+                                WebkitLineClamp: 1,
                                 overflow: "hidden",
-                            }}
-                        >
+                                WebkitBoxOrient: "vertical",
+                            }}>
                             {board.title}
                         </Typography>
 
@@ -83,8 +80,7 @@ function PostCard({ board }) {
                             />
                             <Typography
                                 variant="body2"
-                                sx={{ fontWeight: 600 }}
-                            >
+                                sx={{ fontWeight: 600 }}>
                                 {board.username} ·{" "}
                                 {Math.floor(
                                     (year - board.birthDate.split("-")[0] + 1) /
@@ -95,7 +91,7 @@ function PostCard({ board }) {
                         </Stack>
                         <Divider />
                         {board.type === "ROUTINE" ? (
-                            <Stack direction="row" spacing={1} flexWrap="wrap">
+                            <Grid container spacing={1}>
                                 {board.tags.map((m, i) => (
                                     <Chip
                                         key={i}
@@ -104,9 +100,9 @@ function PostCard({ board }) {
                                         sx={boardTagChipSx(board.type)}
                                     />
                                 ))}
-                            </Stack>
+                            </Grid>
                         ) : (
-                            <Stack direction="row" spacing={1} flexWrap="wrap">
+                            <Grid container spacing={1}>
                                 <Chip
                                     label={board.tags[0]}
                                     size="small"
@@ -117,7 +113,7 @@ function PostCard({ board }) {
                                     size="small"
                                     sx={boardTagChipSx(board.type)}
                                 />
-                            </Stack>
+                            </Grid>
                         )}
                     </Stack>
                 </ListItemButton>

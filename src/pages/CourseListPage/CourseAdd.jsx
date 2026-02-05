@@ -3,18 +3,24 @@ import { useKakaoPlaceSearch } from "../../hooks/useKakaoPlaceSearch";
 import { addCourse } from "../../apis/course/courseService";
 import { Box, Container, Stack } from "@mui/system";
 import { Divider, Paper } from "@mui/material";
-import CoursePanel from "./CoursePanel";
-import PlaceSearchPanel from "./PlaceSearchPanel";
-import CourseSavePanel from "./CourseSavePanel";
 import { useCourseMap } from "../../hooks/useCourseMap";
-import { buildPayload, coordToRegionWithGeocoder } from "../../apis/course/courseMapper";
+import {
+    buildPayload,
+    coordToRegionWithGeocoder,
+} from "../../apis/course/courseMapper";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import CourseMiniBar from "./CourseMiniBar";
 import { NAV_H } from "../../components/BasicBottomNav";
+import CourseMiniBar from "../../components/Course/CourseMiniBar";
+import CoursePanel from "../../components/Course/CoursePanel";
+import PlaceSearchPanel from "../../components/Course/PlaceSearchPanel";
+import CourseSavePanel from "../../components/Course/CourseSavePanel";
+import { useToastStore } from "../../store/useToastStore";
 
 function CourseAdd({ userId, boardId, isAdd }) {
-    const { mapRef, kakaoObj, points, distanceM, map, undo, clear } = useCourseMap();
+    const { mapRef, kakaoObj, points, distanceM, map, undo, clear } =
+        useCourseMap();
     const queryClient = useQueryClient();
+    const { show } = useToastStore();
 
     const [panelOpen, setPanelOpen] = useState(false);
     const [courseName, setCourseName] = useState("");
@@ -25,21 +31,22 @@ function CourseAdd({ userId, boardId, isAdd }) {
         mutationKey: ["addCourse"],
         mutationFn: (data) => addCourse(data),
         onSuccess: (response) => {
-            queryClient.invalidateQueries([
-                "getCourseListByUserId",
-                userId,
-            ]);
+            queryClient.invalidateQueries(["getCourseListByUserId", userId]);
             setCourseName("");
             clear();
-            alert(response.message);
+            show(response.message, "success");
         },
         onError: (error) => {
-            alert(error.message);
+            show(error.message, "error");
         },
     });
 
     const saveCourseHandler = async () => {
-        const regionInfo = await coordToRegionWithGeocoder(kakaoObj, points[0].lat, points[0].lng);
+        const regionInfo = await coordToRegionWithGeocoder(
+            kakaoObj,
+            points[0].lat,
+            points[0].lng,
+        );
 
         const payload = buildPayload({
             userId,
@@ -66,10 +73,17 @@ function CourseAdd({ userId, boardId, isAdd }) {
                 display: "flex",
                 justifyContent: "center",
                 zIndex: 1400,
-            }}
-        >
+            }}>
             <Container disableGutters sx={{ position: "relative" }}>
-                <Box ref={mapRef} sx={{ width: "100%", height: "100%", zIndex: 10, overflow: "hidden" }} />
+                <Box
+                    ref={mapRef}
+                    sx={{
+                        width: "100%",
+                        height: "100%",
+                        zIndex: 10,
+                        overflow: "hidden",
+                    }}
+                />
 
                 <Paper
                     elevation={10}
@@ -81,9 +95,15 @@ function CourseAdd({ userId, boardId, isAdd }) {
                         width: 360,
                         borderRadius: 2,
                         overflow: "hidden",
-                    }}
-                >
-                    <CourseMiniBar pointsCount={points.length} distanceM={distanceM} onUndo={undo} onClear={clear} panelOpen={panelOpen} onTogglePanel={() => setPanelOpen((v) => !v)} />
+                    }}>
+                    <CourseMiniBar
+                        pointsCount={points.length}
+                        distanceM={distanceM}
+                        onUndo={undo}
+                        onClear={clear}
+                        panelOpen={panelOpen}
+                        onTogglePanel={() => setPanelOpen((v) => !v)}
+                    />
 
                     <CoursePanel open={panelOpen}>
                         <Stack spacing={2}>
@@ -102,7 +122,15 @@ function CourseAdd({ userId, boardId, isAdd }) {
 
                             <Divider />
 
-                            <CourseSavePanel courseName={courseName} setCourseName={setCourseName} onSave={saveCourseHandler} disabled={courseName.length < 1 || points.length < 2} onCancel={isAdd} />
+                            <CourseSavePanel
+                                courseName={courseName}
+                                setCourseName={setCourseName}
+                                onSave={saveCourseHandler}
+                                disabled={
+                                    courseName.length < 1 || points.length < 2
+                                }
+                                onCancel={isAdd}
+                            />
                         </Stack>
                     </CoursePanel>
                 </Paper>

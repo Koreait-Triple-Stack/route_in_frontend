@@ -4,8 +4,9 @@ import { Typography, Box, Alert } from "@mui/material";
 import { getWeather } from "../../apis/weather/weatherService";
 import ErrorComponent from "../../components/ErrorComponent";
 import { MoonLoader } from "react-spinners";
+import { useToastStore } from "../../store/useToastStore";
 
-const DEFAULT_SEOUL = { lat: 37.5665, lon: 126.9780 };
+const DEFAULT_SEOUL = { lat: 37.5665, lon: 126.978 };
 
 function Loading() {
     return (
@@ -15,18 +16,17 @@ function Loading() {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-            }}
-        >
+            }}>
             <MoonLoader size={30} />
         </Box>
     );
 }
 
 function Weather() {
+    const { show } = useToastStore();
     const [coords, setCoords] = useState(null);
     const [locationError, setLocationError] = useState(null);
 
-    // 2. 컴포넌트가 켜지자마자 브라우저에게 위치 물어보기
     useEffect(() => {
         if (!navigator.geolocation) {
             setLocationError("위치 정보를 지원하지 않는 브라우저입니다.");
@@ -36,15 +36,16 @@ function Weather() {
 
         navigator.geolocation.getCurrentPosition(
             (position) => {
-                // 성공 시 좌표 저장
                 setCoords({
                     lat: position.coords.latitude,
                     lon: position.coords.longitude,
                 });
             },
             (error) => {
-                // 실패 시 (거부 등)
-                console.warn("위치 정보를 가져올 수 없습니다. 기본 위치(서울)로 설정합니다.", error);
+                show(
+                    "위치 정보를 가져올 수 없습니다. 기본 위치(서울)로 설정합니다.",
+                    "error",
+                );
                 setCoords(DEFAULT_SEOUL);
             },
         );
@@ -87,9 +88,8 @@ function Weather() {
                 sx={{
                     lineHeight: 1,
                     mr: 0.5,
-                    pt: 0.3
-                }}
-            >
+                    pt: 0.3,
+                }}>
                 {city} {Math.round(temp)}°C
             </Typography>
 
@@ -98,8 +98,8 @@ function Weather() {
                 src={iconUrl}
                 alt={description}
                 sx={{
-                    width: 38, 
-                    height: 38 ,
+                    width: 38,
+                    height: 38,
                     filter: "drop-shadow(2px 4px 6px rgba(0,0,0,0.2))",
                 }}
             />

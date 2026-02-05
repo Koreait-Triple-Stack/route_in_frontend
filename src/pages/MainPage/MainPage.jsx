@@ -35,15 +35,11 @@ const MainPage = () => {
     return (
         <Box
             sx={{
-                bgcolor: THEME.bg,
-                minHeight: "100vh",
-                pb: 3,
-                color: "#1D1D1F", // Apple 스타일의 짙은 회색 텍스트
+                color: "#1D1D1F",
                 fontFamily: "'Pretendard', sans-serif",
             }}>
             <Container maxWidth="sm">
                 <Stack spacing={4} sx={{ pt: 4 }}>
-                    {/* 1. 상단 프로필 (깔끔한 타이포그래피) */}
                     <Box sx={{ px: 1 }}>
                         <Typography
                             variant="h4"
@@ -61,7 +57,6 @@ const MainPage = () => {
                         </Typography>
                     </Box>
 
-                    {/* 2. 날씨 섹션 (화이트 플로팅 카드) */}
                     <Paper
                         sx={{
                             ...moduleStyle,
@@ -70,6 +65,8 @@ const MainPage = () => {
                             flexDirection: "row",
                             alignItems: "center",
                             bgcolor: "rgba(255, 255, 255, 0.8)",
+                            border: "1px solid",
+                            borderColor: "divider",
                         }}>
                         <Box
                             sx={{
@@ -89,7 +86,6 @@ const MainPage = () => {
                         <Weather />
                     </Paper>
 
-                    {/* 3. AI 추천 섹션 (부드러운 컬러 강조) */}
                     <Box>
                         <Typography
                             variant="subtitle2"
@@ -105,15 +101,17 @@ const MainPage = () => {
                     </Box>
 
                     <Stack spacing={1.5}>
-                        {" "}
-                        {/* 모듈 간 간격도 조금 좁혀서 콤팩트하게 */}
-                        {/* 운동 루틴 섹션 */}
-                        <Paper sx={moduleStyle}>
+                        <Paper
+                            sx={{
+                                ...moduleStyle,
+                                border: "1px solid",
+                                borderColor: "divider",
+                            }}>
                             <Box
                                 onClick={() => setRoutineOpen(!routineOpen)}
                                 sx={{
                                     display: "flex",
-                                    justifyContent: "space-between", // 제목-왼쪽, 아이콘-오른쪽
+                                    justifyContent: "space-between",
                                     alignItems: "center",
                                     cursor: "pointer",
                                     width: "100%",
@@ -122,7 +120,6 @@ const MainPage = () => {
                                     direction="row"
                                     spacing={1.5}
                                     alignItems="center">
-                                    {/* 왼쪽 포인트 바 */}
                                     <Box
                                         sx={{
                                             width: 3,
@@ -152,14 +149,17 @@ const MainPage = () => {
 
                             <Collapse in={routineOpen}>
                                 <Box sx={{ mt: 2 }}>
-                                    {" "}
-                                    {/* 펼쳐졌을 때만 여백 발생 */}
                                     <RoutineList userId={principal?.userId} />
                                 </Box>
                             </Collapse>
                         </Paper>
-                        {/* 러닝 기록 섹션 */}
-                        <Paper sx={moduleStyle}>
+
+                        <Paper
+                            sx={{
+                                ...moduleStyle,
+                                border: "1px solid",
+                                borderColor: "divider",
+                            }}>
                             <Box
                                 onClick={() => setRunningOpen(!runningOpen)}
                                 sx={{

@@ -26,15 +26,14 @@ function TypeBox({ checked, setChecked, form, setForm, setTags }) {
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
+                px: 0.5,
                 pb: 1,
-            }}
-        >
+            }}>
             <ToggleButtonGroup
                 value={form.type}
                 size="small"
                 exclusive
-                onChange={inputChangeHandler}
-            >
+                onChange={inputChangeHandler}>
                 <Stack direction={"row"} spacing={0.6}>
                     <ToggleButton name="type" value="ALL" sx={boardTypeBtnSx}>
                         전체
@@ -42,15 +41,13 @@ function TypeBox({ checked, setChecked, form, setForm, setTags }) {
                     <ToggleButton
                         name="type"
                         value="COURSE"
-                        sx={boardTypeBtnSx}
-                    >
+                        sx={boardTypeBtnSx}>
                         러닝코스
                     </ToggleButton>
                     <ToggleButton
                         name="type"
                         value="ROUTINE"
-                        sx={boardTypeBtnSx}
-                    >
+                        sx={boardTypeBtnSx}>
                         운동루틴
                     </ToggleButton>
                 </Stack>
@@ -62,8 +59,7 @@ function TypeBox({ checked, setChecked, form, setForm, setTags }) {
                     justifyContent: "center",
                     alignItems: "center",
                     gap: 1,
-                }}
-            >
+                }}>
                 <FormControl size="small">
                     <Select
                         name="sort"
@@ -84,7 +80,6 @@ function TypeBox({ checked, setChecked, form, setForm, setTags }) {
                                     "& .MuiList-root": { py: 0.5 },
                                     "& .MuiMenuItem-root": {
                                         fontSize: 13,
-                                        minHeight: 40,
                                         px: 1,
                                         mx: 0.6,
                                         my: 0.3,
@@ -101,8 +96,7 @@ function TypeBox({ checked, setChecked, form, setForm, setTags }) {
                                     },
                                 },
                             },
-                        }}
-                    >
+                        }}>
                         <MenuItem value="LATEST">최신순</MenuItem>
                         <MenuItem value="RECOMMEND">추천순</MenuItem>
                     </Select>
@@ -113,8 +107,7 @@ function TypeBox({ checked, setChecked, form, setForm, setTags }) {
                     value="checked"
                     selected={checked}
                     onChange={() => setChecked((prev) => !prev)}
-                    sx={boardTypeBtnSx}
-                >
+                    sx={boardTypeBtnSx}>
                     <FilterAltOutlinedIcon />
                 </ToggleButton>
             </Box>

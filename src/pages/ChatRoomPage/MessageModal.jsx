@@ -3,7 +3,6 @@ import {
     Dialog,
     DialogActions,
     DialogContent,
-    DialogContentText,
     DialogTitle,
     Menu,
     MenuItem,
@@ -17,6 +16,7 @@ import {
     deleteMessageRequest,
 } from "../../apis/chat/chatApi";
 import { usePrincipalState } from "../../store/usePrincipalState";
+import DialogComponent from "../../components/DialogComponent";
 
 function MessageModal({
     contextMenuMes,
@@ -158,38 +158,15 @@ function MessageModal({
                 </DialogActions>
             </Dialog>
 
-            <Dialog
+            <DialogComponent
                 open={openDeltete}
-                onClose={() => {
-                    handleClose();
-                }}
-                fullWidth
-                maxWidth="xs">
-                <DialogTitle>메시지 삭제</DialogTitle>
-
-                <DialogContent>
-                    <DialogContentText>
-                        삭제한 메시지는 복원할 수 없습니다
-                    </DialogContentText>
-                </DialogContent>
-
-                <DialogActions sx={{ p: 2 }}>
-                    <Button
-                        variant="outlined"
-                        color="error"
-                        onClick={() => {
-                            handleClose();
-                        }}>
-                        취소
-                    </Button>
-                    <Button
-                        variant="contained"
-                        color="error"
-                        onClick={handleDeleteMessage}>
-                        삭제
-                    </Button>
-                </DialogActions>
-            </Dialog>
+                setOpen={handleClose}
+                title="메시지 삭제"
+                content={"삭제한 메시지는 복원할 수 없습니다"}
+                onClick={handleDeleteMessage}
+                color="error"
+                ment="삭제"
+            />
         </>
     );
 }

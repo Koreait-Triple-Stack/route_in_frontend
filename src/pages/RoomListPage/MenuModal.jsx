@@ -21,6 +21,7 @@ import {
 } from "../../apis/chat/chatApi";
 import { useToastStore } from "../../store/useToastStore";
 import { usePrincipalState } from "../../store/usePrincipalState";
+import DialogComponent from "../../components/DialogComponent";
 
 function MenuModal({
     contextMenu,
@@ -259,38 +260,15 @@ function MenuModal({
                 </DialogActions>
             </Dialog>
 
-            <Dialog
+            <DialogComponent
                 open={openLeaveRoom}
-                onClose={() => {
-                    handleClose();
-                }}
-                fullWidth
-                maxWidth="xs">
-                <DialogTitle>채팅방 나가기</DialogTitle>
-
-                <DialogContent>
-                    <DialogContentText>
-                        채팅방을 나가시겠습니까?
-                    </DialogContentText>
-                </DialogContent>
-
-                <DialogActions sx={{ p: 2 }}>
-                    <Button
-                        variant="outlined"
-                        color="error"
-                        onClick={() => {
-                            handleClose();
-                        }}>
-                        취소
-                    </Button>
-                    <Button
-                        variant="contained"
-                        color="error"
-                        onClick={handleLeaveRoom}>
-                        나가기
-                    </Button>
-                </DialogActions>
-            </Dialog>
+                setOpen={setOpenLeaveRoom}
+                title="채팅방 나가기"
+                content={"채팅방을 나가시겠습니까?"}
+                onClick={handleLeaveRoom}
+                color="error"
+                ment="나가기"
+            />
         </>
     );
 }

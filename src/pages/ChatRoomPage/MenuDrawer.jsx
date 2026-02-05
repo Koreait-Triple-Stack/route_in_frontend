@@ -1,11 +1,6 @@
 import {
     Avatar,
     Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    DialogTitle,
     Divider,
     Drawer,
     IconButton,
@@ -25,13 +20,9 @@ import { quitRoomRequest } from "../../apis/chat/chatApi";
 import { useToastStore } from "../../store/useToastStore";
 import { usePrincipalState } from "../../store/usePrincipalState";
 import { useState } from "react";
+import DialogComponent from "../../components/DialogComponent";
 
-function MenuDrawer({
-    participants,
-    setIsMenu,
-    isMenu,
-    setIsInvite,
-}) {
+function MenuDrawer({ participants, setIsMenu, isMenu, setIsInvite }) {
     const navigate = useNavigate();
     const { show } = useToastStore();
     const { principal } = usePrincipalState();
@@ -144,7 +135,7 @@ function MenuDrawer({
 
                         <List>
                             {participants.map((user) => (
-                                <ListItem sx={{px: 1}} key={user.userId}>
+                                <ListItem sx={{ px: 1 }} key={user.userId}>
                                     <ListItemButton
                                         onClick={() =>
                                             navigate(`/user/${user.userId}`)
@@ -160,7 +151,7 @@ function MenuDrawer({
                                         <ListItemText
                                             primary={user.username}
                                             primaryTypographyProps={{
-                                                fontWeight: "500",
+                                                fontWeight: "550",
                                             }}
                                         />
                                     </ListItemButton>
@@ -192,34 +183,15 @@ function MenuDrawer({
                 </Box>
             </Drawer>
 
-            <Dialog
+            <DialogComponent
                 open={openLeaveRoom}
-                onClose={() => setOpenLeaveRoom(false)}
-                fullWidth
-                maxWidth="xs">
-                <DialogTitle>채팅방 나가기</DialogTitle>
-
-                <DialogContent>
-                    <DialogContentText>
-                        채팅방을 나가시겠습니까?
-                    </DialogContentText>
-                </DialogContent>
-
-                <DialogActions sx={{ p: 2 }}>
-                    <Button
-                        variant="outlined"
-                        color="error"
-                        onClick={() => setOpenLeaveRoom(false)}>
-                        취소
-                    </Button>
-                    <Button
-                        variant="contained"
-                        color="error"
-                        onClick={handleLeaveRoom}>
-                        나가기
-                    </Button>
-                </DialogActions>
-            </Dialog>
+                setOpen={setOpenLeaveRoom}
+                title="채팅방 나가기"
+                content={"채팅방을 나가시겠습니까?"}
+                onClick={handleLeaveRoom}
+                color="error"
+                ment="나가기"
+            />
         </>
     );
 }

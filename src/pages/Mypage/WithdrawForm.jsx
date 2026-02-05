@@ -1,13 +1,9 @@
-import React from "react";
 import {
-    Typography,
     Button,
     Dialog,
     DialogContent,
     DialogTitle,
     DialogActions,
-    Box,
-    Stack,
     DialogContentText,
 } from "@mui/material";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -54,12 +50,12 @@ function WithdrawForm({ userId, onClose, onLogout }) {
                 </DialogContentText>
             </DialogContent>
 
-            {/* 3. 하단 버튼 액션 */}
             <DialogActions sx={{ p: 2 }}>
                 <Button
                     variant="outlined"
                     onClick={onClose}
                     size="large"
+                    color="error"
                     disabled={deleteMutation.isPending}>
                     취소
                 </Button>

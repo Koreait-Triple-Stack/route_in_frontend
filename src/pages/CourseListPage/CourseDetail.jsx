@@ -1,10 +1,12 @@
 import { useCourseMap } from "../../hooks/useCourseMap";
 import { useEffect, useState } from "react";
-import { Button, Checkbox, Chip, Divider, Paper, Typography } from "@mui/material";
+import { Button, Divider, IconButton, Paper, Typography } from "@mui/material";
 import { Box, Stack } from "@mui/system";
 import CourseEdit from "./CourseEdit";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import StarIcon from "@mui/icons-material/Star";
+import Loading from "../../components/Loading";
+import DialogComponent from "../../components/DialogComponent";
 
 function DetailRow({ label, value, valueColor }) {
     return (
@@ -13,13 +15,18 @@ function DetailRow({ label, value, valueColor }) {
                 display: "flex",
                 alignItems: "center",
                 py: 0.8,
-            }}
-        >
+            }}>
             <Typography variant="body1" sx={{ color: "text.secondary" }}>
                 {label}
             </Typography>
 
-            <Typography variant="body1" sx={{ fontWeight: 600, color: valueColor ?? "text.primary", px: 5 }}>
+            <Typography
+                variant="body1"
+                sx={{
+                    fontWeight: 600,
+                    color: valueColor ?? "text.primary",
+                    px: 5,
+                }}>
                 {valueColor ? value / 1000 + "km" : value}
             </Typography>
         </Box>
@@ -28,6 +35,7 @@ function DetailRow({ label, value, valueColor }) {
 
 function CourseDetail({ course, onDelete, onChecked, checked }) {
     const [isEditing, setIsEditing] = useState(false);
+    const [openDelete, setOpenDelete] = useState(false);
     const { mapRef, map, kakaoObj, setPoints } = useCourseMap({
         enableClickAdd: false,
     });
@@ -58,23 +66,10 @@ function CourseDetail({ course, onDelete, onChecked, checked }) {
     };
 
     const ckeckedClick = () => {
-        onChecked(course)
-    }
+        onChecked(course);
+    };
 
-    if (!course) {
-        return (
-            <Box
-                sx={{
-                    width: "100vw",
-                    height: "100vh",
-                    display: "grid",
-                    placeItems: "center",
-                }}
-            >
-                로딩중...
-            </Box>
-        );
-    }
+    if (!course) return <Loading />;
 
     return (
         <Paper
@@ -86,18 +81,16 @@ function CourseDetail({ course, onDelete, onChecked, checked }) {
                 border: "1px solid",
                 borderColor: "divider",
                 width: "100%",
-                maxWidth: { xs: "100%"},
+                maxWidth: { xs: "100%" },
                 mx: { xs: 0, sm: "auto" },
-            }}
-        >
+            }}>
             <Box
                 sx={{
                     position: "relative",
                     width: "100%",
                     height: "clamp(220px, 35vh, 280px)",
                     bgcolor: "grey.200",
-                }}
-            >
+                }}>
                 <Box
                     ref={mapRef}
                     sx={{
@@ -115,50 +108,74 @@ function CourseDetail({ course, onDelete, onChecked, checked }) {
                                 fontWeight: 800,
                                 lineHeight: 1.2,
                                 wordBreak: "keep-all",
-                            }}
-                        >
+                            }}>
                             {course.courseName}
                         </Typography>
-                        {!checked ? (
-                            <Button
-                                onClick={ckeckedClick}
-                                sx={{
-                                    "&.Mui-checked": {
-                                        color: "#fffbfb",
-                                    },
-                                }}
-                            >
-                                <StarBorderIcon />
-                            </Button>
-                        ) : (
-                            <Button
-                                onClick={ckeckedClick}
-                                sx={{
-                                    "&.Mui-checked": {
-                                        color: "#f34452",
-                                    },
-                                }}
-                            >
-                                <StarIcon />
-                            </Button>
-                        )}
+                        <IconButton
+                            onClick={ckeckedClick}
+                            disableRipple
+                            sx={{ pr: 2.5 }}>
+                            {checked ? (
+                                <StarIcon sx={{ color: "warning.light" }} />
+                            ) : (
+                                <StarBorderIcon
+                                    sx={{ color: "warning.light" }}
+                                />
+                            )}
+                        </IconButton>
                     </Stack>
                     <Divider />
-                    <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                        <DetailRow label="거리" value={course.distanceM} valueColor="primary.main" />
-                        <Button onClick={() => setIsEditing(true)}>수정</Button>
+                    <Box
+                        sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                        }}>
+                        <DetailRow
+                            label="거리"
+                            value={course.distanceM}
+                            valueColor="primary.main"
+                        />
+                        <Button
+                            variant="contained"
+                            onClick={() => setIsEditing(true)}
+                            sx={{ my: 1 }}>
+                            수정
+                        </Button>
                     </Box>
-                    <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                    <Box
+                        sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                        }}>
                         <DetailRow label="지역" value={course.region} />
-                        <Button onClick={deleteClick}>삭제</Button>
+                        <Button
+                            variant="outlined"
+                            color="error"
+                            onClick={() => setOpenDelete(true)}>
+                            삭제
+                        </Button>
                     </Box>
                 </Box>
             </Box>
             {isEditing && (
                 <Box>
-                    <CourseEdit key={course.courseId} course={course} isEditing={() => setIsEditing(false)} />
+                    <CourseEdit
+                        key={course.courseId}
+                        course={course}
+                        isEditing={() => setIsEditing(false)}
+                    />
                 </Box>
             )}
+
+            <DialogComponent
+                open={openDelete}
+                setOpen={setOpenDelete}
+                title="코스 삭제"
+                content={"코스를 삭제하시겠습니까?"}
+                onClick={deleteClick}
+                color="error"
+                ment="삭제"
+            />
         </Paper>
     );
 }
