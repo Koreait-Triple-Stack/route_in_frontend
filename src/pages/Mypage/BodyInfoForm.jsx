@@ -55,7 +55,7 @@ const BodyInfoForm = ({ userId, onClose }) => {
                     value={bodyInfo.height}
                     onChange={handleChange}
                     placeholder="숫자만 입력해주세요."
-                    sx={{ mb: 3 }}
+                    sx={{ mb: 3, mt: 1 }}
                 />
 
                 <TextField

@@ -119,7 +119,7 @@ export default function InbodyChartWithActions() {
     };
 
     const handleAddData = () => {
-        if (!inputValues.bodyWeight || !inputValues.skeletalMuscleMass || !inputValues.bodyFatMass) {
+        if (!inputValues.bodyWeight || !inputValues.skeletalMuscleMass || !inputValues.bodyFatMass || !inputValues.monthDt) {
             show("모든 정보를 입력해주세요.", "error");
             return;
         }
