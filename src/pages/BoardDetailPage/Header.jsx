@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { useToastStore } from "../../store/useToastStore";
 import UserAvatarLink from "../../components/UserAvatarLink";
 import HeaderRecommend from "./HeaderRecommend";
+import DialogComponent from "../../components/DialogComponent";
 
 function Header({ boardData, setOpenCopy, boardId }) {
     const { show } = useToastStore();
@@ -21,6 +22,7 @@ function Header({ boardData, setOpenCopy, boardId }) {
     const queryClient = useQueryClient();
     const [anchorEl, setAnchorEl] = useState(false);
     const [recommended, setRecommended] = useState(false);
+    const [openRemove, setOpenRemove] = useState(false);
     const closeMenu = () => setAnchorEl(null);
     const { data: recommendList } = useQuery({
         queryFn: () => getRecommendListByBoardId(boardId),
@@ -83,9 +85,14 @@ function Header({ boardData, setOpenCopy, boardId }) {
 
     const removeOnClickHandler = () => {
         closeMenu();
-        if (!principal.userId) return alert("로그인이 필요합니다.");
-        if (!isOwner) return alert("삭제 권한이 없습니다.");
-        if (!window.confirm("정말로 게시물을 삭제하시겠습니까?")) return;
+        if (!principal.userId) {
+            show("로그인이 필요합니다.", error);
+            return;
+        }
+        if (!isOwner) {
+            show("삭제 권한이 없습니다.", error);
+            return;
+        }
 
         removeMutation.mutate({
             userId: principal.userId,
@@ -96,8 +103,15 @@ function Header({ boardData, setOpenCopy, boardId }) {
 
     const editOnClickHandler = () => {
         closeMenu();
-        if (!principal.userId) return alert("로그인이 필요합니다.");
-        if (!isOwner) return alert("수정 권한이 없습니다.");
+        if (!principal.userId){
+            show("로그인이 필요합니다.", error);
+            return;
+        }
+        if (!isOwner){
+            show("수정 권한이 없습니다.", error);
+            return;
+        }
+        
         navigate(`/board/edit`, { state: { boardData: boardData } });
     };
 
@@ -124,9 +138,9 @@ function Header({ boardData, setOpenCopy, boardId }) {
                         recommendList={recommendList}
                     />
 
-                    {/* 점 3개 */}
                     <IconButton
                         sx={{ pr: 0 }}
+                        disableRipple
                         onClick={(e) => setAnchorEl(e.currentTarget)}>
                         <MoreVertIcon />
                     </IconButton>
@@ -175,7 +189,7 @@ function Header({ boardData, setOpenCopy, boardId }) {
                         </MenuItem>
                         <MenuItem
                             disabled={!isOwner}
-                            onClick={removeOnClickHandler}
+                            onClick={() => setOpenRemove(true)}
                             sx={{
                                 fontWeight: 900,
                                 color: "error.main",
@@ -214,6 +228,16 @@ function Header({ boardData, setOpenCopy, boardId }) {
                     </Typography>
                 </Stack>
             </Stack>
+
+            <DialogComponent
+                open={openRemove}
+                setOpen={setOpenRemove}
+                title={"게시글 삭제"}
+                content={"삭제한 게시글은 복원할 수 없습니다"}
+                onClick={removeOnClickHandler}
+                color="error"
+                ment="삭제"
+            />
         </Box>
     );
 }

@@ -114,7 +114,7 @@ export default function FollowUserList({
                                                     flexDirection: "column",
                                                 }}
                                             >
-                                                <Typography variant="h6">
+                                                <Typography sx={{fontSize: 18, fontWeight: "550"}}>
                                                     {u?.username}
                                                 </Typography>
                                                 <Typography variant="body2">

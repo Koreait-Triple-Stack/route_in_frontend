@@ -4,7 +4,7 @@ import {
     ToggleButton,
     ToggleButtonGroup,
 } from "@mui/material";
-import { Box } from "@mui/system";
+import { Box, Stack } from "@mui/system";
 import { EXERCISE_PARTS } from "../../constants/exerciseParts";
 import {
     filterActionBtnBaseSx,
@@ -72,7 +72,7 @@ function FilterBox({ form, setForm, setTags }) {
         >
             {form.type !== "ALL" &&
                 (form.type === "COURSE" ? (
-                    <>
+                    <Stack spacing={2.5}>
                         <TextField
                             label="지역"
                             variant="outlined"
@@ -95,7 +95,7 @@ function FilterBox({ form, setForm, setTags }) {
                             fullWidth
                             sx={filterTextFieldSx}
                         />
-                    </>
+                    </Stack>
                 ) : (
                     <>
                         <ToggleButtonGroup

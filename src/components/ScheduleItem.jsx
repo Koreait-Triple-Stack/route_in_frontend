@@ -1,9 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { Typography, Box, Paper, Button, TextField, Chip, Stack } from "@mui/material";
+import {
+    Typography,
+    Box,
+    Paper,
+    Button,
+    TextField,
+    Chip,
+    Stack,
+} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { usePrincipalState } from "../store/usePrincipalState";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { changeChecked } from "../apis/routine/routineService";
+import { Grid } from "@mui/system";
 
 const ScheduleItem = ({ dayEng, day, routines, active, onReset, onSave }) => {
     const { principal } = usePrincipalState();
@@ -15,7 +24,8 @@ const ScheduleItem = ({ dayEng, day, routines, active, onReset, onSave }) => {
 
     const checkedMutation = useMutation({
         mutationFn: (routineId) => changeChecked(routineId),
-        onSuccess: () => queryClient.invalidateQueries(["getRoutine", principal?.userId]),
+        onSuccess: () =>
+            queryClient.invalidateQueries(["getRoutine", principal?.userId]),
         onError: (error) => {
             alert(error.message);
         },
@@ -40,16 +50,19 @@ const ScheduleItem = ({ dayEng, day, routines, active, onReset, onSave }) => {
     };
 
     const handleDeleteLocal = (indexToDelete) => {
-        setLocalRoutines(localRoutines.filter((_, index) => index !== indexToDelete));
+        setLocalRoutines(
+            localRoutines.filter((_, index) => index !== indexToDelete),
+        );
     };
 
     const handleSaveClick = () => {
+        setInputText("");
         if (onSave) onSave(localRoutines);
         setIsEditing(false);
     };
 
     const THEME = {
-        accent: "#3f98f8", 
+        accent: "#3f98f8",
         text: "#0F172A",
         activeBg: "#F0F9FF",
     };
@@ -64,8 +77,8 @@ const ScheduleItem = ({ dayEng, day, routines, active, onReset, onSave }) => {
                 bgcolor: active ? THEME.activeBg : "#FFFFFF",
                 border: `1px solid ${active ? THEME.accent : "#bbbdbe"}`,
                 transition: "all 0.2s ease-in-out",
-            }}
-        >
+                overflow: "auto"
+            }}>
             <Box sx={{ display: "flex", alignItems: "center", gap: 2.5 }}>
                 <Box
                     sx={{
@@ -78,8 +91,7 @@ const ScheduleItem = ({ dayEng, day, routines, active, onReset, onSave }) => {
                         bgcolor: active ? THEME.accent : "#ffffff",
                         color: active ? "white" : THEME.text,
                         flexShrink: 0,
-                    }}
-                >
+                    }}>
                     <Typography variant="body1" fontWeight="800">
                         {day}
                     </Typography>
@@ -88,12 +100,19 @@ const ScheduleItem = ({ dayEng, day, routines, active, onReset, onSave }) => {
                 <Box sx={{ flex: 1 }}>
                     {isEditing ? (
                         <Stack spacing={1.5}>
-                            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.8 }}>
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    flexWrap: "wrap",
+                                    gap: 0.8,
+                                }}>
                                 {localRoutines.map((routine, index) => (
                                     <Chip
                                         key={index}
                                         label={routine.exercise}
-                                        onDelete={() => handleDeleteLocal(index)}
+                                        onDelete={() =>
+                                            handleDeleteLocal(index)
+                                        }
                                         sx={{
                                             bgcolor: "#F0F9FF",
                                             color: "#0369A1",
@@ -110,57 +129,138 @@ const ScheduleItem = ({ dayEng, day, routines, active, onReset, onSave }) => {
                                     size="small"
                                     placeholder="운동 입력"
                                     value={inputText}
-                                    onChange={(e) => setInputText(e.target.value)}
-                                    sx={{ "& .MuiOutlinedInput-root": { borderRadius: "10px", bgcolor: "#fff" } }}
+                                    onChange={(e) =>
+                                        setInputText(e.target.value)
+                                    }
+                                    sx={{
+                                        "& .MuiOutlinedInput-root": {
+                                            borderRadius: "10px",
+                                            bgcolor: "#fff",
+                                        },
+                                    }}
                                 />
-                                <Button onClick={handleAddLocal} variant="contained" sx={{ bgcolor: THEME.accent, minWidth: 50, borderRadius: "10px", boxShadow: "none" }}>
+                                <Button
+                                    onClick={handleAddLocal}
+                                    variant="contained"
+                                    sx={{
+                                        bgcolor: THEME.accent,
+                                        minWidth: 50,
+                                        borderRadius: "10px",
+                                        boxShadow: "none",
+                                    }}>
                                     <AddIcon />
                                 </Button>
                             </Stack>
-                            <Stack direction="row" spacing={1} justifyContent="flex-end">
-                                <Button size="small" sx={{ color: "#43484e" }} onClick={() => setIsEditing(false)}>
+                            <Stack
+                                direction="row"
+                                spacing={1}
+                                justifyContent="flex-end">
+                                <Button
+                                    size="small"
+                                    variant="outlined"
+                                    onClick={() => {
+                                        setIsEditing(false);
+                                        setInputText("");
+                                    }}
+                                    sx={{
+                                        boxShadow: "none",
+                                        borderRadius: "8px",
+                                    }}>
                                     취소
                                 </Button>
-                                <Button size="small" variant="contained" onClick={handleSaveClick} sx={{ bgcolor: THEME.accent, boxShadow: "none", borderRadius: "8px" }}>
+                                <Button
+                                    size="small"
+                                    variant="contained"
+                                    onClick={handleSaveClick}
+                                    sx={{
+                                        bgcolor: THEME.accent,
+                                        boxShadow: "none",
+                                        borderRadius: "8px",
+                                    }}>
                                     저장
                                 </Button>
                             </Stack>
                         </Stack>
                     ) : (
-                        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.8 }}>
+                        <Box
+                            sx={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                            }}>
+                            <Grid container spacing={1}>
                                 {routines?.length > 0 ? (
                                     routines.map((act, index) => (
                                         <Chip
                                             key={index}
                                             label={act.exercise}
-                                            onClick={() => checkedMutation.mutate(act.routineId)}
+                                            onClick={() =>
+                                                checkedMutation.mutate(
+                                                    act.routineId,
+                                                )
+                                            }
+                                            size="small"
                                             sx={{
                                                 cursor: "pointer",
                                                 borderRadius: "6px",
                                                 fontSize: "0.8rem",
                                                 fontWeight: 600,
-                                                textDecoration: act.checked ? "line-through" : "none",
-                                                bgcolor: act.checked ? "#F1F5F9" : "#E0F2FE",
-                                                color: act.checked ? "#CBD5E1" : "#0369A1",
+
+                                                maxWidth: 200, 
+
+                                                textDecoration: act.checked
+                                                    ? "line-through"
+                                                    : "none",
+                                                bgcolor: act.checked
+                                                    ? "#F1F5F9"
+                                                    : "#E0F2FE",
+                                                color: act.checked
+                                                    ? "#CBD5E1"
+                                                    : "#0369A1",
                                                 border: "none",
-                                                "&:hover": { bgcolor: "#BAE6FD" },
+
+                                                "& .MuiChip-label": {
+                                                    overflow: "hidden",
+                                                    textOverflow: "ellipsis",
+                                                    whiteSpace: "nowrap",
+                                                    display: "block",
+                                                },
+
+                                                "&:hover": {
+                                                    bgcolor: "#BAE6FD",
+                                                },
                                             }}
-                                            size="small"
                                         />
                                     ))
                                 ) : (
-                                    <Typography variant="caption" sx={{ color: "#424245" }}>
+                                    <Typography
+                                        variant="caption"
+                                        sx={{ color: "#424245" }}>
                                         쉬는 날
                                     </Typography>
                                 )}
-                            </Box>
+                            </Grid>
 
-                            <Stack direction="row">
-                                <Button size="small" onClick={() => setIsEditing(true)} sx={{ color: "#0284C7", fontSize: "0.7rem" }}>
+                            <Stack spacing={1}>
+                                <Button
+                                    size="small"
+                                    onClick={() => setIsEditing(true)}
+                                        sx={{
+                                        color: "#0284C7",
+                                        fontSize: "0.7rem",
+                                    }}>
                                     수정
                                 </Button>
-                                <Button size="small" onClick={() => confirm("초기화 하시겠습니까?") && onReset()} sx={{ color: "#fc6b7c", fontSize: "0.7rem" }}>
+                                <Button
+                                    size="small"
+                                    onClick={() =>
+                                        confirm("초기화 하시겠습니까?") &&
+                                        onReset()
+                                    }
+                                    sx={{
+                                        color: "#fc6b7c",
+                                        fontSize: "0.7rem",
+                                    }}>
                                     초기화
                                 </Button>
                             </Stack>

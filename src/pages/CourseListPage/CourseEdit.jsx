@@ -8,17 +8,19 @@ import { updateCourse } from "../../apis/course/courseService";
 import { Box, Container, Stack } from "@mui/system";
 import { useKakaoPlaceSearch } from "../../hooks/useKakaoPlaceSearch";
 import { Divider, Paper } from "@mui/material";
-import CourseMiniBar from "./CourseMiniBar";
-import CoursePanel from "./CoursePanel";
-import PlaceSearchPanel from "./PlaceSearchPanel";
-import CourseSavePanel from "./CourseSavePanel";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { NAV_H } from "../../components/BasicBottomNav";
 import Loading from "../../components/Loading";
+import CourseMiniBar from "../../components/Course/CourseMiniBar";
+import CoursePanel from "../../components/Course/CoursePanel";
+import PlaceSearchPanel from "../../components/Course/PlaceSearchPanel";
+import CourseSavePanel from "../../components/Course/CourseSavePanel";
+import { useToastStore } from "../../store/useToastStore";
 
 function CourseEdit({ course, userId, isEditing }) {
     const { mapRef, kakaoObj, points, setPoints, distanceM, map, undo, clear } =
         useCourseMap();
+    const { show } = useToastStore();
 
     const [panelOpen, setPanelOpen] = useState(false);
     const [region, setRegion] = useState(null);
@@ -35,10 +37,10 @@ function CourseEdit({ course, userId, isEditing }) {
             queryClient.invalidateQueries(["getCourseListByUserId", userId]);
             setCourseName("");
             clear();
-            alert(response.message);
+            show(response.message, "success");
         },
         onError: (error) => {
-            alert(error.message);
+            show(error.message, "error");
         },
     });
 

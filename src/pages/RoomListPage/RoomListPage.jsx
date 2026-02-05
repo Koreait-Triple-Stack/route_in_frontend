@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import RoomList from "./RoomList";
 import NewChatDialog from "./NewChatDialog";
 import RoomListHeader from "./RoomListHeader";

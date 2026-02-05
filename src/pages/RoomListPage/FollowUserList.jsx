@@ -97,7 +97,6 @@ function FollowUserList({
                                         justifyContent: "space-between",
                                         gap: 2,
                                     }}>
-                                    {/* 왼쪽: 프로필 정보 */}
                                     <Box
                                         sx={{
                                             display: "flex",
@@ -114,7 +113,7 @@ function FollowUserList({
                                                 display: "flex",
                                                 flexDirection: "column",
                                             }}>
-                                            <Typography sx={{ fontSize: 20 }}>
+                                            <Typography sx={{ fontSize: 18, fontWeight: 550 }}>
                                                 {u?.username}
                                             </Typography>
                                         </Box>

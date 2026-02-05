@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { usePrincipalState } from "../../store/usePrincipalState";
-
 import AddressForm from "./AddressForm";
 import UsernameForm from "./UsernameForm";
 import BodyInfoForm from "./BodyInfoForm";
@@ -12,7 +11,6 @@ import Loading from "../../components/Loading";
 import ProfileCard from "./ProfileCard";
 import WithdrawForm from "./WithdrawForm";
 import Calendar from "../../components/Calendar";
-import { Box } from "@mui/system";
 
 function MyPage() {
     const navigate = useNavigate();
@@ -57,7 +55,7 @@ function MyPage() {
     if (isLoading) return <Loading />;
 
     return (
-        <Container>
+        <Container sx={{ py: 2 }}>
             {renderOverlayContent()}
             <Calendar
                 open={activeView === "calendar"}

@@ -3,11 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { usePrincipalState } from "../store/usePrincipalState";
 import { useNotificationWS } from "../hooks/useNotificationWS";
 import { Alert, Avatar, Button, Snackbar, Typography } from "@mui/material";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { Box } from "@mui/system";
 import { useChatUiState } from "../store/useChatUiState";
-import { addNotification } from "../apis/notification/notificationService";
-import { useToastStore } from "../store/useToastStore";
 
 function NotificationListener() {
     const navigate = useNavigate();
@@ -20,19 +18,12 @@ function NotificationListener() {
     const [title, setTitle] = useState("새 알림");
     const [profileImg, setProfileImg] = useState("");
     const [path, setPath] = useState("");
-    const { show } = useToastStore();
 
     const close = (_, reason) => {
         if (reason === "clickaway") return;
         setOpen(false);
     };
     const activeRoomId = useChatUiState((s) => s.activeRoomId);
-    const mutation = useMutation({
-        mutationFn: addNotification,
-        onError: (resp) => {
-            show(resp.message, "error");
-        },
-    });
 
     const onMessage = useCallback(
         (payload) => {
@@ -126,42 +117,24 @@ function NotificationListener() {
                 return;
             }
 
-            if (payloadType === "NOTIFICATION") {
-                const id = payload?.notificationId ?? crypto.randomUUID();
-                const title = payload?.title ?? "새 알림";
-                const message = payload?.message ?? "새 알림";
-                const path = payload?.path ?? "/notification";
-                const profileImg = payload?.profileImg ?? "";
+            const id = payload?.notificationId ?? crypto.randomUUID();
+            const title = payload?.title ?? "새 알림";
+            const message = payload?.message ?? "새 알림";
+            const path = payload?.path ?? "/notification";
+            const profileImg = payload?.profileImg ?? "";
 
-                setLastId(id);
-                setTitle(title);
-                setToastMsg(message);
-                setPath(path);
-                setProfileImg(profileImg);
-                setOpen(true);
+            setLastId(id);
+            setTitle(title);
+            setToastMsg(message);
+            setPath(path);
+            setProfileImg(profileImg);
+            setOpen(true);
 
-                queryClient.invalidateQueries({
-                    queryKey: [
-                        "countUnreadNotificationByUserId",
-                        payload?.userId,
-                    ],
-                });
-                queryClient.invalidateQueries({
-                    queryKey: [
-                        "countUnreadChatByUserIdRequest",
-                        principal.userId,
-                    ],
-                });
-
-                return;
-            }
-
-            mutation.mutate({
-                userId: payload.userId,
-                title: payload.title,
-                message: payload.message,
-                path: payload.path,
-                profileImg: payload.profileImg,
+            queryClient.invalidateQueries({
+                queryKey: ["countUnreadNotificationByUserId", payload?.userId],
+            });
+            queryClient.invalidateQueries({
+                queryKey: ["countUnreadChatByUserIdRequest", principal.userId],
             });
         },
         [activeRoomId, principal?.userId, queryClient],

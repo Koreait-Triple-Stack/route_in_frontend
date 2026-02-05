@@ -24,7 +24,7 @@ export default function AppLayout({ children }) {
                         height: "100%",
                         minHeight: 0,
                         overflowY: "auto",
-                        pb: `${NAV_H + 20}px`,
+                        pb: !isChatRoom ? `${NAV_H + 20}px` : 0,
                         pt: !isChatRoom ? "var(--header-offset)" : 0,
                         transition: "padding-top 0s",
                         msOverflowStyle: "none",
@@ -35,7 +35,7 @@ export default function AppLayout({ children }) {
                 </Box>
             </Container>
 
-            {<BasicBottomNav />}
+            {!isChatRoom && <BasicBottomNav />}
         </Box>
     );
 }

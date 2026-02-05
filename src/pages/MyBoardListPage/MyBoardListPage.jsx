@@ -20,7 +20,7 @@ function MyBoardListPage() {
     if (isLoading) return <Loading />;
 
     return (
-        <Container>
+        <Container sx={{ py: 2 }}>
             <Stack
                 direction="row"
                 alignItems="center"

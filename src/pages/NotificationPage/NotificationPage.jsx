@@ -89,7 +89,6 @@ function NotificationPage() {
                 </Typography>
             </Box>
 
-            {/* List */}
             <List sx={{ px: 1, pt: 1.5 }}>
                 {notifications?.length ? (
                     notifications.map((n) => (
@@ -127,7 +126,6 @@ function NotificationPage() {
                                     />
 
                                     <Box sx={{ flex: 1, minWidth: 0 }}>
-                                        {/* title */}
                                         {n.title && (
                                             <Typography
                                                 variant="subtitle2"
@@ -142,25 +140,22 @@ function NotificationPage() {
                                             </Typography>
                                         )}
 
-                                        {/* message (2줄 클램프) */}
                                         <Typography
                                             variant="body2"
                                             sx={{
                                                 mt: 0.3,
                                                 color: "text.secondary",
-                                                display: "-webkit-box",
-                                                WebkitLineClamp: 2,
-                                                WebkitBoxOrient: "vertical",
                                                 overflow: "hidden",
+                                                textOverflow: "ellipsis",
+                                                whiteSpace: "nowrap",
                                             }}>
                                             {n.message}
                                         </Typography>
 
-                                        {/* time */}
                                         <Typography
                                             variant="caption"
                                             sx={{
-                                                mt: 0.8,
+                                                mt: 0.3,
                                                 color: "text.disabled",
                                                 display: "block",
                                             }}>
@@ -168,7 +163,6 @@ function NotificationPage() {
                                         </Typography>
                                     </Box>
 
-                                    {/* delete */}
                                     <IconButton
                                         className="deleteBtn"
                                         size="small"
@@ -179,7 +173,7 @@ function NotificationPage() {
                                         }}
                                         sx={{
                                             mt: 0.2,
-                                            opacity: 0.35, // 기본은 은은하게
+                                            opacity: 0.35,
                                             transition: "0.15s",
                                             "&:hover": { opacity: 1 },
                                         }}>
