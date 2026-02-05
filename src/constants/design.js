@@ -1,3 +1,5 @@
+import { fontWeight } from "@mui/system";
+
 export const THEME = {
     bg: "#F0F4F8",
     paper: "#FFFFFF",
@@ -99,7 +101,7 @@ export const BUTTON_COLOR = {
     background: "linear-gradient(135deg, #2563eb, #22c55e)",
 };
 
-// 제목 입력칸 
+// 제목 입력칸
 export const filterTextFieldSx = {
     "& .MuiOutlinedInput-root": {
         height: 40,
@@ -119,10 +121,34 @@ export const filterTextFieldSx = {
         fontWeight: 800,
     },
 };
+// 필터 적용 초기화
 export const filterActionBtnBaseSx = {
     height: 38,
-    px: 2.2,
+    px: { xs: 1.4, sm: 2.2 },
     borderRadius: 2,
     fontWeight: 900,
     textTransform: "none",
+};
+
+export const pillToggleSx = {
+    borderRadius: 999,
+    px: 1.6,
+    py: 0.7,
+    fontWeight: 500,
+    textTransform: "none",
+    whiteSpace: "nowrap",
+    bgcolor: "background.paper",
+    borderColor: "divider",
+    color: "text.primary",
+    "&:hover": {
+        bgcolor: "action.hover",
+    },
+    "&.Mui-selected": {
+        bgcolor: "primary.main",
+        borderColor: "primary.main",
+        color: "#fff",
+        "&:hover": {
+            bgcolor: "primary.dark",
+        },
+    },
 };
