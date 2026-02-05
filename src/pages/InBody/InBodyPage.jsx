@@ -129,7 +129,8 @@ export default function InbodyChartWithActions() {
         if (
             !inputValues.bodyWeight ||
             !inputValues.skeletalMuscleMass ||
-            !inputValues.bodyFatMass
+            !inputValues.bodyFatMass || 
+            !inputValues.monthDt
         ) {
             show("모든 정보를 입력해주세요.", "error");
             return;

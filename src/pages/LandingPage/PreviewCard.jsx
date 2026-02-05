@@ -1,13 +1,23 @@
-import {
-    Box,
-    Chip,
-    Stack,
-    Typography,
-    Card,
-    CardContent,
-} from "@mui/material";
+import { Chip, Stack, Typography, Card, CardContent } from "@mui/material";
+import Loading from "../../components/Loading";
+import ErrorComponent from "../../components/ErrorComponent";
+import { getRecommendationCourse } from "../../apis/aiRecommend/aiRecommendService";
+import { useQuery } from "@tanstack/react-query";
+import Course from "./Course";
 
 function PreviewCard() {
+    const {
+        data: response,
+        isLoading,
+        error,
+    } = useQuery({
+        queryKey: ["getRecommendationCourse"],
+        queryFn: () => getRecommendationCourse(),
+    });
+
+    if (isLoading) return <Loading />;
+    if (error) return <ErrorComponent error={error} />;
+
     return (
         <Card
             sx={{
@@ -16,20 +26,23 @@ function PreviewCard() {
                 border: "1px solid rgba(15,23,42,0.10)",
                 boxShadow: "0 20px 60px rgba(15,23,42,0.10)",
                 overflow: "hidden",
-            }}>
+            }}
+        >
             <CardContent sx={{ p: 2.4 }}>
                 <Stack
                     direction="row"
                     alignItems="center"
-                    justifyContent="space-between">
+                    justifyContent="space-between"
+                >
                     <Stack spacing={0.2}>
                         <Typography sx={{ fontWeight: 1000 }}>
                             오늘의 추천 코스
                         </Typography>
                         <Typography
                             variant="caption"
-                            sx={{ color: "rgba(15,23,42,0.60)" }}>
-                            서울 · 한강 러닝
+                            sx={{ color: "rgba(15,23,42,0.60)" }}
+                        >
+                            {response?.data?.region}
                         </Typography>
                     </Stack>
                     <Chip
@@ -44,29 +57,19 @@ function PreviewCard() {
                     />
                 </Stack>
 
-                <Box
-                    sx={{
-                        mt: 2,
-                        height: 190,
-                        borderRadius: "18px",
-                        border: "1px solid rgba(15,23,42,0.10)",
-                        background:
-                            "radial-gradient(700px 280px at 20% 30%, rgba(37,99,235,0.16), transparent 65%)," +
-                            "radial-gradient(600px 260px at 70% 50%, rgba(34,197,94,0.14), transparent 60%)," +
-                            "linear-gradient(135deg, rgba(255,255,255,0.8), rgba(248,250,252,0.9))",
-                    }}
-                />
+                <Course boardId={response?.data?.boardId} />
+
                 <Stack
                     direction="row"
                     spacing={1}
                     flexWrap="wrap"
                     useFlexGap
-                    sx={{ mt: 2 }}>
+                    sx={{ mt: 2 }}
+                >
                     {[
-                        "거리 6.2km",
-                        "예상 38분",
-                        "난이도 보통",
-                        "야경 추천",
+                        `거리 ${(response?.data?.distanceM / 1000).toFixed(1)}km`,
+                        `예상 ${response?.data?.estimatedMinutes || 0}분`,
+                        `난이도 ${response?.data?.level}`,
                     ].map((t) => (
                         <Chip
                             key={t}
@@ -84,4 +87,4 @@ function PreviewCard() {
     );
 }
 
-export default PreviewCard
+export default PreviewCard;
