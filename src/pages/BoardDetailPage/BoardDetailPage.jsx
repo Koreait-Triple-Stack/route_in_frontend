@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Box, Chip, Divider } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Container, Grid, Stack } from "@mui/system";
+import { Container, Grid } from "@mui/system";
 import { copyPayload, getBoardByBoardId } from "../../apis/board/boardService";
 import Header from "./Header";
 import CourseDetail from "./CourseDetail";
@@ -76,8 +76,7 @@ function BoardDetailPage() {
                 sx={{
                     overflow: "hidden",
                     bgcolor: "transparent",
-                }}
-            >
+                }}>
                 <Header
                     boardData={boardData}
                     setOpenCopy={setOpenCopy}

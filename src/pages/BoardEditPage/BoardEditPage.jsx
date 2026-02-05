@@ -2,9 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Box, Container, Stack } from "@mui/system";
 import { Typography, TextField, Button, Paper } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
-import { usePrincipalState } from "../../store/usePrincipalState";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { addBoard, updateBoard } from "../../apis/board/boardService";
+import { updateBoard } from "../../apis/board/boardService";
 import { useToastStore } from "../../store/useToastStore";
 import RoutineParts from "./RoutineParts";
 import CourseDetail from "./CourseDetail";
@@ -167,7 +166,6 @@ function BoardEditPage() {
                         onChange={onChangeHandler}
                     />
 
-                    {/* 버튼 */}
                     <Stack direction="row" spacing={1}>
                         <Button
                             variant="outlined"

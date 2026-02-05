@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Box, Button, TextField, Stack } from "@mui/material";
-import SubdirectoryArrowRightIcon from "@mui/icons-material/SubdirectoryArrowRight";
 
 function CommentInput({ onSubmit, onCancel, placeholder }) {
     const [content, setContent] = useState("");

@@ -1,14 +1,6 @@
-import {
-    Avatar,
-    IconButton,
-    Menu,
-    MenuItem,
-    ToggleButton,
-    Typography,
-} from "@mui/material";
+import { IconButton, Menu, MenuItem, Typography } from "@mui/material";
 import { Box, Stack } from "@mui/system";
-import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { usePrincipalState } from "../../store/usePrincipalState";
@@ -27,7 +19,7 @@ function Header({ boardData, setOpenCopy, boardId }) {
     const { principal } = usePrincipalState();
     const navigate = useNavigate();
     const queryClient = useQueryClient();
-    const [anchorEl, setAnchorEl] = useState(false); // 점 3개 메뉴
+    const [anchorEl, setAnchorEl] = useState(false);
     const [recommended, setRecommended] = useState(false);
     const closeMenu = () => setAnchorEl(null);
     const { data: recommendList } = useQuery({
@@ -70,7 +62,6 @@ function Header({ boardData, setOpenCopy, boardId }) {
         );
     }, [principal, boardData]);
 
-    // 삭제
     const removeMutation = useMutation({
         mutationKey: ["removeBoard", boardId],
         mutationFn: removeBoard,
@@ -127,7 +118,6 @@ function Header({ boardData, setOpenCopy, boardId }) {
                 </Typography>
 
                 <Stack direction="row" alignItems="center" spacing={0.8}>
-                    {/* 추천수 pill */}
                     <HeaderRecommend
                         recommended={recommended}
                         changeRecommendMutation={changeRecommendMutation}
@@ -136,7 +126,7 @@ function Header({ boardData, setOpenCopy, boardId }) {
 
                     {/* 점 3개 */}
                     <IconButton
-                        sx={{ pr: 0}}
+                        sx={{ pr: 0 }}
                         onClick={(e) => setAnchorEl(e.currentTarget)}>
                         <MoreVertIcon />
                     </IconButton>
@@ -196,7 +186,6 @@ function Header({ boardData, setOpenCopy, boardId }) {
                 </Stack>
             </Stack>
 
-            {/* 작성자 라인 */}
             <Stack
                 direction="row"
                 alignItems="center"
@@ -217,7 +206,10 @@ function Header({ boardData, setOpenCopy, boardId }) {
                             color: "text.secondary",
                             fontSize: 12,
                         }}>
-                        {boardData?.createDt?.split("T")[0].replaceAll("-", ".")}{". "}
+                        {boardData?.createDt
+                            ?.split("T")[0]
+                            .replaceAll("-", ".")}
+                        {". "}
                         {boardData?.createDt?.split("T")[1].slice(0, 5)}
                     </Typography>
                 </Stack>

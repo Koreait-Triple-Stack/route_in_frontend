@@ -6,12 +6,22 @@ import ScheduleItem from "./ScheduleItem";
 function RoutineParts({ form, setForm, setRoutine }) {
     const togglePart = (part) => {
         setForm((prev) => {
-            const nextParts = prev.tags?.includes(part) ? prev.parts.filter((t) => t !== part) : [...prev.parts, part];
+            const nextParts = prev.tags?.includes(part)
+                ? prev.parts.filter((t) => t !== part)
+                : [...prev.parts, part];
 
             return { ...prev, parts: nextParts };
         });
     };
-    const dbDays = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
+    const dbDays = [
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "saturday",
+        "sunday",
+    ];
     const dayMap = {
         monday: "월",
         tuesday: "화",
@@ -25,13 +35,15 @@ function RoutineParts({ form, setForm, setRoutine }) {
     return (
         <Box>
             <Stack spacing={2}>
-                <Stack direction="row" alignItems="baseline" justifyContent="space-between">
+                <Stack
+                    direction="row"
+                    alignItems="baseline"
+                    justifyContent="space-between">
                     <Typography
                         sx={{
                             fontWeight: 900,
                             fontSize: 14,
-                        }}
-                    >
+                        }}>
                         운동 부위
                     </Typography>
                     <Typography
@@ -39,8 +51,7 @@ function RoutineParts({ form, setForm, setRoutine }) {
                             fontSize: 12,
                             fontWeight: 700,
                             color: "text.secondary",
-                        }}
-                    >
+                        }}>
                         복수 선택 가능
                     </Typography>
                 </Stack>
@@ -50,8 +61,7 @@ function RoutineParts({ form, setForm, setRoutine }) {
                         display: "flex",
                         flexWrap: "wrap",
                         gap: 1,
-                    }}
-                >
+                    }}>
                     {EXERCISE_PARTS.map((part) => {
                         const selected = form.parts.includes(part);
                         return (
@@ -66,8 +76,7 @@ function RoutineParts({ form, setForm, setRoutine }) {
                                     py: 0.7,
                                     fontWeight: 800,
                                     fontSize: 13,
-                                }}
-                            >
+                                }}>
                                 {part}
                             </ToggleButton>
                         );
@@ -75,14 +84,18 @@ function RoutineParts({ form, setForm, setRoutine }) {
                 </Box>
                 <Stack spacing={2}>
                     {dbDays.map((day) => {
-                        const dayRoutines = form.routines.filter((r) => r.weekday === day);
+                        const dayRoutines = form.routines.filter(
+                            (r) => r.weekday === day,
+                        );
                         return (
                             <ScheduleItem
                                 key={day}
                                 dayEng={day}
                                 day={dayMap[day]}
                                 routines={dayRoutines}
-                                onSave={(localRoutine) => setRoutine(day, localRoutine)}
+                                onSave={(localRoutine) =>
+                                    setRoutine(day, localRoutine)
+                                }
                                 onReset={() => setRoutine(day, [])}
                             />
                         );

@@ -1,7 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
 import { Box, Stack } from "@mui/system";
-import { getRoutine } from "../../apis/routine/routineService";
-import Loading from "../../components/Loading";
 import { Chip, Paper, Typography } from "@mui/material";
 
 function RoutineList({ routines }) {
