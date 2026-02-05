@@ -9,6 +9,7 @@ import { useToastStore } from "../../store/useToastStore";
 import RoutineParts from "./RoutineParts";
 import CourseDetail from "./CourseDetail";
 import DialogComponent from "../../components/DialogComponent";
+import { filterTextFieldSx } from "../../constants/design";
 
 function BoardWritePage() {
     const { show } = useToastStore();
@@ -110,6 +111,7 @@ function BoardWritePage() {
                         fontWeight: 900,
                         fontSize: { xs: 20, sm: 24 },
                         lineHeight: 1.2,
+                        py: 2,
                     }}>
                     {type === "ROUTINE" ? "루틴 작성" : "코스 작성"}
                 </Typography>
@@ -128,10 +130,12 @@ function BoardWritePage() {
                         fullWidth
                         variant="outlined"
                         label="제목"
+                        size="small"
                         placeholder="제목을 입력하세요."
                         name="title"
                         value={form.title}
                         onChange={onChangeHandler}
+                        sx={filterTextFieldSx}
                     />
                     {type === "ROUTINE" ? (
                         <RoutineParts
@@ -156,6 +160,17 @@ function BoardWritePage() {
                         name="content"
                         value={form.content}
                         onChange={onChangeHandler}
+                        sx={{
+                            ...filterTextFieldSx,
+                            "& .MuiOutlinedInput-root": {
+                                ...filterTextFieldSx[
+                                    "& .MuiOutlinedInput-root"
+                                ],
+                                height: "auto",
+                                alignItems: "flex-start",
+                                py: 1.2,
+                            },
+                        }}
                     />
 
                     <Stack direction="row" spacing={1}>
@@ -165,7 +180,7 @@ function BoardWritePage() {
                             onClick={() => navigate("/board")}
                             disabled={mutation.isPending}
                             sx={{
-                                borderRadius: 2,
+                                borderRadius: 20,
                                 py: 1.2,
                                 fontWeight: 900,
                             }}>
@@ -177,7 +192,7 @@ function BoardWritePage() {
                             onClick={() => setOpenSave(true)}
                             disabled={mutation.isPending}
                             sx={{
-                                borderRadius: 2,
+                                borderRadius: 20,
                                 py: 1.2,
                                 fontWeight: 900,
                             }}>

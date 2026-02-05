@@ -7,11 +7,7 @@ import {
 } from "@mui/material";
 import { Box, Stack } from "@mui/system";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
-import {
-    boardSortSelectSx,
-    boardTypeBtnSx,
-    selectMenuPaperSx,
-} from "../../constants/design";
+import { boardSortSelectSx, boardTypeBtnSx } from "../../constants/design";
 function TypeBox({ checked, setChecked, form, setForm, setTags }) {
     const inputChangeHandler = (e) => {
         setTags([]);
@@ -31,7 +27,6 @@ function TypeBox({ checked, setChecked, form, setForm, setTags }) {
                 justifyContent: "space-between",
                 alignItems: "center",
                 pb: 1,
-                pl: 0.8,
             }}
         >
             <ToggleButtonGroup
@@ -39,7 +34,6 @@ function TypeBox({ checked, setChecked, form, setForm, setTags }) {
                 size="small"
                 exclusive
                 onChange={inputChangeHandler}
-                sx={{}}
             >
                 <Stack direction={"row"} spacing={0.6}>
                     <ToggleButton name="type" value="ALL" sx={boardTypeBtnSx}>
@@ -77,7 +71,37 @@ function TypeBox({ checked, setChecked, form, setForm, setTags }) {
                         onChange={inputChangeHandler}
                         displayEmpty
                         sx={boardSortSelectSx}
-                        MenuProps={{ PaperProps: { sx: selectMenuPaperSx } }}
+                        MenuProps={{
+                            PaperProps: {
+                                sx: {
+                                    mt: 1,
+                                    borderRadius: 2,
+                                    border: "1px solid",
+                                    borderColor: "divider",
+                                    boxShadow:
+                                        "0 10px 24px rgba(15,23,42,0.12)",
+                                    overflow: "hidden",
+                                    "& .MuiList-root": { py: 0.5 },
+                                    "& .MuiMenuItem-root": {
+                                        fontSize: 13,
+                                        minHeight: 40,
+                                        px: 1,
+                                        mx: 0.6,
+                                        my: 0.3,
+                                        borderRadius: 1,
+                                        "&:hover": { bgcolor: "action.hover" },
+                                        "&.Mui-selected": {
+                                            bgcolor: "primary.main",
+                                            color: "#fff",
+                                            fontWeight: 800,
+                                            "&:hover": {
+                                                bgcolor: "primary.dark",
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        }}
                     >
                         <MenuItem value="LATEST">최신순</MenuItem>
                         <MenuItem value="RECOMMEND">추천순</MenuItem>

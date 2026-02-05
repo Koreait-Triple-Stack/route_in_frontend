@@ -2,7 +2,7 @@ export const THEME = {
     bg: "#F0F4F8",
     paper: "#FFFFFF",
     accent: "#237ee0",
-    point: "#5856D6", // 퍼플 블루
+    point: "#5856D6",
 };
 
 export const moduleStyle = {
@@ -17,7 +17,6 @@ export const moduleStyle = {
     width: "100%",
 };
 
-// 게시판 태크/타입 칩
 export const boardTagChipSx = (type) => ({
     height: 30,
     borderRadius: "999px",
@@ -30,7 +29,6 @@ export const boardTagChipSx = (type) => ({
     borderColor: type === "COURSE" ? THEME.accent : "transparent",
 });
 
-// 추천 Chip
 export const recommendChipSx = {
     minWidth: 72,
     height: 32,
@@ -49,7 +47,6 @@ export const recommendChipSx = {
     },
 };
 
-// PostCard스타일
 export const boardCardSx = {
     position: "relative",
     borderRadius: 5,
@@ -61,31 +58,10 @@ export const boardCardSx = {
     boxShadow: "0 12px 28px rgba(15,23,42,0.10)",
     overflow: "hidden",
     transition: "transform 160ms ease, box-shadow 160ms ease",
-
-    // 상단 컬러바 (최신 느낌)
-    "&::before": {
-        content: '""',
-        position: "absolute",
-        left: 0,
-        top: 0,
-        height: 4,
-        width: "100%",
-        background: "linear-gradient(90deg, #2563eb, #22c55e)",
-    },
-
-    "&:hover": {
-        transform: "translateY(-2px)",
-        boxShadow: "0 18px 40px rgba(15,23,42,0.14)",
-    },
 };
-
-// src/pages/board/TypeBox.sx.js
-
-// 게시글 타입 토글 버튼 스타일 (TypeBox.jsx)
 export const boardTypeBtnSx = {
-    height: 36,
-    px: 2.2,
-    borderRadius: 2,
+    height: 40,
+    borderRadius: 3,
     fontWeight: 800,
     textTransform: "none",
     bgcolor: "#fff",
@@ -101,7 +77,6 @@ export const boardTypeBtnSx = {
     },
 };
 
-// 정렬 Select 스타일 (TypeBox.jsx)
 export const boardSortSelectSx = {
     height: 36,
     minWidth: 110,
@@ -119,49 +94,34 @@ export const boardSortSelectSx = {
     "& .MuiSelect-icon": { fontSize: 18 },
 };
 
-// 필터 버튼 스타일 (TypeBox.jsx)
-export const boardFilterBtnSx = {
-    width: 36,
-    height: 36,
-    borderRadius: 2,
-    bgcolor: "#fff",
-    color: "primary.main",
-    border: "1px solid",
-    borderColor: "primary.main",
-    "&:hover": { bgcolor: "#fff" },
-    "&.Mui-selected": {
-        bgcolor: "primary.main",
-        color: "#fff",
-        "&:hover": { bgcolor: "primary.dark" },
-    },
-};
-
 export const BUTTON_COLOR = {
     background: "linear-gradient(135deg, #2563eb, #22c55e)",
 };
 
-// 최신순 메뉴
-export const selectMenuPaperSx = {
-    mt: 1,
-    borderRadius: 2,
-    border: "1px solid",
-    borderColor: "divider",
-    boxShadow: "0 10px 24px rgba(15,23,42,0.12)",
-    overflow: "hidden",
-    "& .MuiList-root": { py: 0.5 },
-    "& .MuiMenuItem-root": {
-        fontSize: 13,
-        minHeight: 38,
-        px: 1.6,
-        mx: 0.6,
-        my: 0.3,
-        borderRadius: 1,
-        "&:hover": { bgcolor: "action.hover" },
-        "&.Mui-selected": {
-            bgcolor: "primary.main",
-            color: "#fff",
-            fontWeight: 800,
-            "&:hover": { bgcolor: "primary.dark" },
-        },
+// 제목 입력칸 
+export const filterTextFieldSx = {
+    "& .MuiOutlinedInput-root": {
+        height: 40,
+        borderRadius: 2,
+        bgcolor: "action.hover",
     },
+    "& .MuiOutlinedInput-notchedOutline": {
+        borderColor: "divider",
+    },
+    "&:hover .MuiOutlinedInput-notchedOutline": {
+        borderColor: "text.secondary",
+    },
+    "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+        borderColor: "primary.main",
+    },
+    "& .MuiInputLabel-root": {
+        fontWeight: 800,
+    },
+};
+export const filterActionBtnBaseSx = {
+    height: 38,
+    px: 2.2,
+    borderRadius: 2,
+    fontWeight: 900,
+    textTransform: "none",
 };
