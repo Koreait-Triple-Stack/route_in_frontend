@@ -34,6 +34,7 @@ function RoutineList({ routines }) {
                             variant="outlined"
                             sx={{
                                 p: 2,
+                                borderRadius: 5,
                                 bgcolor: dayRoutines > 0 ? "#f0f7ff" : "white",
                                 borderColor:
                                     dayRoutines > 0

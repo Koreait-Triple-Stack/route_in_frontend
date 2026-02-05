@@ -73,7 +73,8 @@ function BoardListPage() {
 
     return (
         <Container>
-            <Typography sx={{ fontSize: 22, fontWeight: 900, mb: 1, px: 0.8 }}>
+            <Typography
+                sx={{ fontSize: 22, fontWeight: 900, mb: 1, px: 0, py: 2 }}>
                 게시판
             </Typography>
             <TypeBox
@@ -141,5 +142,4 @@ function BoardListPage() {
         </Container>
     );
 }
-
 export default BoardListPage;
