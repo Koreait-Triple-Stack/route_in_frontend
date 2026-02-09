@@ -65,7 +65,6 @@ function CommentSection({ boardId }) {
                 ) : (
                     comments.map((comment) => {
                         const commentList = comment.commentRespDtoList || [];
-                        // 살아있는 자식이 있는지 확인
                         const hasLiveChild = commentList.some(
                             (child) => !child.isDeleted,
                         );
