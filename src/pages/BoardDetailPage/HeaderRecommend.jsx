@@ -1,4 +1,4 @@
-import { ToggleButton } from "@mui/material";
+import { ToggleButton, Typography } from "@mui/material";
 import FavoriteBorderRoundedIcon from "@mui/icons-material/FavoriteBorderRounded";
 import FavoriteRoundedIcon from "@mui/icons-material/FavoriteRounded";
 import { Box } from "@mui/material";
@@ -52,17 +52,16 @@ function HeaderRecommend({
                     )}
                 </Box>
 
-                <Box
+                <Typography
                     sx={{
                         fontSize: 14,
                         fontWeight: 900,
-                        color: "black",
                         lineHeight: 1,
                         minWidth: 30,
                         textAlign: "left",
                     }}>
                     추천 {recommendList?.data?.length ?? 0}
-                </Box>
+                </Typography>
             </Box>
         </ToggleButton>
     );

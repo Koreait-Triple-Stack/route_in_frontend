@@ -180,7 +180,7 @@ function BoardWritePage() {
                             onClick={() => navigate("/board")}
                             disabled={mutation.isPending}
                             sx={{
-                                borderRadius: 20,
+                                borderRadius: 2,
                                 py: 1.2,
                                 fontWeight: 900,
                             }}>
@@ -192,7 +192,7 @@ function BoardWritePage() {
                             onClick={() => setOpenSave(true)}
                             disabled={mutation.isPending}
                             sx={{
-                                borderRadius: 20,
+                                borderRadius: 2,
                                 py: 1.2,
                                 fontWeight: 900,
                             }}>

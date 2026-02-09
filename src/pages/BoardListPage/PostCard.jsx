@@ -7,12 +7,11 @@ import {
     Typography,
 } from "@mui/material";
 import { Box, Grid, Stack } from "@mui/system";
-import React from "react";
 import { useNavigate } from "react-router-dom";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { timeAgo } from "../../apis/utils/time";
-import { boardTagChipSx, recommendChipSx } from "../../constants/design";
-import { boardCardSx } from "../../constants/design";
+import { glassCardSx, chipBaseSx } from "../../constants/boardDesign";
+
 function PostCard({ board }) {
     const year = new Date().getFullYear();
     const navigate = useNavigate();
@@ -22,7 +21,7 @@ function PostCard({ board }) {
             <ListItem sx={{ px: 0, mb: 1 }}>
                 <ListItemButton
                     onClick={() => navigate(`/board/detail/${board.boardId}`)}
-                    sx={boardCardSx}>
+                    sx={{ ...glassCardSx, px: 2, py: 1.8 }}>
                     <Stack sx={{ width: "100%" }} spacing={1.5}>
                         <Box
                             sx={{
@@ -42,14 +41,51 @@ function PostCard({ board }) {
                                             : "운동루틴"
                                     }
                                     size="small"
-                                    sx={boardTagChipSx(board.type)}
+                                    sx={{
+                                        ...chipBaseSx,
+                                        border: "1px solid",
+                                        borderColor: "divider",
+                                        ...(board.type === "COURSE"
+                                            ? {
+                                                  color: "primary.dark",
+                                                  bgcolor:
+                                                      "rgba(59,130,246,0.10)",
+                                              }
+                                            : {
+                                                  color: "secondary.dark",
+                                                  bgcolor:
+                                                      "rgba(168,85,247,0.10)",
+                                              }),
+                                    }}
                                 />
-                                <Chip
-                                    size="small"
-                                    icon={<FavoriteIcon />}
-                                    label={`추천 ${board.recommendCnt}`}
-                                    sx={recommendChipSx}
-                                />
+
+                                <Box
+                                    sx={{
+                                        display: "inline-flex",
+                                        alignItems: "center",
+                                        gap: 0.4,
+                                        px: 0.9,
+                                        height: 24,
+                                        borderRadius: 999,
+                                        bgcolor: "rgba(245,158,11,0.14)",
+                                        border: "1px solid rgba(245,158,11,0.30)",
+                                    }}>
+                                    <FavoriteIcon
+                                        sx={{
+                                            fontSize: 14,
+                                            color: "error.main",
+                                        }}
+                                    />
+                                    <Typography
+                                        sx={{
+                                            fontSize: 12.5,
+                                            fontWeight: 800,
+                                            color: "warning.dark",
+                                            lineHeight: 1,
+                                        }}>
+                                        {board.recommendCnt}
+                                    </Typography>
+                                </Box>
                             </Stack>
 
                             <Typography
@@ -64,27 +100,33 @@ function PostCard({ board }) {
                         <Typography
                             sx={{
                                 flex: 1,
-                                pl: 0.5,
-                                fontWeight: 800,
+                                pl: 0.2,
+                                fontWeight: 950,
+                                letterSpacing: "-0.02em",
                                 whiteSpace: "normal",
-                                overflow: "visible",
-                                textOverflow: "clip",
                                 wordBreak: "keep-all",
                                 overflowWrap: "anywhere",
                                 lineHeight: 1.25,
-                            }}
-                        >
+                            }}>
                             {board.title}
                         </Typography>
 
                         <Stack direction="row" spacing={1} alignItems="center">
                             <Avatar
-                                sx={{ width: 32, height: 32 }}
+                                sx={{
+                                    width: 34,
+                                    height: 34,
+                                    border: "2px solid rgba(255,255,255,0.9)",
+                                    boxShadow: "0 6px 16px rgba(15,23,42,0.12)",
+                                }}
                                 src={board.profileImg}
                             />
                             <Typography
                                 variant="body2"
-                                sx={{ fontWeight: 600 }}>
+                                sx={{
+                                    fontWeight: 800,
+                                    letterSpacing: "-0.01em",
+                                }}>
                                 {board.username} ·{" "}
                                 {Math.floor(
                                     (year - board.birthDate.split("-")[0] + 1) /
@@ -101,7 +143,12 @@ function PostCard({ board }) {
                                         key={i}
                                         label={m}
                                         size="small"
-                                        sx={boardTagChipSx(board.type)}
+                                        sx={{
+                                            ...chipBaseSx,
+                                            border: "1px solid",
+                                            borderColor: "divider",
+                                            bgcolor: "transparent",
+                                        }}
                                     />
                                 ))}
                             </Grid>
@@ -110,12 +157,22 @@ function PostCard({ board }) {
                                 <Chip
                                     label={board.tags[0]}
                                     size="small"
-                                    sx={boardTagChipSx(board.type)}
+                                    sx={{
+                                        ...chipBaseSx,
+                                        border: "1px solid",
+                                        borderColor: "divider",
+                                        bgcolor: "transparent",
+                                    }}
                                 />
                                 <Chip
                                     label={`${Math.round((board.tags[1] ?? 0) / 100) / 10} km`}
                                     size="small"
-                                    sx={boardTagChipSx(board.type)}
+                                    sx={{
+                                        ...chipBaseSx,
+                                        border: "1px solid",
+                                        borderColor: "divider",
+                                        bgcolor: "transparent",
+                                    }}
                                 />
                             </Grid>
                         )}
