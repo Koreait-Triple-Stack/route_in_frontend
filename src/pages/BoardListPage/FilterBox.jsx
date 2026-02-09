@@ -10,6 +10,7 @@ import {
     filterActionBtnBaseSx,
     filterTextFieldSx,
 } from "../../constants/design";
+
 function FilterBox({ form, setForm, setTags }) {
     const resetOnClickHandler = () => {
         setTags([]);
@@ -17,7 +18,7 @@ function FilterBox({ form, setForm, setTags }) {
             type: "ALL",
             sort: "LATEST",
             region: "",
-            distance: 0,
+            distance: "",
             parts: [],
         });
     };
@@ -26,11 +27,12 @@ function FilterBox({ form, setForm, setTags }) {
         if (form.type === "ALL") {
             setTags([]);
         } else if (form.type === "COURSE") {
-            setTags([form.region, form.distance]);
+            setTags([form.region, form.distance * 1000 ?? 0]);
         } else if (form.type === "ROUTINE") {
             setTags(form.parts);
         }
     };
+
     const inputChangeHandler = (e) => {
         const { name, value } = e.target;
 
@@ -88,7 +90,7 @@ function FilterBox({ form, setForm, setTags }) {
                             type="number"
                             variant="outlined"
                             size="small"
-                            value={form.distance}
+                            value={form.distance === 0 ? "" : form.distance}
                             name="distance"
                             inputProps={{ min: 0, step: 1 }}
                             onChange={inputChangeHandler}

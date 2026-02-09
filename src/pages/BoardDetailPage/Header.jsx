@@ -73,10 +73,13 @@ function Header({ boardData, setOpenCopy, boardId }) {
             queryClient.invalidateQueries({
                 queryKey: ["getBoardListInfinite"],
             });
+            queryClient.invalidateQueries({
+                queryKey: ["getBoardListByUserId", principal.userId],
+            });
             queryClient.removeQueries({
                 queryKey: ["getBoardByBoardId", boardId],
             });
-            navigate("/board");
+            navigate(-1);
         },
         onError: (error) => {
             show(error?.message ?? "삭제 실패", "error");
