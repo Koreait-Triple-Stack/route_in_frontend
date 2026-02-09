@@ -35,7 +35,7 @@ function CommentSection({ boardId }) {
                 direction="row"
                 alignItems="center"
                 spacing={1}
-                sx={{ mb: 2, px: 1 }}>
+                sx={{ px: 1 }}>
                 <Typography
                     variant="h6"
                     sx={{ fontSize: "1.1rem", fontWeight: "bold" }}>

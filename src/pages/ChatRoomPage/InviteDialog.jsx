@@ -66,6 +66,8 @@ function InviteDialog({
     };
 
     const followOnChangeHandler = (e) => {
+        setUserIds([]);
+        setUsernames([]);
         setIsFollow(e.target.value);
     };
 
