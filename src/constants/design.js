@@ -1,4 +1,4 @@
-import { fontWeight } from "@mui/system";
+import { flexShrink, flexWrap } from "@mui/system";
 
 export const THEME = {
     bg: "#F0F4F8",
@@ -32,16 +32,19 @@ export const boardTagChipSx = (type) => ({
 });
 
 export const recommendChipSx = {
-    minWidth: 72,
-    height: 32,
+    minWidth: 64.36,
+    height: 30,
     bgcolor: "transparent",
     border: "1px solid",
     borderColor: "divider",
     borderRadius: "999px",
+    flexWrap: "wrap",
     fontWeight: 600,
+    flexShrink: 0,
     "& .MuiChip-label": {
         px: 1.1,
         fontSize: 12,
+        whiteSpace: "nowrap",
     },
     "& .MuiChip-icon": {
         color: "error.main",
@@ -58,7 +61,6 @@ export const boardCardSx = {
     border: "1px solid",
     borderColor: "rgba(15,23,42,0.06)",
     boxShadow: "0 12px 28px rgba(15,23,42,0.10)",
-    overflow: "hidden",
     transition: "transform 160ms ease, box-shadow 160ms ease",
 };
 export const boardTypeBtnSx = {
@@ -132,21 +134,15 @@ export const pillToggleSx = {
     borderRadius: 999,
     px: 1.6,
     py: 0.7,
-    fontWeight: 500,
+    fontWeight: 700,
     textTransform: "none",
     whiteSpace: "nowrap",
-    bgcolor: "background.paper",
-    borderColor: "divider",
-    color: "text.primary",
-    "&:hover": {
-        bgcolor: "action.hover",
-    },
+    bgcolor: "transparent",
+    border: "1px solid",
     "&.Mui-selected": {
         bgcolor: "primary.main",
         borderColor: "primary.main",
         color: "#fff",
-        "&:hover": {
-            bgcolor: "primary.dark",
-        },
+        "&:hover": { bgcolor: "primary.dark" },
     },
 };

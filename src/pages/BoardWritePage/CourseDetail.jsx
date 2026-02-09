@@ -112,7 +112,8 @@ function CourseDetail({ course, setCourse }) {
                     <Box
                         display="flex"
                         justifyContent="space-between"
-                        alignItems="center">
+                        alignItems="center"
+                        flexWrap="wrap">
                         <Stack spacing={1.2}>
                             <Box
                                 sx={{

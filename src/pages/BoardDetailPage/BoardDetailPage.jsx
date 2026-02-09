@@ -13,6 +13,7 @@ import { usePrincipalState } from "../../store/usePrincipalState";
 import RoutineList from "./RoutineList";
 import DialogComponent from "../../components/DialogComponent";
 import CommentSection from "./CommentSection";
+import { boardTagChipSx } from "../../constants/design";
 
 function BoardDetailPage() {
     const { principal } = usePrincipalState();
@@ -91,7 +92,7 @@ function BoardDetailPage() {
                     <>
                         <Grid container spacing={1.5} sx={{ pl: 1, py: 1 }}>
                             {boardData.tags.map((tag, index) => (
-                                <Chip key={index} label={tag} />
+                                <Chip key={index} label={tag} sx={boardTagChipSx}/>
                             ))}
                         </Grid>
 

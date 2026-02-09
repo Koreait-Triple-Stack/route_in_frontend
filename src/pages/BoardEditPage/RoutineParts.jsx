@@ -2,11 +2,12 @@ import { ToggleButton, Typography } from "@mui/material";
 import { Box, Stack } from "@mui/system";
 import { EXERCISE_PARTS } from "../../constants/exerciseParts";
 import ScheduleItem from "./ScheduleItem";
+import { pillToggleSx } from "../../constants/design";
 
 function RoutineParts({ form, setForm, setRoutine }) {
     const togglePart = (part) => {
         setForm((prev) => {
-            const nextParts = prev.tags?.includes(part)
+            const nextParts = prev.parts?.includes(part)
                 ? prev.parts.filter((t) => t !== part)
                 : [...prev.parts, part];
 
@@ -70,13 +71,7 @@ function RoutineParts({ form, setForm, setRoutine }) {
                                 value={part}
                                 selected={selected}
                                 onClick={() => togglePart(part)}
-                                sx={{
-                                    borderRadius: 999,
-                                    px: 1.5,
-                                    py: 0.7,
-                                    fontWeight: 800,
-                                    fontSize: 13,
-                                }}>
+                                sx={pillToggleSx}>
                                 {part}
                             </ToggleButton>
                         );
