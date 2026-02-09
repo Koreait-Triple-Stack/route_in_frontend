@@ -70,7 +70,7 @@ function BoardDetailPage() {
     if (error) return <ErrorComponent error={error} />;
 
     return (
-        <Container>
+        <Container sx={{ py: 2 }}>
             <Box
                 variant="outlined"
                 sx={{

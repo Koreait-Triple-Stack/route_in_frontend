@@ -123,7 +123,7 @@ function RunningRecord({ userId }) {
                             <Box sx={{ display: "flex", gap: 0.5 }}>
                                 <Button
                                     size="small"
-                                    color="inherit"
+                                    variant="outlined"
                                     onClick={handleCancel}
                                     sx={{
                                         fontSize: {
@@ -131,7 +131,7 @@ function RunningRecord({ userId }) {
                                             sm: "0.8rem",
                                         },
                                         minWidth: "auto",
-                                        px: 1,
+                                        px: 2,
                                     }}>
                                     취소
                                 </Button>

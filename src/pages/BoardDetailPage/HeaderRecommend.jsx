@@ -17,7 +17,7 @@ function HeaderRecommend({
                 border: "1px solid #e5e5e5",
                 borderRadius: "999px",
                 overflow: "hidden",
-                minWidth: 72,
+                minWidth: 90,
                 height: 32,
                 textTransform: "none",
                 "&.Mui-selected": {
@@ -30,7 +30,6 @@ function HeaderRecommend({
                     display: "flex",
                     alignItems: "center",
                     height: "100%",
-                    px: 1.2,
                     gap: 0.8,
                     pointerEvents: "none",
                 }}>

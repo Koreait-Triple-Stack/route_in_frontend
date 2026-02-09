@@ -101,12 +101,10 @@ export const BUTTON_COLOR = {
     background: "linear-gradient(135deg, #2563eb, #22c55e)",
 };
 
-// 제목 입력칸
 export const filterTextFieldSx = {
     "& .MuiOutlinedInput-root": {
         height: 40,
         borderRadius: 2,
-        bgcolor: "action.hover",
     },
     "& .MuiOutlinedInput-notchedOutline": {
         borderColor: "divider",
@@ -121,7 +119,7 @@ export const filterTextFieldSx = {
         fontWeight: 800,
     },
 };
-// 필터 적용 초기화
+
 export const filterActionBtnBaseSx = {
     height: 38,
     px: { xs: 1.4, sm: 2.2 },

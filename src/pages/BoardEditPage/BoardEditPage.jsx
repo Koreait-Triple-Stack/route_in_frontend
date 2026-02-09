@@ -107,7 +107,7 @@ function BoardEditPage() {
     if (!boardData) return <Loading />;
 
     return (
-        <Container>
+        <Container sx={{ py: 2 }}>
             <Box
                 sx={{
                     mb: 2,
