@@ -2,7 +2,7 @@ import { ToggleButton } from "@mui/material";
 import FavoriteBorderRoundedIcon from "@mui/icons-material/FavoriteBorderRounded";
 import FavoriteRoundedIcon from "@mui/icons-material/FavoriteRounded";
 import { Box } from "@mui/material";
-
+import { recommendChipSx } from "../../constants/design";
 function HeaderRecommend({
     recommended,
     changeRecommendMutation,
@@ -14,15 +14,19 @@ function HeaderRecommend({
             selected={recommended}
             onChange={() => changeRecommendMutation.mutate()}
             sx={{
-                border: "1px solid #e5e5e5",
-                borderRadius: "999px",
-                overflow: "hidden",
-                minWidth: 90,
-                height: 32,
+                ...recommendChipSx,
+                px: 1.1,
                 textTransform: "none",
+                bgcolor: "transparent",
+                color: "text.primary",
+                "& .MuiSvgIcon-root": {
+                    fontSize: 18,
+                    color: "error.main",
+                },
                 "&.Mui-selected": {
-                    borderColor: "#ff4d4f",
                     bgcolor: "transparent",
+                    borderColor: "error.main",
+                    "&:hover": { bgcolor: "transparent" },
                 },
             }}>
             <Box
@@ -42,13 +46,9 @@ function HeaderRecommend({
                         height: 20,
                     }}>
                     {recommended ? (
-                        <FavoriteRoundedIcon
-                            sx={{ fontSize: 18, color: "#ff4d4f" }}
-                        />
+                        <FavoriteRoundedIcon />
                     ) : (
-                        <FavoriteBorderRoundedIcon
-                            sx={{ fontSize: 18, color: "#ff4d4f" }}
-                        />
+                        <FavoriteBorderRoundedIcon />
                     )}
                 </Box>
 

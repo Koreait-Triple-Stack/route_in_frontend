@@ -29,6 +29,7 @@ function PostCard({ board }) {
                                 display: "flex",
                                 justifyContent: "space-between",
                                 alignItems: "center",
+                                flexWrap: "wrap",
                             }}>
                             <Stack
                                 direction="row"
@@ -65,11 +66,14 @@ function PostCard({ board }) {
                                 flex: 1,
                                 pl: 0.5,
                                 fontWeight: 800,
-                                display: "-webkit-box",
-                                WebkitLineClamp: 1,
-                                overflow: "hidden",
-                                WebkitBoxOrient: "vertical",
-                            }}>
+                                whiteSpace: "normal",
+                                overflow: "visible",
+                                textOverflow: "clip",
+                                wordBreak: "keep-all",
+                                overflowWrap: "anywhere",
+                                lineHeight: 1.25,
+                            }}
+                        >
                             {board.title}
                         </Typography>
 

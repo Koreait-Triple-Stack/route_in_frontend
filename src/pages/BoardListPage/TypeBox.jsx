@@ -25,15 +25,19 @@ function TypeBox({ checked, setChecked, form, setForm, setTags }) {
             sx={{
                 display: "flex",
                 justifyContent: "space-between",
+                flexWrap: "wrap",
                 alignItems: "center",
                 px: 0.5,
                 pb: 1,
+                gap: 1,
+                minWidth: 0,
             }}>
             <ToggleButtonGroup
                 value={form.type}
                 size="small"
                 exclusive
-                onChange={inputChangeHandler}>
+                onChange={inputChangeHandler}
+                sx={{ flexWrap: "wrap" }}>
                 <Stack direction={"row"} spacing={0.6}>
                     <ToggleButton name="type" value="ALL" sx={boardTypeBtnSx}>
                         전체
@@ -59,6 +63,8 @@ function TypeBox({ checked, setChecked, form, setForm, setTags }) {
                     justifyContent: "center",
                     alignItems: "center",
                     gap: 1,
+                    flexWrap: "wrap",
+                    flexShrink:0,
                 }}>
                 <FormControl size="small">
                     <Select

@@ -1,4 +1,4 @@
-import { Box, Container } from "@mui/system";
+import { Box } from "@mui/system";
 import { useEffect, useRef, useState } from "react";
 import TypeBox from "./TypeBox";
 import FilterBox from "./FilterBox";
@@ -9,6 +9,8 @@ import { ClipLoader } from "react-spinners";
 import WriteDial from "./WriteDial";
 import Loading from "../../components/Loading";
 import { Collapse, List, Paper, Typography } from "@mui/material";
+import ErrorOutlineRoundedIcon from "@mui/icons-material/ErrorOutlineRounded";
+
 function BoardListPage() {
     const [form, setForm] = useState({
         type: "ALL",
@@ -72,12 +74,11 @@ function BoardListPage() {
     if (isLoading) return <Loading />;
 
     return (
-        <Container>
+        <Box sx={{ px: { xs: 1.5, sm: 2 } }}>
             <Typography
                 sx={{ fontSize: 22, fontWeight: 900, mb: 1, px: 1, py: 2 }}>
                 게시판
             </Typography>
-            
             <TypeBox
                 checked={checked}
                 setChecked={setChecked}
@@ -125,6 +126,9 @@ function BoardListPage() {
                             alignItems: "center",
                             gap: 0.8,
                         }}>
+                        <ErrorOutlineRoundedIcon
+                            sx={{ fontSize: 18, color: "text.secondary" }}
+                        />
                         <Typography
                             sx={{
                                 fontWeight: 800,
@@ -138,7 +142,7 @@ function BoardListPage() {
             )}
 
             <WriteDial />
-        </Container>
+        </Box>
     );
 }
 export default BoardListPage;
