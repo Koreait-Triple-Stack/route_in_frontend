@@ -20,7 +20,7 @@ function Header({ boardData, setOpenCopy, boardId }) {
     const { principal } = usePrincipalState();
     const navigate = useNavigate();
     const queryClient = useQueryClient();
-    const [anchorEl, setAnchorEl] = useState(null);
+    const [anchorEl, setAnchorEl] = useState(false);
     const [recommended, setRecommended] = useState(false);
     const [openRemove, setOpenRemove] = useState(false);
     const closeMenu = () => setAnchorEl(null);

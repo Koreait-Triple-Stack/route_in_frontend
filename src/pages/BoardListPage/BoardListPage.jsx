@@ -16,7 +16,7 @@ function BoardListPage() {
         type: "ALL",
         sort: "LATEST",
         region: "",
-        distance: 0,
+        distance: "",
         parts: [],
     });
     const [tags, setTags] = useState([]);

@@ -98,7 +98,6 @@ export default function InbodyChartWithActions() {
             ]);
             show(resp.message, "success");
             handleAddClose();
-            handleDeleteClose();
         },
         onError: (error) => {
             show(error.message, "error");
@@ -129,7 +128,7 @@ export default function InbodyChartWithActions() {
         if (
             !inputValues.bodyWeight ||
             !inputValues.skeletalMuscleMass ||
-            !inputValues.bodyFatMass || 
+            !inputValues.bodyFatMass ||
             !inputValues.monthDt
         ) {
             show("모든 정보를 입력해주세요.", "error");
@@ -251,7 +250,7 @@ export default function InbodyChartWithActions() {
                 maxWidth="xs">
                 <DialogTitle>인바디 정보 삭제</DialogTitle>
                 <DialogContent dividers>
-                    {response.length === 0 ? (
+                    {response.data.length === 0 ? (
                         <Typography align="center" color="text.secondary">
                             기록된 데이터가 없습니다.
                         </Typography>
