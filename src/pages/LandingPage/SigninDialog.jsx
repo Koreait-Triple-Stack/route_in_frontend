@@ -6,13 +6,11 @@ import CloseIcon from "@mui/icons-material/Close";
 
 function SigninDialog({ openDialog, setOpenDialog }) {
     const handleGoogleLogin = () => {
-        window.location.href =
-            "http://localhost:8080/oauth2/authorization/google";
+        window.location.href = `http://${import.meta.env.VITE_API_BASE_URL}/oauth2/authorization/google`;
     };
 
     const handleNaverLogin = () => {
-        window.location.href =
-            "http://localhost:8080/oauth2/authorization/naver";
+        window.location.href = `http://${import.meta.env.VITE_API_BASE_URL}/oauth2/authorization/naver`;
     };
 
     return (
