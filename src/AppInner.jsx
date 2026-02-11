@@ -37,7 +37,7 @@ function AppInner() {
 
     useEffect(() => {
         if (isSuccess) {
-            login(response.data);
+            login(response.data, token);
         } else if (!isLoading) {
             setLoading(false);
         }

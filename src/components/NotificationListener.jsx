@@ -9,9 +9,8 @@ import { useChatUiState } from "../store/useChatUiState";
 
 function NotificationListener() {
     const navigate = useNavigate();
-    const token = localStorage.getItem("AccessToken");
     const queryClient = useQueryClient();
-    const { principal } = usePrincipalState();
+    const { principal, token } = usePrincipalState();
     const [open, setOpen] = useState(false);
     const [lastId, setLastId] = useState(null);
     const [toastMsg, setToastMsg] = useState("새 알림이 도착했어요");
