@@ -109,12 +109,15 @@ function NotificationListener() {
             }
 
             if (
+                payloadType === "CHAT_MESSAGE" &&
                 payloadRoomId != null &&
                 activeRoomId != null &&
                 Number(payloadRoomId) === Number(activeRoomId)
             ) {
                 return;
             }
+
+            console.log("[SNACKBAR OPEN]", payload);
 
             const id = payload?.notificationId ?? crypto.randomUUID();
             const title = payload?.title ?? "새 알림";
