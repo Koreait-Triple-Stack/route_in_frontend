@@ -28,7 +28,6 @@ export function useNotificationWS({ enabled, token, onMessage, roomId }) {
     };
 
     const unsubscribeRoom = () => safeUnsubscribe(roomSubRef);
-    const unsubscribeNotif = () => safeUnsubscribe(notifSubRef);
 
     const subscribeRoom = (client, rid) => {
         unsubscribeRoom();
@@ -84,8 +83,6 @@ export function useNotificationWS({ enabled, token, onMessage, roomId }) {
 
             onConnect: () => {
                 setIsConnected(true);
-
-                unsubscribeNotif();
                 notifSubRef.current = client.subscribe(
                     "/user/queue/notification",
                     (msg) => {
