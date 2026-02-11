@@ -163,6 +163,7 @@ function NotificationListener() {
             anchorOrigin={{ vertical: "top", horizontal: "center" }}
             sx={{
                 pointerEvents: "none",
+                zIndex: 99999,
             }}>
             <Alert
                 severity="info"
@@ -173,6 +174,7 @@ function NotificationListener() {
                     pointerEvents: "auto",
                     borderRadius: 2.5,
                     maxWidth: 320,
+                    zIndex: 99999,
                     "& .MuiAlert-message": {
                         width: "100%",
                         p: 0,
