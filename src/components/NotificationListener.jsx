@@ -28,6 +28,7 @@ function NotificationListener() {
 
     const onMessage = useCallback(
         (payload) => {
+            try {
             if (!uid) return;
 
             const payloadType = payload?.type;
@@ -126,6 +127,10 @@ function NotificationListener() {
             queryClient.invalidateQueries({
                 queryKey: ["countUnreadChatByUserIdRequest", uid],
             });
+
+            } catch (e) {
+                console.error("[onMessage crash]", e, payload);
+            }
         },
         [uid, activeRoomId, queryClient],
     );
