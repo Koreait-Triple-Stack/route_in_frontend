@@ -29,112 +29,117 @@ function NotificationListener() {
     const onMessage = useCallback(
         (payload) => {
             try {
-            if (!uid) return;
+                if (!uid) return;
 
-            const payloadType = payload?.type;
-            const payloadRoomId = payload?.roomId ?? payload?.data?.roomId;
-
-            if (payloadType === "CHAT_MESSAGE" || payloadType === "CHAT_MUTE") {
-                queryClient.invalidateQueries({
-                    queryKey: ["getRoomListByUserIdRequest", uid],
-                });
-            }
-
-            if (payloadType === "CHAT_MESSAGE") {
-                if (
-                    payloadRoomId != null &&
-                    activeRoomId != null &&
-                    Number(payloadRoomId) === Number(activeRoomId)
-                ) {
-                    queryClient.invalidateQueries({
-                        queryKey: [
-                            "getMessageListInfiniteRequest",
-                            { roomId: Number(payloadRoomId), limit: 20 },
-                        ],
-                    });
-                    return;
-                }
-            }
-
-            if (payloadType === "CHAT_MUTE") {
-                queryClient.invalidateQueries({
-                    queryKey: ["countUnreadChatByUserIdRequest", uid],
-                });
+                const payloadType = payload?.type;
+                const payloadRoomId = payload?.roomId ?? payload?.data?.roomId;
 
                 if (
-                    payloadRoomId != null &&
-                    activeRoomId != null &&
-                    Number(payloadRoomId) === Number(activeRoomId)
+                    payloadType === "CHAT_MESSAGE" ||
+                    payloadType === "CHAT_MUTE"
                 ) {
                     queryClient.invalidateQueries({
-                        queryKey: [
-                            "getMessageListInfiniteRequest",
-                            { roomId: Number(payloadRoomId), limit: 20 },
-                        ],
+                        queryKey: ["getRoomListByUserIdRequest", uid],
                     });
                 }
-                return;
-            }
 
-            if (payloadType === "MESSAGE") {
-                if (payloadRoomId != null) {
-                    queryClient.invalidateQueries({
-                        queryKey: ["getRoomByRoomIdRequest", payloadRoomId],
-                    });
+                if (payloadType === "CHAT_MESSAGE") {
+                    if (
+                        payloadRoomId != null &&
+                        activeRoomId != null &&
+                        Number(payloadRoomId) === Number(activeRoomId)
+                    ) {
+                        queryClient.invalidateQueries({
+                            queryKey: [
+                                "getMessageListInfiniteRequest",
+                                { roomId: Number(payloadRoomId), limit: 20 },
+                            ],
+                        });
+                        return;
+                    }
                 }
-                return;
-            }
 
-            if (payloadType === "read") {
-                if (
-                    payloadRoomId != null &&
-                    activeRoomId != null &&
-                    Number(payloadRoomId) === Number(activeRoomId)
-                ) {
-                    queryClient.invalidateQueries({
-                        queryKey: [
-                            "getMessageListInfiniteRequest",
-                            { roomId: activeRoomId, limit: 20 },
-                        ],
-                    });
+                if (payloadType === "CHAT_MUTE") {
                     queryClient.invalidateQueries({
                         queryKey: ["countUnreadChatByUserIdRequest", uid],
                     });
+
+                    if (
+                        payloadRoomId != null &&
+                        activeRoomId != null &&
+                        Number(payloadRoomId) === Number(activeRoomId)
+                    ) {
+                        queryClient.invalidateQueries({
+                            queryKey: [
+                                "getMessageListInfiniteRequest",
+                                { roomId: Number(payloadRoomId), limit: 20 },
+                            ],
+                        });
+                    }
+                    return;
                 }
-                return;
-            }
 
-            console.log("[SNACKBAR OPEN]", payload);
+                if (payloadType === "MESSAGE") {
+                    if (payloadRoomId != null) {
+                        queryClient.invalidateQueries({
+                            queryKey: ["getRoomByRoomIdRequest", payloadRoomId],
+                        });
+                    }
+                    return;
+                }
 
-            const id = payload?.notificationId ?? crypto.randomUUID();
-            const nextTitle = payload?.title ?? "새 알림";
-            const message = payload?.message ?? "새 알림";
-            const nextPath = payload?.path ?? "/notification";
-            const nextProfileImg = payload?.profileImg ?? "";
+                if (payloadType === "read") {
+                    if (
+                        payloadRoomId != null &&
+                        activeRoomId != null &&
+                        Number(payloadRoomId) === Number(activeRoomId)
+                    ) {
+                        queryClient.invalidateQueries({
+                            queryKey: [
+                                "getMessageListInfiniteRequest",
+                                { roomId: activeRoomId, limit: 20 },
+                            ],
+                        });
+                        queryClient.invalidateQueries({
+                            queryKey: ["countUnreadChatByUserIdRequest", uid],
+                        });
+                    }
+                    return;
+                }
 
-            setLastId(id);
-            setTitle(nextTitle);
-            setToastMsg(message);
-            setPath(nextPath);
-            setProfileImg(nextProfileImg);
+                console.log("[SNACKBAR OPEN]", payload);
 
-            setOpen(false);
-            queueMicrotask(() => setOpen(true));
+                const id =
+                    payload?.notificationId ??
+                    (window.crypto?.randomUUID
+                        ? window.crypto.randomUUID()
+                        : `${Date.now()}-${Math.random()}`);
+                const nextTitle = payload?.title ?? "새 알림";
+                const message = payload?.message ?? "새 알림";
+                const nextPath = payload?.path ?? "/notification";
+                const nextProfileImg = payload?.profileImg ?? "";
 
-            queryClient.invalidateQueries({
-                queryKey: ["countUnreadNotificationByUserId", uid],
-            });
-            queryClient.invalidateQueries({
-                queryKey: ["countUnreadChatByUserIdRequest", uid],
-            });
+                setLastId(id);
+                setTitle(nextTitle);
+                setToastMsg(message);
+                setPath(nextPath);
+                setProfileImg(nextProfileImg);
 
+                setOpen(false);
+                queueMicrotask(() => setOpen(true));
+
+                queryClient.invalidateQueries({
+                    queryKey: ["countUnreadNotificationByUserId", uid],
+                });
+                queryClient.invalidateQueries({
+                    queryKey: ["countUnreadChatByUserIdRequest", uid],
+                });
             } catch (e) {
                 console.error("[onMessage crash]", e, payload);
             }
         },
         [uid, activeRoomId, queryClient],
     );
-
 
     useNotificationWS({
         enabled: !!token && !!principal?.userId,
