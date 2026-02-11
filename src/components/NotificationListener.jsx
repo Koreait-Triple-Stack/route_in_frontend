@@ -142,7 +142,7 @@ function NotificationListener() {
     useNotificationWS({
         enabled: !!token && !!principal?.userId,
         token,
-        userId: principal.userId,
+        userId: principal?.userId,
         onMessage,
         roomId: activeRoomId,
     });
