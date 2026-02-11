@@ -8,7 +8,6 @@ export const usePrincipalState = create((set, get) => ({
     unreadCount: 0,
 
     login: (userData, token) => {
-        localStorage.setItem("AccessToken", token);
         set({
             isLoggedIn: true,
             principal: userData,
@@ -22,7 +21,7 @@ export const usePrincipalState = create((set, get) => ({
         set({ isLoggedIn: false, principal: null, loading: false });
         window.location.href = "/";
     },
-    
+
     setLoading: (loading) =>
         set({
             loading: loading,
