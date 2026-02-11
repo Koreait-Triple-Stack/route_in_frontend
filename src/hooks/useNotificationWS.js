@@ -52,6 +52,7 @@ export function useNotificationWS({
         notifSubRef.current = client.subscribe(
             `/topic/notification/${uid}`,
             (msg) => {
+                console.log("[NOTI RECEIVED]", data);
                 try {
                     onMessageRef.current?.(JSON.parse(msg.body));
                 } catch (e) {}
@@ -100,14 +101,6 @@ export function useNotificationWS({
             reconnectDelay: 3000,
 
             onConnect: () => {
-                console.log(
-                    "[WS] subscribe notif =>",
-                    `/topic/notification/${userId}`,
-                );
-                console.log(
-                    "[WS] subscribe room =>",
-                    roomId ? `/topic/room/${roomId}` : null,
-                );
                 setIsConnected(true);
 
                 subscribeNotif(client, userId);
