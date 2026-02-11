@@ -9,21 +9,26 @@ export function useNotificationWS({ enabled, token, onMessage, roomId }) {
     const roomSubRef = useRef(null);
 
     const [isConnected, setIsConnected] = useState(false);
-
     const lastPresenceRoomIdRef = useRef(undefined);
 
     useEffect(() => {
         onMessageRef.current = onMessage;
     }, [onMessage]);
 
-    const unsubscribeRoom = () => {
-        roomSubRef.current?.unsubscribe?.();
-        roomSubRef.current = null;
+    const safeUnsubscribe = (subRef) => {
+        const client = clientRef.current;
+
+        if (client?.connected) {
+            try {
+                subRef.current?.unsubscribe?.();
+            } catch (e) {}
+        }
+
+        subRef.current = null;
     };
-    const unsubscribeNotif = () => {
-        notifSubRef.current?.unsubscribe?.();
-        notifSubRef.current = null;
-    };
+
+    const unsubscribeRoom = () => safeUnsubscribe(roomSubRef);
+    const unsubscribeNotif = () => safeUnsubscribe(notifSubRef);
 
     const subscribeRoom = (client, rid) => {
         unsubscribeRoom();
@@ -37,7 +42,7 @@ export function useNotificationWS({ enabled, token, onMessage, roomId }) {
     };
 
     const sendPresence = (client, rid) => {
-        if (!client || !client.connected) return;
+        if (!client?.connected) return;
 
         const normalized = rid == null ? null : Number(rid);
         if (lastPresenceRoomIdRef.current === normalized) return;
@@ -57,16 +62,18 @@ export function useNotificationWS({ enabled, token, onMessage, roomId }) {
             lastPresenceRoomIdRef.current = undefined;
 
             if (clientRef.current) {
-                unsubscribeRoom();
-                unsubscribeNotif();
                 clientRef.current.deactivate();
                 clientRef.current = null;
             }
+
+            notifSubRef.current = null;
+            roomSubRef.current = null;
+
             return;
         }
 
         if (clientRef.current?.active) return;
-        
+
         const wsScheme = window.location.protocol === "https:" ? "wss" : "ws";
         const wsUrl = `${wsScheme}://${window.location.host}/ws`;
 
@@ -89,16 +96,20 @@ export function useNotificationWS({ enabled, token, onMessage, roomId }) {
                 );
 
                 sendPresence(client, roomId);
-
                 subscribeRoom(client, roomId);
             },
 
             onDisconnect: () => {
-                console.log("[WS] disconnected");
                 setIsConnected(false);
-                unsubscribeRoom();
-                unsubscribeNotif();
+                notifSubRef.current = null;
+                roomSubRef.current = null;
             },
+
+            onStompError: (frame) => {
+                console.error("[WS] stomp error", frame?.headers, frame?.body);
+            },
+
+            onWebSocketClose: (evt) => {},
         });
 
         client.activate();
@@ -106,10 +117,16 @@ export function useNotificationWS({ enabled, token, onMessage, roomId }) {
 
         return () => {
             setIsConnected(false);
-            unsubscribeRoom();
-            unsubscribeNotif();
-            client.deactivate();
+
+            const c = clientRef.current;
             clientRef.current = null;
+
+            try {
+                c?.deactivate();
+            } catch (e) {}
+
+            notifSubRef.current = null;
+            roomSubRef.current = null;
             lastPresenceRoomIdRef.current = undefined;
         };
     }, [enabled, token]);
@@ -119,7 +136,6 @@ export function useNotificationWS({ enabled, token, onMessage, roomId }) {
         if (!client || !isConnected) return;
 
         subscribeRoom(client, roomId);
-
         sendPresence(client, roomId);
     }, [roomId, isConnected]);
 }
