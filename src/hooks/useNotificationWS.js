@@ -66,9 +66,12 @@ export function useNotificationWS({ enabled, token, onMessage, roomId }) {
         }
 
         if (clientRef.current?.active) return;
+        
+        const wsScheme = window.location.protocol === "https:" ? "wss" : "ws";
+        const wsUrl = `${wsScheme}://${window.location.host}/ws`;
 
         const client = new Client({
-            brokerURL: "ws://localhost:8080/ws",
+            brokerURL: wsUrl,
             connectHeaders: { Authorization: `Bearer ${token}` },
             reconnectDelay: 3000,
 
