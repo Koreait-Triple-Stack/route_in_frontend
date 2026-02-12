@@ -13,6 +13,7 @@ export default function ChatRoomLayout({ children }) {
                 overflow: "hidden",
                 backgroundColor: "#f2f2f2",
                 overscrollBehavior: "none",
+                touchAction: "none",
             }}>
             {children}
         </Box>
