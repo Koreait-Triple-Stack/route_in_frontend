@@ -126,8 +126,7 @@ function ChatRoomPage() {
     return (
         <Box
             sx={{
-                flex: 1,
-                minHeight: 0,
+                height: "100%",
                 display: "flex",
                 flexDirection: "column",
                 backgroundColor: "#F5F7FA",
