@@ -1,20 +1,15 @@
 import { Box } from "@mui/system";
-import useVisualViewportVars from "../pages/ChatRoomPage/useVisualViewportVars";
 
 export default function ChatRoomLayout({ children }) {
-    // useVisualViewportVars();
 
     return (
         <Box
             sx={{
-                // position: "fixed",
-                // inset: 0,
-                // height: "var(--vvh, 100dvh)",
-                height: "100%",
+                height: "100dvh",
+                minHeight: "100dvh",
                 overflow: "hidden",
-                backgroundColor: "#f2f2f2",
-                // overscrollBehavior: "none",
-                // touchAction: "none",
+                overscrollBehavior: "none",
+                touchAction: "manipulation",
             }}>
             {children}
         </Box>

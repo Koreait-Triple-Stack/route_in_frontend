@@ -45,6 +45,25 @@ function ChatRoomPage() {
 
     const isMobileTyping = isCoarsePointer && !hasHardwareKeyboard;
 
+    const [isSoftEnter, setIsSoftEnter] = useState(false);
+
+    useEffect(() => {
+        const el = inputRef.current;
+        if (!el) return;
+
+        const onBeforeInput = (e) => {
+            const t = e.inputType;
+            if (t === "insertLineBreak" || t === "insertParagraph") {
+                setIsSoftEnter(true);
+                queueMicrotask(() => setIsSoftEnter(false));
+            }
+        };
+
+        el.addEventListener("beforeinput", onBeforeInput);
+        return () => el.removeEventListener("beforeinput", onBeforeInput);
+    }, []);
+
+
     useEffect(() => {
         const onKeyDown = () => setHasHardwareKeyboard(true);
         window.addEventListener("keydown", onKeyDown);
@@ -82,6 +101,17 @@ function ChatRoomPage() {
         return () => setActiveRoomId(null);
     }, [roomId, setActiveRoomId]);
 
+    const focusInput = () => {
+        const el = inputRef.current;
+        if (!el) return;
+        try {
+            el.focus({ preventScroll: true });
+        } catch {
+            el.focus();
+        }
+    };
+
+
     const handleSend = ({ keepFocus } = { keepFocus: false }) => {
         if (!inputValue.trim()) return;
 
@@ -96,7 +126,7 @@ function ChatRoomPage() {
 
         if (keepFocus) {
             requestAnimationFrame(() => {
-                inputRef.current?.focus();
+                focusInput();
                 requestAnimationFrame(() => inputRef.current?.focus());
             });
         }
@@ -105,13 +135,14 @@ function ChatRoomPage() {
     const handleKeyDown = (e) => {
         if (e.nativeEvent.isComposing) return;
 
-        if (isMobileTyping) return;
+        if (isSoftEnter) return;
 
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
             handleSend({ keepFocus: true });
         }
     };
+
 
     const handleBack = () => {
         navigate("/chat");
