@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Client } from "@stomp/stompjs";
+import SockJS from "sockjs-client/dist/sockjs.min.js";
 
 export function useNotificationWS({
     enabled,
@@ -95,11 +96,11 @@ export function useNotificationWS({
 
         const isLocal = window.location.hostname === "localhost";
         const wsUrl = isLocal
-            ? "ws://localhost:8080/ws"
-            : `${window.location.protocol === "https:" ? "wss" : "ws"}://${window.location.host}/ws`;
+            ? "http://localhost:8080/ws"
+            : `${window.location.protocol}//${window.location.host}/ws`;
 
         const client = new Client({
-            brokerURL: wsUrl,
+            webSocketFactory: () => new SockJS(wsUrl),
             connectHeaders: { Authorization: `Bearer ${token}` },
             reconnectDelay: 3000,
 
