@@ -5,7 +5,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import SendIcon from "@mui/icons-material/Send";
 import { useNavigate, useParams } from "react-router-dom";
 import MessageBubble from "./MessageBubble";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { usePrincipalState } from "../../store/usePrincipalState";
 import {
     addMessageRequest,
@@ -27,6 +27,30 @@ function ChatRoomPage() {
     const { roomId: roomIdParam } = useParams();
     const [isInvite, setIsInvite] = useState();
     const roomId = Number(roomIdParam);
+
+    const scrollerRef = useRef(null);
+
+    const inputRef = useRef(null);
+    const [isCoarsePointer, setIsCoarsePointer] = useState(false);
+
+    const [hasHardwareKeyboard, setHasHardwareKeyboard] = useState(false);
+
+    const isMobileTyping = isCoarsePointer && !hasHardwareKeyboard;
+
+    useEffect(() => {
+        const onKeyDown = () => setHasHardwareKeyboard(true);
+        window.addEventListener("keydown", onKeyDown);
+        return () => window.removeEventListener("keydown", onKeyDown);
+    }, []);
+
+    useEffect(() => {
+        const mq = window.matchMedia("(pointer: coarse)");
+        const update = () => setIsCoarsePointer(mq.matches);
+        update();
+        mq.addEventListener?.("change", update);
+        return () => mq.removeEventListener?.("change", update);
+    }, []);
+
     const {
         data: roomResp,
         isLoading: roomLoading,
@@ -39,10 +63,9 @@ function ChatRoomPage() {
 
     const mutation = useMutation({
         mutationFn: addMessageRequest,
-        onError: (resp) => {
-            show(resp.message, "error");
-        },
+        onError: (resp) => show(resp.message, "error"),
     });
+
     const setActiveRoomId = useChatUiState((s) => s.setActiveRoomId);
 
     useEffect(() => {
@@ -51,7 +74,7 @@ function ChatRoomPage() {
         return () => setActiveRoomId(null);
     }, [roomId, setActiveRoomId]);
 
-    const handleSend = () => {
+    const handleSend = ({ keepFocus } = { keepFocus: false }) => {
         if (!inputValue.trim()) return;
 
         mutation.mutate({
@@ -62,14 +85,20 @@ function ChatRoomPage() {
         });
 
         setInputValue("");
+
+        if (keepFocus) {
+            requestAnimationFrame(() => inputRef.current?.focus());
+        }
     };
 
     const handleKeyDown = (e) => {
         if (e.nativeEvent.isComposing) return;
 
+        if (isMobileTyping) return;
+
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
-            handleSend();
+            handleSend({ keepFocus: true });
         }
     };
 
@@ -104,6 +133,7 @@ function ChatRoomPage() {
                     onClick={() => navigate("/chat")}>
                     <ArrowBackIcon />
                 </IconButton>
+
                 <Typography
                     variant="h6"
                     sx={{ fontWeight: "bold", fontSize: "1.1rem" }}>
@@ -113,6 +143,7 @@ function ChatRoomPage() {
                         )?.title
                     }
                 </Typography>
+
                 <Stack direction="row">
                     <IconButton color="inherit" onClick={() => setIsMenu(true)}>
                         <MenuIcon />
@@ -136,14 +167,19 @@ function ChatRoomPage() {
             />
 
             <Box
+                ref={scrollerRef}
                 sx={{
                     flex: 1,
                     minHeight: 0,
                     minWidth: 0,
                     overflowY: "auto",
                     overflowX: "hidden",
+                    WebkitOverflowScrolling: "touch",
+                    msOverflowStyle: "none",
+                    scrollbarWidth: "none",
+                    "&::-webkit-scrollbar": { display: "none" },
                 }}>
-                <MessageBubble roomId={roomId} />
+                <MessageBubble roomId={roomId} scrollerRef={scrollerRef} />
             </Box>
 
             <Box
@@ -176,6 +212,7 @@ function ChatRoomPage() {
                             alignItems: "center",
                         }}>
                         <TextField
+                            inputRef={inputRef}
                             fullWidth
                             multiline
                             maxRows={3}
@@ -190,15 +227,15 @@ function ChatRoomPage() {
                                     fontSize: "1rem",
                                     p: 0.5,
                                 },
-                                "& .MuiInputBase-input": {
-                                    fontSize: "1rem",
-                                },
+                                "& .MuiInputBase-input": { fontSize: "1rem" },
                             }}
                         />
                     </Box>
 
                     <IconButton
-                        onClick={handleSend}
+                        onMouseDown={(e) => e.preventDefault()}
+                        onTouchStart={(e) => e.preventDefault()}
+                        onClick={() => handleSend({ keepFocus: true })}
                         sx={{
                             bgcolor: inputValue.trim()
                                 ? "primary.main"

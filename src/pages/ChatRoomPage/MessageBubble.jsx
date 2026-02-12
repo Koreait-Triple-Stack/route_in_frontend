@@ -1,6 +1,6 @@
 import { Box } from "@mui/system";
 import { getMessageListInfiniteRequest } from "../../apis/chat/chatApi";
-import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import Loading from "../../components/Loading";
 import ErrorComponent from "../../components/ErrorComponent";
 import MessageBubbleComponent from "./MessageBubbleComponent";
@@ -8,27 +8,12 @@ import { ClipLoader } from "react-spinners";
 import { useEffect, useLayoutEffect, useRef } from "react";
 import { usePrincipalState } from "../../store/usePrincipalState";
 
-function MessageBubble({ roomId }) {
-    const bottomRef = useRef(null);
-    const scrollerRef = useRef(null);
+function MessageBubble({ roomId, scrollerRef }) {
     const prevScrollHeightRef = useRef(0);
     const needAdjustRef = useRef(false);
     const didInitScrollRef = useRef(false);
+    const keepAtBottomRef = useRef(true);
     const { principal } = usePrincipalState();
-
-    const scrollToBottom = () => {
-        const el = scrollerRef.current;
-        if (!el) return;
-
-        el.scrollTop = el.scrollHeight;
-        requestAnimationFrame(() => {
-            el.scrollTop = el.scrollHeight;
-            bottomRef.current?.scrollIntoView({
-                block: "end",
-                behavior: "auto",
-            });
-        });
-    };
 
     const {
         data: messageResp,
@@ -38,7 +23,10 @@ function MessageBubble({ roomId }) {
         fetchNextPage,
         hasNextPage,
     } = useInfiniteQuery({
-        queryKey: ["getMessageListInfiniteRequest", { roomId, userId: principal?.userId, limit: 20 }],
+        queryKey: [
+            "getMessageListInfiniteRequest",
+            { roomId, userId: principal?.userId, limit: 20 },
+        ],
         queryFn: getMessageListInfiniteRequest,
         initialPageParam: null,
         getNextPageParam: (lastPage) => {
@@ -49,24 +37,45 @@ function MessageBubble({ roomId }) {
                 cursorMessageId: d.nextCursorMessageId,
             };
         },
+        enabled: !!roomId && !!principal?.userId,
     });
 
     const messageList =
         messageResp?.pages?.flatMap((p) => p?.data?.messageList ?? []) ?? [];
 
-    const handleScroll = () => {
-        const el = scrollerRef.current;
+    const scrollToBottom = () => {
+        const el = scrollerRef?.current;
         if (!el) return;
-
-        if (el.scrollTop <= 20 && hasNextPage && !isFetchingNextPage) {
-            prevScrollHeightRef.current = el.scrollHeight;
-            needAdjustRef.current = true;
-            fetchNextPage();
-        }
+        el.scrollTop = el.scrollHeight;
+        requestAnimationFrame(() => {
+            el.scrollTop = el.scrollHeight;
+        });
     };
 
     useEffect(() => {
-        const el = scrollerRef.current;
+        const el = scrollerRef?.current;
+        if (!el) return;
+
+        const onScroll = () => {
+            if (el.scrollTop <= 20 && hasNextPage && !isFetchingNextPage) {
+                prevScrollHeightRef.current = el.scrollHeight;
+                needAdjustRef.current = true;
+                fetchNextPage();
+            }
+
+            const nearBottom =
+                el.scrollHeight - (el.scrollTop + el.clientHeight) < 120;
+            keepAtBottomRef.current = nearBottom;
+        };
+
+        el.addEventListener("scroll", onScroll, { passive: true });
+        onScroll();
+
+        return () => el.removeEventListener("scroll", onScroll);
+    }, [scrollerRef, hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+    useEffect(() => {
+        const el = scrollerRef?.current;
         if (!el) return;
         if (!needAdjustRef.current) return;
 
@@ -76,16 +85,13 @@ function MessageBubble({ roomId }) {
 
         needAdjustRef.current = false;
         prevScrollHeightRef.current = 0;
-    }, [messageList.length]);
+    }, [messageList.length, scrollerRef]);
 
     useLayoutEffect(() => {
-        const el = scrollerRef.current;
+        const el = scrollerRef?.current;
         if (!el) return;
 
         if (needAdjustRef.current) return;
-
-        const nearBottomNow =
-            el.scrollHeight - (el.scrollTop + el.clientHeight) < 120;
 
         if (!didInitScrollRef.current && messageList.length > 0) {
             didInitScrollRef.current = true;
@@ -93,42 +99,27 @@ function MessageBubble({ roomId }) {
             return;
         }
 
-        if (nearBottomNow) {
+        if (keepAtBottomRef.current) {
             scrollToBottom();
         }
-    }, [messageList[0]?.messageId]);
+    }, [messageList[0]?.messageId, messageList.length, scrollerRef]);
 
     if (messageLoading) return <Loading />;
     if (messageError) return <ErrorComponent error={messageError} />;
 
     return (
         <Box
-            ref={scrollerRef}
-            onScroll={handleScroll}
             sx={{
-                height: "100%",
-                overflowY: "auto",
+                px: 2,
+                display: "flex",
+                flexDirection: "column",
                 minHeight: 0,
-                msOverflowStyle: "none",
-                scrollbarWidth: "none",
-                "&::-webkit-scrollbar": { display: "none" },
             }}>
-            <Box
-                sx={{
-                    flex: 1,
-                    px: 2,
-                    display: "flex",
-                    flexDirection: "column",
-                    minHeight: 0,
-                }}>
-                {isFetchingNextPage && <ClipLoader />}
+            {isFetchingNextPage && <ClipLoader />}
 
-                {[...messageList].reverse().map((msg) => (
-                    <MessageBubbleComponent key={msg.messageId} message={msg} />
-                ))}
-
-                <div ref={bottomRef} />
-            </Box>
+            {[...messageList].reverse().map((msg) => (
+                <MessageBubbleComponent key={msg.messageId} message={msg} />
+            ))}
         </Box>
     );
 }
