@@ -84,14 +84,21 @@ function ChatRoomPage() {
                 display: "flex",
                 flexDirection: "column",
                 backgroundColor: "#f2f2f2",
+                py: "64px",
                 overflowX: "hidden",
                 width: "100%",
             }}>
             <Box
+                position="fixed"
                 sx={{
                     display: "flex",
                     flexDirection: "row",
                     justifyContent: "space-between",
+                    width: "100%",
+                    maxWidth: "sm",
+                    top: 0,
+                    left: "50%",
+                    transform: "translateX(-50%)",
                     flexShrink: 0,
                     alignItems: "center",
                     px: 2,
@@ -138,7 +145,16 @@ function ChatRoomPage() {
                 <MessageBubble roomId={roomId} />
             </Box>
 
-            <Box sx={{ flexShrink: 0 }}>
+            <Box
+                position="fixed"
+                sx={{
+                    bottom: 0,
+                    width: "100%",
+                    maxWidth: "sm",
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    flexShrink: 0,
+                }}>
                 <Box
                     sx={{
                         width: "100%",

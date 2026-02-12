@@ -10,7 +10,8 @@ export default function AppLayout({ children }) {
     return (
         <Box
             sx={{
-                height: "100svh",
+                height: "100dvh",
+                minHeight: "100svh",
                 background: "linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)",
                 overflow: "hidden",
             }}>
