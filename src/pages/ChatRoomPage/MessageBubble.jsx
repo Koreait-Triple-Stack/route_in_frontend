@@ -13,6 +13,9 @@ function MessageBubble({ roomId, scrollerRef }) {
     const needAdjustRef = useRef(false);
     const didInitScrollRef = useRef(false);
     const keepAtBottomRef = useRef(true);
+
+    const fetchLockRef = useRef(false);
+
     const { principal } = usePrincipalState();
 
     const {
@@ -57,19 +60,31 @@ function MessageBubble({ roomId, scrollerRef }) {
         if (!el) return;
 
         const onScroll = () => {
-            if (el.scrollTop <= 20 && hasNextPage && !isFetchingNextPage) {
-                prevScrollHeightRef.current = el.scrollHeight;
-                needAdjustRef.current = true;
-                fetchNextPage();
-            }
+            if (needAdjustRef.current) return;
 
             const nearBottom =
                 el.scrollHeight - (el.scrollTop + el.clientHeight) < 120;
             keepAtBottomRef.current = nearBottom;
+
+            if (!didInitScrollRef.current) return;
+
+            if (fetchLockRef.current) return;
+
+            if (el.scrollTop <= 20 && hasNextPage && !isFetchingNextPage) {
+
+                prevScrollHeightRef.current = el.scrollHeight;
+                needAdjustRef.current = true;
+                fetchLockRef.current = true;
+
+                fetchNextPage().finally(() => {
+                    setTimeout(() => {
+                        fetchLockRef.current = false;
+                    }, 300);
+                });
+            }
         };
 
         el.addEventListener("scroll", onScroll, { passive: true });
-        onScroll();
 
         return () => el.removeEventListener("scroll", onScroll);
     }, [scrollerRef, hasNextPage, isFetchingNextPage, fetchNextPage]);
@@ -81,10 +96,13 @@ function MessageBubble({ roomId, scrollerRef }) {
 
         const prevH = prevScrollHeightRef.current;
         const diff = el.scrollHeight - prevH;
+
         el.scrollTop = el.scrollTop + diff;
 
         needAdjustRef.current = false;
         prevScrollHeightRef.current = 0;
+
+        fetchLockRef.current = false;
     }, [messageList.length, scrollerRef]);
 
     useLayoutEffect(() => {
@@ -116,7 +134,6 @@ function MessageBubble({ roomId, scrollerRef }) {
                 minHeight: 0,
             }}>
             {isFetchingNextPage && <ClipLoader />}
-
             {[...messageList].reverse().map((msg) => (
                 <MessageBubbleComponent key={msg.messageId} message={msg} />
             ))}

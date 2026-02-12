@@ -17,6 +17,7 @@ import { useToastStore } from "../../store/useToastStore";
 import { useChatUiState } from "../../store/useChatUiState";
 import MenuDrawer from "./MenuDrawer";
 import InviteDialog from "./InviteDialog";
+import { useLockBodyScroll } from "./useLockBodyScroll";
 
 function ChatRoomPage() {
     const { show } = useToastStore();
@@ -36,6 +37,8 @@ function ChatRoomPage() {
     const [hasHardwareKeyboard, setHasHardwareKeyboard] = useState(false);
 
     const isMobileTyping = isCoarsePointer && !hasHardwareKeyboard;
+
+    useLockBodyScroll(true);
 
     useEffect(() => {
         const onKeyDown = () => setHasHardwareKeyboard(true);
@@ -174,6 +177,7 @@ function ChatRoomPage() {
                     minWidth: 0,
                     overflowY: "auto",
                     overflowX: "hidden",
+                    overscrollBehavior: "contain",
                     WebkitOverflowScrolling: "touch",
                     msOverflowStyle: "none",
                     scrollbarWidth: "none",
