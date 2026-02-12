@@ -75,6 +75,9 @@ function ChatRoomPage() {
     const focusInput = () => {
         const el = inputRef.current;
         if (!el) return;
+
+        if (document.activeElement === el) return;
+
         try {
             el.focus({ preventScroll: true });
         } catch {
@@ -82,7 +85,7 @@ function ChatRoomPage() {
         }
     };
 
-    const handleSend = ({ keepFocus } = { keepFocus: false }) => {
+    const handleSend = () => {
         if (!inputValue.trim()) return;
 
         mutation.mutate({
@@ -94,7 +97,7 @@ function ChatRoomPage() {
 
         setInputValue("");
 
-        if (keepFocus) {
+        if (!isCoarsePointer) {
             requestAnimationFrame(() => {
                 focusInput();
             });
@@ -108,7 +111,7 @@ function ChatRoomPage() {
 
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
-            handleSend({ keepFocus: true });
+            handleSend();
         }
     };
 
@@ -257,7 +260,7 @@ function ChatRoomPage() {
                         onPointerDown={(e) => e.preventDefault()}
                         onMouseDown={(e) => e.preventDefault()}
                         onTouchStart={(e) => e.preventDefault()}
-                        onClick={() => handleSend({ keepFocus: true })}
+                        onClick={handleSend}
                         sx={{
                             bgcolor: inputValue.trim()
                                 ? "primary.main"
