@@ -48,7 +48,7 @@ function MessageBubbleComponent({ message }) {
                 display: "flex",
                 flexDirection: isMe ? "row-reverse" : "row",
                 alignItems: "flex-start",
-                mb: 2,
+                my: 1,
                 width: "100%",
                 height: "100%",
             }}>
@@ -62,8 +62,7 @@ function MessageBubbleComponent({ message }) {
                         display: "flex",
                         justifyContent: "center",
                         alignItems: "center",
-                        mb: 1,
-                        mt: 1,
+                        my: 1,
                     }}>
                     <Typography
                         sx={{
@@ -89,7 +88,7 @@ function MessageBubbleComponent({ message }) {
                     {!isMe && (
                         <Typography
                             variant="caption"
-                            sx={{ color: "#555", mb: 0.5, ml: 0.5 }}>
+                            sx={{ color: "#555", ml: 0.5 }}>
                             {username}
                         </Typography>
                     )}
