@@ -73,7 +73,6 @@ function BoardDetailPage() {
     return (
         <Container sx={{ py: 2 }}>
             <Box
-                variant="outlined"
                 sx={{
                     overflow: "hidden",
                     bgcolor: "transparent",

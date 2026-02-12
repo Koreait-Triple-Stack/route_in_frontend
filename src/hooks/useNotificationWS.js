@@ -1,7 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { Client } from "@stomp/stompjs";
 
-export function useNotificationWS({ enabled, token, onMessage, roomId }) {
+export function useNotificationWS({
+    enabled,
+    token,
+    userId,
+    onMessage,
+    roomId,
+}) {
     const clientRef = useRef(null);
     const onMessageRef = useRef(onMessage);
 
@@ -9,21 +15,24 @@ export function useNotificationWS({ enabled, token, onMessage, roomId }) {
     const roomSubRef = useRef(null);
 
     const [isConnected, setIsConnected] = useState(false);
-
     const lastPresenceRoomIdRef = useRef(undefined);
 
     useEffect(() => {
         onMessageRef.current = onMessage;
     }, [onMessage]);
 
-    const unsubscribeRoom = () => {
-        roomSubRef.current?.unsubscribe?.();
-        roomSubRef.current = null;
+    const safeUnsubscribe = (subRef) => {
+        const client = clientRef.current;
+        if (client?.connected) {
+            try {
+                subRef.current?.unsubscribe?.();
+            } catch (e) {}
+        }
+        subRef.current = null;
     };
-    const unsubscribeNotif = () => {
-        notifSubRef.current?.unsubscribe?.();
-        notifSubRef.current = null;
-    };
+
+    const unsubscribeRoom = () => safeUnsubscribe(roomSubRef);
+    const unsubscribeNotif = () => safeUnsubscribe(notifSubRef);
 
     const subscribeRoom = (client, rid) => {
         unsubscribeRoom();
@@ -36,8 +45,24 @@ export function useNotificationWS({ enabled, token, onMessage, roomId }) {
         });
     };
 
+    const subscribeNotif = (client, uid) => {
+        unsubscribeNotif();
+        if (!uid) return;
+
+        notifSubRef.current = client.subscribe(
+            `/topic/notification/${uid}`,
+            (msg) => {
+                try {
+                    const data = JSON.parse(msg.body);
+                    console.log("[NOTI RECEIVED]", data);
+                    onMessageRef.current?.(data);
+                } catch (e) {}
+            },
+        );
+    };
+
     const sendPresence = (client, rid) => {
-        if (!client || !client.connected) return;
+        if (!client?.connected) return;
 
         const normalized = rid == null ? null : Number(rid);
         if (lastPresenceRoomIdRef.current === normalized) return;
@@ -52,49 +77,47 @@ export function useNotificationWS({ enabled, token, onMessage, roomId }) {
     };
 
     useEffect(() => {
-        if (!enabled || !token) {
+        if (!enabled || !token || !userId) {
             setIsConnected(false);
             lastPresenceRoomIdRef.current = undefined;
 
             if (clientRef.current) {
-                unsubscribeRoom();
-                unsubscribeNotif();
                 clientRef.current.deactivate();
                 clientRef.current = null;
             }
+
+            notifSubRef.current = null;
+            roomSubRef.current = null;
             return;
         }
 
         if (clientRef.current?.active) return;
 
+        const wsScheme = window.location.protocol === "https:" ? "wss" : "ws";
+        const wsUrl = `${wsScheme}://${window.location.host}/ws`;
+
         const client = new Client({
-            brokerURL: "ws://localhost:8080/ws",
+            brokerURL: wsUrl,
             connectHeaders: { Authorization: `Bearer ${token}` },
             reconnectDelay: 3000,
 
             onConnect: () => {
                 setIsConnected(true);
 
-                unsubscribeNotif();
-                notifSubRef.current = client.subscribe(
-                    "/user/queue/notification",
-                    (msg) => {
-                        try {
-                            onMessageRef.current?.(JSON.parse(msg.body));
-                        } catch (e) {}
-                    },
-                );
+                subscribeNotif(client, userId);
 
                 sendPresence(client, roomId);
-
                 subscribeRoom(client, roomId);
             },
 
             onDisconnect: () => {
-                console.log("[WS] disconnected");
                 setIsConnected(false);
-                unsubscribeRoom();
-                unsubscribeNotif();
+                notifSubRef.current = null;
+                roomSubRef.current = null;
+            },
+
+            onStompError: (frame) => {
+                console.error("[WS] stomp error", frame?.headers, frame?.body);
             },
         });
 
@@ -103,20 +126,27 @@ export function useNotificationWS({ enabled, token, onMessage, roomId }) {
 
         return () => {
             setIsConnected(false);
-            unsubscribeRoom();
-            unsubscribeNotif();
-            client.deactivate();
+
+            const c = clientRef.current;
             clientRef.current = null;
+
+            try {
+                c?.deactivate();
+            } catch (e) {}
+
+            notifSubRef.current = null;
+            roomSubRef.current = null;
             lastPresenceRoomIdRef.current = undefined;
         };
-    }, [enabled, token]);
+    }, [enabled, token, userId]);
 
     useEffect(() => {
         const client = clientRef.current;
         if (!client || !isConnected) return;
 
-        subscribeRoom(client, roomId);
+        subscribeNotif(client, userId);
 
+        subscribeRoom(client, roomId);
         sendPresence(client, roomId);
-    }, [roomId, isConnected]);
+    }, [roomId, isConnected, userId]);
 }

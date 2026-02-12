@@ -6,10 +6,7 @@ import {
 } from "@mui/material";
 import { Box, Stack } from "@mui/system";
 import { EXERCISE_PARTS } from "../../constants/exerciseParts";
-import {
-    filterActionBtnBaseSx,
-    filterTextFieldSx,
-} from "../../constants/design";
+import { filterTextFieldSx } from "../../constants/design";
 
 function FilterBox({ form, setForm, setTags }) {
     const resetOnClickHandler = () => {
@@ -63,14 +60,16 @@ function FilterBox({ form, setForm, setTags }) {
             sx={{
                 mt: 1.2,
                 p: 2,
-                borderRadius: 3,
+                borderRadius: 4,
                 border: "1px solid",
                 borderColor: "divider",
+                bgcolor: "rgba(255,255,255,0.70)",
+                backdropFilter: "blur(10px)",
+                boxShadow: "0 12px 28px rgba(15,23,42,0.08)",
                 display: "flex",
                 flexDirection: "column",
                 gap: 1.6,
-            }}
-        >
+            }}>
             {form.type !== "ALL" &&
                 (form.type === "COURSE" ? (
                     <Stack spacing={2.5}>
@@ -107,15 +106,13 @@ function FilterBox({ form, setForm, setTags }) {
                                 display: "block",
                                 p: 0,
                                 m: 0,
-                            }}
-                        >
+                            }}>
                             <Box
                                 sx={{
                                     display: "flex",
                                     flexWrap: "wrap",
                                     gap: 1,
-                                }}
-                            >
+                                }}>
                                 {EXERCISE_PARTS.map((part) => (
                                     <ToggleButton
                                         key={part}
@@ -145,8 +142,7 @@ function FilterBox({ form, setForm, setTags }) {
                                                     bgcolor: "primary.dark",
                                                 },
                                             },
-                                        }}
-                                    >
+                                        }}>
                                         {part}
                                     </ToggleButton>
                                 ))}
@@ -162,17 +158,18 @@ function FilterBox({ form, setForm, setTags }) {
                     mt: 0.2,
                     gap: 1,
                     flexWrap: "wrap",
-                }}
-            >
+                }}>
                 <Button
                     disableElevation
                     variant="contained"
                     onClick={applyOnClickHandler}
                     sx={{
-                        ...filterActionBtnBaseSx,
-                        boxShadow: "0 6px 18px rgba(15,23,42,0.10)",
-                    }}
-                >
+                        borderRadius: 999,
+                        fontWeight: 950,
+                        px: 2.2,
+                        py: 0.8,
+                        boxShadow: "0 12px 26px rgba(99,102,241,0.24)",
+                    }}>
                     적용
                 </Button>
 
@@ -180,10 +177,12 @@ function FilterBox({ form, setForm, setTags }) {
                     variant="outlined"
                     onClick={resetOnClickHandler}
                     sx={{
-                        ...filterActionBtnBaseSx,
-                        bgcolor: "background.paper",
-                    }}
-                >
+                        borderRadius: 999,
+                        fontWeight: 900,
+                        px: 2.2,
+                        py: 0.8,
+                        bgcolor: "rgba(255,255,255,0.65)",
+                    }}>
                     필터 초기화
                 </Button>
             </Box>

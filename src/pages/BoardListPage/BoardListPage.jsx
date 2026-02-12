@@ -10,6 +10,7 @@ import WriteDial from "./WriteDial";
 import Loading from "../../components/Loading";
 import { Collapse, List, Paper, Typography } from "@mui/material";
 import ErrorOutlineRoundedIcon from "@mui/icons-material/ErrorOutlineRounded";
+import { sectionTitleSx } from "../../constants/boardDesign";
 
 function BoardListPage() {
     const [form, setForm] = useState({
@@ -74,9 +75,21 @@ function BoardListPage() {
     if (isLoading) return <Loading />;
 
     return (
-        <Box sx={{ px: { xs: 1.5, sm: 2 } }}>
-            <Typography
-                sx={{ fontSize: 22, fontWeight: 900, mb: 1, px: 1, py: 2 }}>
+        <Box
+            sx={{
+                px: { xs: 1.5, sm: 2 },
+                position: "relative",
+                "&:before": {
+                    content: '""',
+                    position: "absolute",
+                    inset: -12,
+                    zIndex: -1,
+                    background:
+                        "radial-gradient(800px 240px at 20% 0%, rgba(99,102,241,0.20), transparent 60%)," +
+                        "radial-gradient(700px 220px at 80% 10%, rgba(168,85,247,0.16), transparent 55%)",
+                },
+            }}>
+            <Typography sx={{ ...sectionTitleSx, px: 1, py: 2 }}>
                 게시판
             </Typography>
             <TypeBox
@@ -119,8 +132,9 @@ function BoardListPage() {
                             borderRadius: "999px",
                             border: "1px solid",
                             borderColor: "divider",
-                            bgcolor: "background.paper",
-                            boxShadow: "0 6px 18px rgba(15,23,42,0.08)",
+                            bgcolor: "rgba(255,255,255,0.70)",
+                            backdropFilter: "blur(10px)",
+                            boxShadow: "0 12px 28px rgba(15,23,42,0.08)",
                             display: "flex",
                             justifyContent: "center",
                             alignItems: "center",
