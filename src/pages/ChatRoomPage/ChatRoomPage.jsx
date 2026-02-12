@@ -114,6 +114,21 @@ function ChatRoomPage() {
         ]);
     };
 
+    const stickToBottomOnFocus = () => {
+        const el = scrollerRef.current;
+        if (!el) return;
+
+        const go = () => {
+            el.scrollTop = el.scrollHeight;
+        };
+
+        go();
+        requestAnimationFrame(go);
+        requestAnimationFrame(go);
+        setTimeout(go, 60);
+        setTimeout(go, 140);
+    };
+
     if (roomLoading) return <Loading />;
     if (roomError) return <ErrorComponent error={roomError} />;
 
@@ -231,6 +246,7 @@ function ChatRoomPage() {
                             InputProps={{ disableUnderline: true }}
                             value={inputValue}
                             onChange={(e) => setInputValue(e.target.value)}
+                            onFocus={stickToBottomOnFocus}
                             onKeyDown={handleKeyDown}
                             sx={{
                                 "& .MuiInputBase-root": {
