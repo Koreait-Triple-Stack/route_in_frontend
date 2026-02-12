@@ -93,8 +93,10 @@ export function useNotificationWS({
 
         if (clientRef.current?.active) return;
 
-        const wsScheme = window.location.protocol === "https:" ? "wss" : "ws";
-        const wsUrl = `${wsScheme}://${window.location.host}/ws`;
+        const isLocal = window.location.hostname === "localhost";
+        const wsUrl = isLocal
+            ? "ws://localhost:8080/ws"
+            : `${window.location.protocol === "https:" ? "wss" : "ws"}://${window.location.host}/ws`;
 
         const client = new Client({
             brokerURL: wsUrl,
