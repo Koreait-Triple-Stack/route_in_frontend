@@ -41,35 +41,6 @@ function ChatRoomPage() {
     const inputRef = useRef(null);
     const [isCoarsePointer, setIsCoarsePointer] = useState(false);
 
-    const [hasHardwareKeyboard, setHasHardwareKeyboard] = useState(false);
-
-    const isMobileTyping = isCoarsePointer && !hasHardwareKeyboard;
-
-    const [isSoftEnter, setIsSoftEnter] = useState(false);
-
-    useEffect(() => {
-        const el = inputRef.current;
-        if (!el) return;
-
-        const onBeforeInput = (e) => {
-            const t = e.inputType;
-            if (t === "insertLineBreak" || t === "insertParagraph") {
-                setIsSoftEnter(true);
-                queueMicrotask(() => setIsSoftEnter(false));
-            }
-        };
-
-        el.addEventListener("beforeinput", onBeforeInput);
-        return () => el.removeEventListener("beforeinput", onBeforeInput);
-    }, []);
-
-
-    useEffect(() => {
-        const onKeyDown = () => setHasHardwareKeyboard(true);
-        window.addEventListener("keydown", onKeyDown);
-        return () => window.removeEventListener("keydown", onKeyDown);
-    }, []);
-
     useEffect(() => {
         const mq = window.matchMedia("(pointer: coarse)");
         const update = () => setIsCoarsePointer(mq.matches);
@@ -111,7 +82,6 @@ function ChatRoomPage() {
         }
     };
 
-
     const handleSend = ({ keepFocus } = { keepFocus: false }) => {
         if (!inputValue.trim()) return;
 
@@ -127,7 +97,6 @@ function ChatRoomPage() {
         if (keepFocus) {
             requestAnimationFrame(() => {
                 focusInput();
-                requestAnimationFrame(() => inputRef.current?.focus());
             });
         }
     };
@@ -135,14 +104,13 @@ function ChatRoomPage() {
     const handleKeyDown = (e) => {
         if (e.nativeEvent.isComposing) return;
 
-        if (isSoftEnter) return;
+        if (isCoarsePointer) return;
 
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
             handleSend({ keepFocus: true });
         }
     };
-
 
     const handleBack = () => {
         navigate("/chat");
@@ -158,7 +126,8 @@ function ChatRoomPage() {
     return (
         <Box
             sx={{
-                height: "100%",
+                flex: 1,
+                minHeight: 0,
                 display: "flex",
                 flexDirection: "column",
                 backgroundColor: "#F5F7FA",
@@ -231,12 +200,12 @@ function ChatRoomPage() {
             </Box>
 
             <Box
-                position="fixed"
                 sx={{
+                    position: "fixed",
                     bottom: 0,
+                    left: 0,
+                    right: 0,
                     width: "100%",
-                    left: "50%",
-                    transform: "translateX(-50%)",
                     flexShrink: 0,
                 }}>
                 <Box
@@ -269,7 +238,9 @@ function ChatRoomPage() {
                             value={inputValue}
                             inputRef={inputRef}
                             onChange={(e) => setInputValue(e.target.value)}
-                            onKeyDown={handleKeyDown}
+                            onKeyDown={
+                                isCoarsePointer ? undefined : handleKeyDown
+                            }
                             sx={{
                                 "& .MuiInputBase-root": {
                                     fontSize: "1rem",
