@@ -107,6 +107,11 @@ function MessageModal({
                     list: {
                         sx: { minWidth: 75, py: 0.5 },
                     },
+                    paper: {
+                        sx: {
+                            borderRadius: 3,
+                        },
+                    },
                 }}>
                 <MenuItem
                     onClick={() => setOpenChange(true)}
