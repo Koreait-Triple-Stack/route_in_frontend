@@ -120,25 +120,23 @@ function ChatRoomPage() {
     return (
         <Box
             sx={{
-                position: "relative",
                 height: "100%",
+                display: "flex",
+                flexDirection: "column",
                 overflow: "hidden",
-                backgroundColor: "#f2f2f2",
             }}>
             <Box
                 sx={{
-                    position: "fixed",
+                    position: "sticky",
                     top: 0,
-                    left: 0,
-                    right: 0,
-                    height: `64px`,
-                    zIndex: 1300,
+                    zIndex: 1200,
                     display: "flex",
-                    alignItems: "center",
                     justifyContent: "space-between",
+                    alignItems: "center",
                     px: 2,
-                    borderBottom: "1px solid rgba(0,0,0,0.06)",
+                    py: 1.5,
                     bgcolor: "#f2f2f2",
+                    borderBottom: "1px solid rgba(0,0,0,0.06)",
                 }}>
                 <IconButton edge="start" color="inherit" onClick={handleBack}>
                     <ArrowBackIcon />
@@ -179,15 +177,14 @@ function ChatRoomPage() {
             <Box
                 ref={scrollerRef}
                 sx={{
-                    position: "absolute",
-                    top: `64px`,
-                    left: 0,
-                    right: 0,
-                    bottom: `calc(64px + env(safe-area-inset-bottom))`,
+                    flex: 1,
+                    minHeight: 0,
+                    minWidth: 0,
                     overflowY: "auto",
-                    WebkitOverflowScrolling: "touch",
+                    overflowX: "hidden",
                     overscrollBehavior: "contain",
                     touchAction: "pan-y",
+                    WebkitOverflowScrolling: "touch",
                     msOverflowStyle: "none",
                     scrollbarWidth: "none",
                     "&::-webkit-scrollbar": { display: "none" },
@@ -197,16 +194,14 @@ function ChatRoomPage() {
 
             <Box
                 sx={{
-                    position: "fixed",
-                    left: 0,
-                    right: 0,
+                    position: "sticky",
                     bottom: 0,
-                    zIndex: 1300,
+                    zIndex: 1200,
                     bgcolor: "#fff",
                     borderTop: "1px solid #ddd",
-                    px: 1.5,
-                    py: 1.5,
-                    paddingBottom: "calc(env(safe-area-inset-bottom) + 12px)",
+                    p: 1.5,
+                    display: "flex",
+                    alignItems: "center",
                 }}>
                 <Box
                     sx={{
