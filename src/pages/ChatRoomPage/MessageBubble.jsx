@@ -109,6 +109,7 @@ function MessageBubble({ roomId }) {
             ref={scrollerRef}
             onScroll={handleScroll}
             sx={{
+                py: 1,
                 height: "100%",
                 overflowY: "auto",
                 minHeight: 0,
@@ -119,7 +120,7 @@ function MessageBubble({ roomId }) {
             <Box
                 sx={{
                     flex: 1,
-                    px: 2,
+                    px: 1,
                     display: "flex",
                     flexDirection: "column",
                     minHeight: 0,
