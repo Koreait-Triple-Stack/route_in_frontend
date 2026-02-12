@@ -24,12 +24,21 @@ export default function useLockBodyScroll(locked, allowScrollRef) {
         body.style.overflow = "hidden";
         body.style.touchAction = "none";
 
+        const pinTop = () => {
+            if (window.scrollY !== 0) window.scrollTo(0, 0);
+        };
+
+        pinTop();
+
+        const vv = window.visualViewport;
+        const onVV = () => pinTop();
+
+        let savedScrollY = 0;
         if (!isIOS) {
-            const scrollY = window.scrollY || window.pageYOffset;
+            savedScrollY = window.scrollY || window.pageYOffset;
             body.style.position = "fixed";
-            body.style.top = `-${scrollY}px`;
+            body.style.top = `-${savedScrollY}px`;
             body.style.width = "100%";
-            body.dataset.__lockScrollY = String(scrollY);
         }
 
         const onTouchMove = (e) => {
@@ -37,6 +46,12 @@ export default function useLockBodyScroll(locked, allowScrollRef) {
             if (allowEl && allowEl.contains(e.target)) return;
             e.preventDefault();
         };
+
+        const onScroll = () => pinTop();
+
+        window.addEventListener("scroll", onScroll, { passive: true });
+        vv?.addEventListener("resize", onVV);
+        vv?.addEventListener("scroll", onVV);
 
         if (isIOS) {
             document.addEventListener("touchmove", onTouchMove, {
@@ -49,6 +64,10 @@ export default function useLockBodyScroll(locked, allowScrollRef) {
                 document.removeEventListener("touchmove", onTouchMove);
             }
 
+            window.removeEventListener("scroll", onScroll);
+            vv?.removeEventListener("resize", onVV);
+            vv?.removeEventListener("scroll", onVV);
+
             html.style.overflow = prev.htmlOverflow;
             body.style.overflow = prev.bodyOverflow;
             body.style.position = prev.bodyPosition;
@@ -57,10 +76,8 @@ export default function useLockBodyScroll(locked, allowScrollRef) {
             body.style.touchAction = prev.bodyTouchAction;
 
             if (!isIOS) {
-                const y = Number(body.dataset.__lockScrollY || "0");
-                delete body.dataset.__lockScrollY;
-                window.scrollTo(0, y);
+                window.scrollTo(0, savedScrollY);
             }
         };
-    }, [locked]);
+    }, [locked, allowScrollRef]);
 }

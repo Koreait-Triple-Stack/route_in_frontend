@@ -39,7 +39,7 @@ function ChatRoomPage() {
 
     const isMobileTyping = isCoarsePointer && !hasHardwareKeyboard;
 
-    // useLockBodyScroll(true, scrollerRef);
+    useLockBodyScroll(true, scrollerRef);
 
     useEffect(() => {
         const onKeyDown = () => setHasHardwareKeyboard(true);
@@ -187,6 +187,7 @@ function ChatRoomPage() {
                     overflowY: "auto",
                     WebkitOverflowScrolling: "touch",
                     overscrollBehavior: "contain",
+                    touchAction: "pan-y",
                     msOverflowStyle: "none",
                     scrollbarWidth: "none",
                     "&::-webkit-scrollbar": { display: "none" },
