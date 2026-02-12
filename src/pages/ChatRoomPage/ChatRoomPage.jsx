@@ -1,5 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Box, Typography, TextField, IconButton, Stack, Portal } from "@mui/material";
+import {
+    Box,
+    Typography,
+    TextField,
+    IconButton,
+    Stack,
+    Portal,
+} from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import MenuIcon from "@mui/icons-material/Menu";
 import SendIcon from "@mui/icons-material/Send";
@@ -17,6 +24,7 @@ import { useToastStore } from "../../store/useToastStore";
 import { useChatUiState } from "../../store/useChatUiState";
 import MenuDrawer from "./MenuDrawer";
 import InviteDialog from "./InviteDialog";
+import useVisualTop from "./useVisualTop";
 
 function ChatRoomPage() {
     const queryClient = useQueryClient();
@@ -28,6 +36,7 @@ function ChatRoomPage() {
     const { roomId: roomIdParam } = useParams();
     const [isInvite, setIsInvite] = useState();
     const roomId = Number(roomIdParam);
+    const visualTop = useVisualTop();
 
     const inputRef = useRef(null);
     const [isCoarsePointer, setIsCoarsePointer] = useState(false);
@@ -119,30 +128,34 @@ function ChatRoomPage() {
                 display: "flex",
                 flexDirection: "column",
                 backgroundColor: "#f2f2f2",
-                py: "64px",
+                pt: "57px",
+                pb: "65px",
                 overflowX: "hidden",
                 width: "100%",
             }}>
             <Portal>
                 <Box
-                    position="fixed"
                     sx={{
+                        position: "fixed",
+                        top: `${visualTop}px`,
+                        left: 0,
+                        right: 0,
+
                         display: "flex",
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        width: "100%",
-                        top: 0,
-                        left: "50%",
-                        transform: "translateX(-50%)",
-                        flexShrink: 0,
                         alignItems: "center",
-                        px: 2,
-                        py: 1.5,
+                        justifyContent: "space-between",
+                        px: 1.5,
+                        py: 0.5,
+                        bgcolor: "transparent",
+                        borderBottom: "1px solid #dbdbdb",
+
+                        paddingTop:
+                            "calc(env(safe-area-inset-top, 0px) + 12px)",
                     }}>
                     <IconButton
                         edge="start"
                         color="inherit"
-                        onClick={() => navigate("/chat")}>
+                        onClick={handleBack}>
                         <ArrowBackIcon />
                     </IconButton>
                     <Typography
