@@ -95,7 +95,10 @@ function ChatRoomPage() {
         setInputValue("");
 
         if (keepFocus) {
-            requestAnimationFrame(() => inputRef.current?.focus());
+            requestAnimationFrame(() => {
+                inputRef.current?.focus();
+                requestAnimationFrame(() => inputRef.current?.focus());
+            });
         }
     };
 
@@ -233,6 +236,7 @@ function ChatRoomPage() {
                             variant="standard"
                             InputProps={{ disableUnderline: true }}
                             value={inputValue}
+                            inputRef={inputRef}
                             onChange={(e) => setInputValue(e.target.value)}
                             onKeyDown={handleKeyDown}
                             sx={{
@@ -248,6 +252,8 @@ function ChatRoomPage() {
                     </Box>
 
                     <IconButton
+                        tabIndex={-1}
+                        onPointerDown={(e) => e.preventDefault()}
                         onMouseDown={(e) => e.preventDefault()}
                         onTouchStart={(e) => e.preventDefault()}
                         onClick={() => handleSend({ keepFocus: true })}
