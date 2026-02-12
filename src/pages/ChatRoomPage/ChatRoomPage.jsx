@@ -5,7 +5,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import SendIcon from "@mui/icons-material/Send";
 import { useNavigate, useParams } from "react-router-dom";
 import MessageBubble from "./MessageBubble";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { usePrincipalState } from "../../store/usePrincipalState";
 import {
     addMessageRequest,
@@ -20,6 +20,7 @@ import InviteDialog from "./InviteDialog";
 import useLockBodyScroll from "./useLockBodyScroll";
 
 function ChatRoomPage() {
+    const queryClient = useQueryClient();
     const { show } = useToastStore();
     const [inputValue, setInputValue] = useState("");
     const [isMenu, setIsMenu] = useState(false);
@@ -105,6 +106,14 @@ function ChatRoomPage() {
         }
     };
 
+    const handleBack = () => {
+        navigate("/chat");
+        queryClient.removeQueries([
+            "getMessageListInfiniteRequest",
+            { roomId, userId: principal?.userId, limit: 20 },
+        ]);
+    };
+
     if (roomLoading) return <Loading />;
     if (roomError) return <ErrorComponent error={roomError} />;
 
@@ -129,10 +138,7 @@ function ChatRoomPage() {
                     bgcolor: "#f2f2f2",
                     borderBottom: "1px solid rgba(0,0,0,0.06)",
                 }}>
-                <IconButton
-                    edge="start"
-                    color="inherit"
-                    onClick={() => navigate("/chat")}>
+                <IconButton edge="start" color="inherit" onClick={handleBack}>
                     <ArrowBackIcon />
                 </IconButton>
 
