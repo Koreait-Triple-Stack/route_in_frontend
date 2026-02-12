@@ -13,8 +13,9 @@ function MessageBubble({ roomId, scrollerRef }) {
     const needAdjustRef = useRef(false);
     const didInitScrollRef = useRef(false);
     const keepAtBottomRef = useRef(true);
-
     const fetchLockRef = useRef(false);
+
+    const bottomRef = useRef(null);
 
     const { principal } = usePrincipalState();
 
@@ -46,13 +47,16 @@ function MessageBubble({ roomId, scrollerRef }) {
     const messageList =
         messageResp?.pages?.flatMap((p) => p?.data?.messageList ?? []) ?? [];
 
-    const scrollToBottom = () => {
+    const scrollToBottom = (behavior = "auto") => {
         const el = scrollerRef?.current;
         if (!el) return;
-        el.scrollTop = el.scrollHeight;
-        requestAnimationFrame(() => {
-            el.scrollTop = el.scrollHeight;
-        });
+
+        const go = () =>
+            bottomRef.current?.scrollIntoView({ block: "end", behavior });
+
+        go();
+        requestAnimationFrame(go);
+        setTimeout(go, 50);
     };
 
     useEffect(() => {
@@ -67,11 +71,9 @@ function MessageBubble({ roomId, scrollerRef }) {
             keepAtBottomRef.current = nearBottom;
 
             if (!didInitScrollRef.current) return;
-
             if (fetchLockRef.current) return;
 
             if (el.scrollTop <= 20 && hasNextPage && !isFetchingNextPage) {
-
                 prevScrollHeightRef.current = el.scrollHeight;
                 needAdjustRef.current = true;
                 fetchLockRef.current = true;
@@ -85,7 +87,6 @@ function MessageBubble({ roomId, scrollerRef }) {
         };
 
         el.addEventListener("scroll", onScroll, { passive: true });
-
         return () => el.removeEventListener("scroll", onScroll);
     }, [scrollerRef, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
@@ -96,31 +97,26 @@ function MessageBubble({ roomId, scrollerRef }) {
 
         const prevH = prevScrollHeightRef.current;
         const diff = el.scrollHeight - prevH;
-
         el.scrollTop = el.scrollTop + diff;
 
         needAdjustRef.current = false;
         prevScrollHeightRef.current = 0;
-
         fetchLockRef.current = false;
     }, [messageList.length, scrollerRef]);
 
     useLayoutEffect(() => {
-        const el = scrollerRef?.current;
-        if (!el) return;
+        if (!messageList.length) return;
 
-        if (needAdjustRef.current) return;
-
-        if (!didInitScrollRef.current && messageList.length > 0) {
+        if (!didInitScrollRef.current) {
             didInitScrollRef.current = true;
-            scrollToBottom();
+            scrollToBottom("auto");
             return;
         }
 
         if (keepAtBottomRef.current) {
-            scrollToBottom();
+            scrollToBottom("auto");
         }
-    }, [messageList[0]?.messageId, messageList.length, scrollerRef]);
+    }, [messageList[0]?.messageId, messageList.length]);
 
     if (messageLoading) return <Loading />;
     if (messageError) return <ErrorComponent error={messageError} />;
@@ -137,6 +133,8 @@ function MessageBubble({ roomId, scrollerRef }) {
             {[...messageList].reverse().map((msg) => (
                 <MessageBubbleComponent key={msg.messageId} message={msg} />
             ))}
+
+            <div ref={bottomRef} />
         </Box>
     );
 }
