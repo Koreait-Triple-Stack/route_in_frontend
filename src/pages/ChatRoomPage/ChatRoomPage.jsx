@@ -112,7 +112,6 @@ function ChatRoomPage() {
                 height: "100%",
                 display: "flex",
                 flexDirection: "column",
-                backgroundColor: "#f2f2f2",
                 overflow: "hidden",
             }}>
             <Box
