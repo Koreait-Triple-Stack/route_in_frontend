@@ -39,7 +39,7 @@ function ChatRoomPage() {
 
     const isMobileTyping = isCoarsePointer && !hasHardwareKeyboard;
 
-    useLockBodyScroll(true, scrollerRef);
+    // useLockBodyScroll(true, scrollerRef);
 
     useEffect(() => {
         const onKeyDown = () => setHasHardwareKeyboard(true);
