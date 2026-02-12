@@ -48,12 +48,12 @@ function MessageBubbleComponent({ message }) {
                 display: "flex",
                 flexDirection: isMe ? "row-reverse" : "row",
                 alignItems: "flex-start",
-                my: 1,
+                my: 0.5,
                 width: "100%",
                 height: "100%",
             }}>
             {!isMe && !isMiddle && (
-                <UserAvatarLink userId={senderId} src={profileImg} size={48} />
+                <UserAvatarLink userId={senderId} src={profileImg} size={40} />
             )}
             {isMiddle ? (
                 <Box
@@ -62,7 +62,7 @@ function MessageBubbleComponent({ message }) {
                         display: "flex",
                         justifyContent: "center",
                         alignItems: "center",
-                        my: 1,
+                        my: 0.5,
                     }}>
                     <Typography
                         sx={{
@@ -106,7 +106,7 @@ function MessageBubbleComponent({ message }) {
                             sx={{
                                 bgcolor: isMe ? "primary.main" : "#FFFFFF",
                                 color: isMe ? "#FFF" : "#000",
-                                p: "10px 14px",
+                                p: "7px 12px",
                                 borderRadius: isMe
                                     ? "15px 0px 15px 15px"
                                     : "0px 15px 15px 15px",
