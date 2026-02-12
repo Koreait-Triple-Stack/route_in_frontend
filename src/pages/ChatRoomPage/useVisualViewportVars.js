@@ -10,13 +10,10 @@ export default function useVisualViewportVars() {
                 "--vvh",
                 `${vv.height}px`,
             );
-            const inset = Math.max(
-                0,
-                window.innerHeight - vv.height - vv.offsetTop,
-            );
+
             document.documentElement.style.setProperty(
-                "--keyboard-inset",
-                `${inset}px`,
+                "--vvo",
+                `${vv.offsetTop}px`,
             );
         };
 
