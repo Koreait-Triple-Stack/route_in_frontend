@@ -125,7 +125,11 @@ function MessageBubble({ roomId }) {
                     flexDirection: "column",
                     minHeight: 0,
                 }}>
-                {isFetchingNextPage && <ClipLoader />}
+                {isFetchingNextPage && (
+                    <Box sx={{ display: "flex", justifyContent: "center" }}>
+                        <ClipLoader />
+                    </Box>
+                )}
 
                 {[...messageList].reverse().map((msg) => (
                     <MessageBubbleComponent key={msg.messageId} message={msg} />
