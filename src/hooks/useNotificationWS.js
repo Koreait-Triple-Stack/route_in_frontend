@@ -96,8 +96,8 @@ export function useNotificationWS({
 
         const isLocal = window.location.hostname === "localhost";
         const wsUrl = isLocal
-            ? "http://localhost:8080/ws"
-            : `http://${window.location.host}/ws`;
+            ? `${import.meta.env.VITE_API_BASE_URL}/ws`
+            : `${window.location.protocol}//${window.location.host}/ws`;
 
         const client = new Client({
             webSocketFactory: () => new SockJS(wsUrl),
