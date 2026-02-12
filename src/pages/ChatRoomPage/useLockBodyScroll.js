@@ -8,7 +8,6 @@ export default function useLockBodyScroll(locked, allowScrollRef) {
             /iP(hone|od|ad)/.test(navigator.userAgent) ||
             (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
 
-        const scrollY = window.scrollY || window.pageYOffset;
         const html = document.documentElement;
         const body = document.body;
 
@@ -23,18 +22,19 @@ export default function useLockBodyScroll(locked, allowScrollRef) {
 
         html.style.overflow = "hidden";
         body.style.overflow = "hidden";
-        body.style.position = "fixed";
-        body.style.top = `-${scrollY}px`;
-        body.style.width = "100%";
         body.style.touchAction = "none";
+
+        if (!isIOS) {
+            const scrollY = window.scrollY || window.pageYOffset;
+            body.style.position = "fixed";
+            body.style.top = `-${scrollY}px`;
+            body.style.width = "100%";
+            body.dataset.__lockScrollY = String(scrollY);
+        }
 
         const onTouchMove = (e) => {
             const allowEl = allowScrollRef?.current;
-            if (!allowEl) {
-                e.preventDefault();
-                return;
-            }
-            if (allowEl.contains(e.target)) return;
+            if (allowEl && allowEl.contains(e.target)) return;
             e.preventDefault();
         };
 
@@ -56,7 +56,11 @@ export default function useLockBodyScroll(locked, allowScrollRef) {
             body.style.width = prev.bodyWidth;
             body.style.touchAction = prev.bodyTouchAction;
 
-            window.scrollTo(0, scrollY);
+            if (!isIOS) {
+                const y = Number(body.dataset.__lockScrollY || "0");
+                delete body.dataset.__lockScrollY;
+                window.scrollTo(0, y);
+            }
         };
     }, [locked, allowScrollRef]);
 }
