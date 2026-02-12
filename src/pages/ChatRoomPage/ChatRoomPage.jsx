@@ -127,7 +127,7 @@ function ChatRoomPage() {
                 height: "100%",
                 display: "flex",
                 flexDirection: "column",
-                backgroundColor: "#f2f2f2",
+                backgroundColor: "#F5F7FA",
                 pt: "57px",
                 pb: "65px",
                 overflowX: "hidden",
@@ -146,7 +146,7 @@ function ChatRoomPage() {
                         justifyContent: "space-between",
                         px: 1.5,
                         py: 0.5,
-                        bgcolor: "transparent",
+                        bgcolor: "#F5F7FA",
                         borderBottom: "1px solid #dbdbdb",
 
                         paddingTop:
