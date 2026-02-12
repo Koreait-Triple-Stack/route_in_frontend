@@ -29,7 +29,6 @@ function FilterBox({ form, setForm, setTags }) {
             setTags(form.parts);
         }
     };
-
     const inputChangeHandler = (e) => {
         const { name, value } = e.target;
 
