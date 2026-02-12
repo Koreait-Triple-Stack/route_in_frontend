@@ -1,11 +1,8 @@
 import { Box, Container } from "@mui/system";
 import BasicBottomNav, { NAV_H } from "./BasicBottomNav";
-import { useLocation } from "react-router-dom";
 import LayoutHeader, { HEADER_H } from "./LayoutHeader";
 
 export default function AppLayout({ children }) {
-    const location = useLocation();
-    const isChatRoom = location.pathname.includes("/chat/room");
 
     return (
         <Box
@@ -15,7 +12,7 @@ export default function AppLayout({ children }) {
                 background: "linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)",
                 overflow: "hidden",
             }}>
-            {!isChatRoom && <LayoutHeader />}
+            <LayoutHeader />
 
             <Container maxWidth="sm" disableGutters sx={{ height: "100%" }}>
                 <Box
@@ -27,8 +24,8 @@ export default function AppLayout({ children }) {
 
                         overflow: "hidden",
 
-                        pb: !isChatRoom ? `${NAV_H + 20}px` : 0,
-                        pt: !isChatRoom ? "var(--header-offset)" : 0,
+                        pb: `${NAV_H + 20}px`,
+                        pt: "var(--header-offset)",
 
                         msOverflowStyle: "none",
                         scrollbarWidth: "none",
@@ -38,7 +35,7 @@ export default function AppLayout({ children }) {
                 </Box>
             </Container>
 
-            {!isChatRoom && <BasicBottomNav />}
+            <BasicBottomNav />
         </Box>
     );
 }
