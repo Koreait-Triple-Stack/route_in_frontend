@@ -138,6 +138,7 @@ function ChatRoomPage() {
             <Box
                 sx={{
                     flex: 1,
+                    minHeight: 0,
                     minWidth: 0,
                     overflowY: "auto",
                     overflowX: "hidden",
