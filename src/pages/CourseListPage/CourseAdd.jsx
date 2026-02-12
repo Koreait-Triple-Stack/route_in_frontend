@@ -89,10 +89,10 @@ function CourseAdd({ userId, boardId, isAdd }) {
                     elevation={10}
                     sx={{
                         position: "absolute",
-                        top: 30,
-                        left: 30,
+                        top: 10,
+                        left: 10,
                         zIndex: 10,
-                        width: 360,
+                        width: 320,
                         borderRadius: 2,
                         overflow: "hidden",
                     }}>

@@ -127,10 +127,10 @@ function CourseEdit({ course, userId, isEditing }) {
                     elevation={10}
                     sx={{
                         position: "absolute",
-                        top: 30,
-                        left: 30,
+                        top: 10,
+                        left: 10,
                         zIndex: 10,
-                        width: 360,
+                        width: 320,
                         borderRadius: 2,
                         overflow: "hidden",
                     }}>
@@ -144,7 +144,7 @@ function CourseEdit({ course, userId, isEditing }) {
                     />
 
                     <CoursePanel open={panelOpen}>
-                        <Stack spacing={2} sx={{ p: 2 }}>
+                        <Stack spacing={2}>
                             <PlaceSearchPanel
                                 query={search.query}
                                 setQuery={search.setQuery}

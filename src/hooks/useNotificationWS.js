@@ -97,7 +97,7 @@ export function useNotificationWS({
         const isLocal = window.location.hostname === "localhost";
         const wsUrl = isLocal
             ? "http://localhost:8080/ws"
-            : `${window.location.protocol}//${window.location.host}/ws`;
+            : `http://${window.location.host}/ws`;
 
         const client = new Client({
             webSocketFactory: () => new SockJS(wsUrl),
