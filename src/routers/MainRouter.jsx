@@ -15,6 +15,9 @@ import UserDetailPage from "../pages/UserDetailPage/UserDetailPage";
 import FollowingListPage from "../pages/FollowUserListPage/FollowingListPage";
 import FollowerListPage from "../pages/FollowUserListPage/FollowerListPage";
 import ChatRouter from "./ChatRouter";
+import RoomListPage from "../pages/RoomListPage/RoomListPage";
+import ChatRoomPage from "../pages/ChatRoomPage/ChatRoomPage";
+import ChatRoomLayout from "../components/ChatRoomLayout";
 
 export default function MainRouter() {
     return (
@@ -112,12 +115,23 @@ export default function MainRouter() {
             />
 
             <Route
-                path="/chat/*"
+                path="/chat"
                 element={
                     <ProtectedRouter>
                         <AppLayout>
-                            <ChatRouter />
+                            <RoomListPage />
                         </AppLayout>
+                    </ProtectedRouter>
+                }
+            />
+
+            <Route
+                path="/chat/room/:roomId"
+                element={
+                    <ProtectedRouter>
+                        <ChatRoomLayout>
+                            <ChatRoomPage />
+                        </ChatRoomLayout>
                     </ProtectedRouter>
                 }
             />
