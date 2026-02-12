@@ -62,5 +62,5 @@ export default function useLockBodyScroll(locked, allowScrollRef) {
                 window.scrollTo(0, y);
             }
         };
-    }, [locked, allowScrollRef]);
+    }, [locked]);
 }

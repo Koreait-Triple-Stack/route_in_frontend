@@ -22,7 +22,8 @@ export default function AppLayout({ children }) {
                         height: "100%",
                         minHeight: 0,
 
-                        overflow: "hidden",
+                        overflowY: "auto",
+                        overflowX: "hidden",
 
                         pb: `${NAV_H + 20}px`,
                         pt: "var(--header-offset)",
