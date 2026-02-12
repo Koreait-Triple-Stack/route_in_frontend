@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Box, Typography, TextField, IconButton, Stack } from "@mui/material";
+import { Box, Typography, TextField, IconButton, Stack, Portal } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import MenuIcon from "@mui/icons-material/Menu";
 import SendIcon from "@mui/icons-material/Send";
@@ -123,42 +123,46 @@ function ChatRoomPage() {
                 overflowX: "hidden",
                 width: "100%",
             }}>
-            <Box
-                position="fixed"
-                sx={{
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    width: "100%",
-                    top: 0,
-                    left: "50%",
-                    transform: "translateX(-50%)",
-                    flexShrink: 0,
-                    alignItems: "center",
-                    px: 2,
-                    py: 1.5,
-                }}>
-                <IconButton
-                    edge="start"
-                    color="inherit"
-                    onClick={() => navigate("/chat")}>
-                    <ArrowBackIcon />
-                </IconButton>
-                <Typography
-                    variant="h6"
-                    sx={{ fontWeight: "bold", fontSize: "1.1rem" }}>
-                    {
-                        room?.participants.find(
-                            (p) => p.userId === principal?.userId,
-                        )?.title
-                    }
-                </Typography>
-                <Stack direction="row">
-                    <IconButton color="inherit" onClick={() => setIsMenu(true)}>
-                        <MenuIcon />
+            <Portal>
+                <Box
+                    position="fixed"
+                    sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        width: "100%",
+                        top: 0,
+                        left: "50%",
+                        transform: "translateX(-50%)",
+                        flexShrink: 0,
+                        alignItems: "center",
+                        px: 2,
+                        py: 1.5,
+                    }}>
+                    <IconButton
+                        edge="start"
+                        color="inherit"
+                        onClick={() => navigate("/chat")}>
+                        <ArrowBackIcon />
                     </IconButton>
-                </Stack>
-            </Box>
+                    <Typography
+                        variant="h6"
+                        sx={{ fontWeight: "bold", fontSize: "1.1rem" }}>
+                        {
+                            room?.participants.find(
+                                (p) => p.userId === principal?.userId,
+                            )?.title
+                        }
+                    </Typography>
+                    <Stack direction="row">
+                        <IconButton
+                            color="inherit"
+                            onClick={() => setIsMenu(true)}>
+                            <MenuIcon />
+                        </IconButton>
+                    </Stack>
+                </Box>
+            </Portal>
 
             <MenuDrawer
                 setIsMenu={setIsMenu}
