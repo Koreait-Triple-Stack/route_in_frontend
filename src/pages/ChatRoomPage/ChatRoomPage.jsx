@@ -17,7 +17,6 @@ import { useToastStore } from "../../store/useToastStore";
 import { useChatUiState } from "../../store/useChatUiState";
 import MenuDrawer from "./MenuDrawer";
 import InviteDialog from "./InviteDialog";
-import useLockBodyScroll from "./useLockBodyScroll";
 
 function ChatRoomPage() {
     const queryClient = useQueryClient();
@@ -30,16 +29,12 @@ function ChatRoomPage() {
     const [isInvite, setIsInvite] = useState();
     const roomId = Number(roomIdParam);
 
-    const scrollerRef = useRef(null);
-
     const inputRef = useRef(null);
     const [isCoarsePointer, setIsCoarsePointer] = useState(false);
 
     const [hasHardwareKeyboard, setHasHardwareKeyboard] = useState(false);
 
     const isMobileTyping = isCoarsePointer && !hasHardwareKeyboard;
-
-    useLockBodyScroll(true, scrollerRef);
 
     useEffect(() => {
         const onKeyDown = () => setHasHardwareKeyboard(true);
@@ -114,21 +109,6 @@ function ChatRoomPage() {
         ]);
     };
 
-    const stickToBottomOnFocus = () => {
-        const el = scrollerRef.current;
-        if (!el) return;
-
-        const go = () => {
-            el.scrollTop = el.scrollHeight;
-        };
-
-        go();
-        requestAnimationFrame(go);
-        requestAnimationFrame(go);
-        setTimeout(go, 60);
-        setTimeout(go, 140);
-    };
-
     if (roomLoading) return <Loading />;
     if (roomError) return <ErrorComponent error={roomError} />;
 
@@ -138,25 +118,32 @@ function ChatRoomPage() {
                 height: "100%",
                 display: "flex",
                 flexDirection: "column",
-                overflow: "hidden",
+                backgroundColor: "#f2f2f2",
+                py: "64px",
+                overflowX: "hidden",
+                width: "100%",
             }}>
             <Box
+                position="fixed"
                 sx={{
-                    position: "sticky",
-                    top: 0,
-                    zIndex: 1200,
                     display: "flex",
+                    flexDirection: "row",
                     justifyContent: "space-between",
+                    width: "100%",
+                    top: 0,
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    flexShrink: 0,
                     alignItems: "center",
                     px: 2,
                     py: 1.5,
-                    bgcolor: "#f2f2f2",
-                    borderBottom: "1px solid rgba(0,0,0,0.06)",
                 }}>
-                <IconButton edge="start" color="inherit" onClick={handleBack}>
+                <IconButton
+                    edge="start"
+                    color="inherit"
+                    onClick={() => navigate("/chat")}>
                     <ArrowBackIcon />
                 </IconButton>
-
                 <Typography
                     variant="h6"
                     sx={{ fontWeight: "bold", fontSize: "1.1rem" }}>
@@ -166,7 +153,6 @@ function ChatRoomPage() {
                         )?.title
                     }
                 </Typography>
-
                 <Stack direction="row">
                     <IconButton color="inherit" onClick={() => setIsMenu(true)}>
                         <MenuIcon />
@@ -189,41 +175,27 @@ function ChatRoomPage() {
                 roomId={roomId}
             />
 
-            <Box
-                ref={scrollerRef}
-                sx={{
-                    flex: 1,
-                    minHeight: 0,
-                    minWidth: 0,
-                    overflowY: "auto",
-                    overflowX: "hidden",
-                    overscrollBehavior: "contain",
-                    touchAction: "pan-y",
-                    WebkitOverflowScrolling: "touch",
-                    msOverflowStyle: "none",
-                    scrollbarWidth: "none",
-                    "&::-webkit-scrollbar": { display: "none" },
-                }}>
-                <MessageBubble roomId={roomId} scrollerRef={scrollerRef} />
+            <Box sx={{ flex: 1, minWidth: 0, overflowX: "hidden" }}>
+                <MessageBubble roomId={roomId} />
             </Box>
 
             <Box
+                position="fixed"
                 sx={{
-                    position: "sticky",
                     bottom: 0,
-                    zIndex: 1200,
-                    bgcolor: "#fff",
-                    borderTop: "1px solid #ddd",
-                    p: 1.5,
-                    display: "flex",
-                    alignItems: "center",
+                    width: "100%",
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    flexShrink: 0,
                 }}>
                 <Box
                     sx={{
                         width: "100%",
                         bgcolor: "#fff",
+                        p: 1.5,
                         display: "flex",
                         alignItems: "center",
+                        borderTop: "1px solid #ddd",
                     }}>
                     <Box
                         sx={{
@@ -237,7 +209,6 @@ function ChatRoomPage() {
                             alignItems: "center",
                         }}>
                         <TextField
-                            inputRef={inputRef}
                             fullWidth
                             multiline
                             maxRows={3}
@@ -246,14 +217,15 @@ function ChatRoomPage() {
                             InputProps={{ disableUnderline: true }}
                             value={inputValue}
                             onChange={(e) => setInputValue(e.target.value)}
-                            onFocus={stickToBottomOnFocus}
                             onKeyDown={handleKeyDown}
                             sx={{
                                 "& .MuiInputBase-root": {
                                     fontSize: "1rem",
                                     p: 0.5,
                                 },
-                                "& .MuiInputBase-input": { fontSize: "1rem" },
+                                "& .MuiInputBase-input": {
+                                    fontSize: "1rem",
+                                },
                             }}
                         />
                     </Box>
