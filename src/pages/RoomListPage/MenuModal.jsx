@@ -186,8 +186,15 @@ function MenuModal({
                         ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
                         : undefined
                 }
-                PaperProps={{
-                    style: { width: 200 },
+                slotProps={{
+                    list: {
+                        sx: { minWidth: 200 },
+                    },
+                    paper: {
+                        sx: {
+                            borderRadius: 3,
+                        },
+                    },
                 }}>
                 <MenuItem onClick={handleRead}>읽음 처리</MenuItem>
                 <MenuItem

@@ -4,6 +4,7 @@ import { Box, flex } from "@mui/system";
 import { Typography } from "@mui/material";
 import { usePrincipalState } from "../../store/usePrincipalState";
 import MessageModal from "./MessageModal";
+import { useLongPress } from "../../hooks/useLongPress";
 
 function MessageBubbleComponent({ message }) {
     const { principal } = usePrincipalState();
@@ -29,18 +30,20 @@ function MessageBubbleComponent({ message }) {
 
     const [contextMenuMes, setContextMenuMes] = useState(null);
     const [selectedMessage, setSelectedMessage] = useState(null);
-    const handleContextMenu = (event, message) => {
-        event.preventDefault();
+
+    const openMessageMenu = (e, message) => {
+        e.preventDefault?.();
         setSelectedMessage(message);
-        setContextMenuMes(
-            contextMenuMes === null
-                ? {
-                      mouseX: event.clientX,
-                      mouseY: event.clientY,
-                  }
-                : null,
-        );
+
+        const p = e.touches?.[0] ?? e.changedTouches?.[0] ?? e;
+
+        setContextMenuMes({
+            mouseX: p.clientX,
+            mouseY: p.clientY,
+        });
     };
+
+    const handleContextMenu = (e, message) => openMessageMenu(e, message);
 
     return (
         <Box
@@ -99,29 +102,45 @@ function MessageBubbleComponent({ message }) {
                             flexDirection: isMe ? "row-reverse" : "row",
                             alignItems: "flex-end",
                         }}>
-                        <Box
-                            onContextMenu={(e) => {
-                                handleContextMenu(e, message);
-                            }}
-                            sx={{
-                                bgcolor: isMe ? "primary.main" : "#FFFFFF",
-                                color: isMe ? "#FFF" : "#000",
-                                p: "7px 12px",
-                                borderRadius: isMe
-                                    ? "15px 0px 15px 15px"
-                                    : "0px 15px 15px 15px",
+                        {(() => {
+                            const bindMsgLongPress = useLongPress({
+                                delay: 450,
+                                onLongPress: (e) => openMessageMenu(e, message),
+                                onClick: () => {},
+                            });
 
-                                maxWidth: 250,
-                                whiteSpace: "pre-wrap",
-                                wordBreak: "break-word",
-                                overflowWrap: "break-word",
+                            return (
+                                <Box
+                                    {...bindMsgLongPress}
+                                    onContextMenu={(e) =>
+                                        handleContextMenu(e, message)
+                                    }
+                                    sx={{
+                                        bgcolor: isMe
+                                            ? "primary.main"
+                                            : "#FFFFFF",
+                                        color: isMe ? "#FFF" : "#000",
+                                        p: "7px 12px",
+                                        borderRadius: isMe
+                                            ? "15px 0px 15px 15px"
+                                            : "0px 15px 15px 15px",
+                                        maxWidth: 250,
+                                        whiteSpace: "pre-wrap",
+                                        wordBreak: "break-word",
+                                        overflowWrap: "break-word",
+                                        boxShadow: "0 1px 1px rgba(0,0,0,0.1)",
+                                        fontSize: "0.95rem",
+                                        lineHeight: 1.5,
 
-                                boxShadow: "0 1px 1px rgba(0,0,0,0.1)",
-                                fontSize: "0.95rem",
-                                lineHeight: 1.5,
-                            }}>
-                            {content}
-                        </Box>
+                                        WebkitUserSelect: "none",
+                                        userSelect: "none",
+                                        WebkitTouchCallout: "none",
+                                        touchAction: "pan-y",
+                                    }}>
+                                    {content}
+                                </Box>
+                            );
+                        })()}
 
                         <Box
                             sx={{
