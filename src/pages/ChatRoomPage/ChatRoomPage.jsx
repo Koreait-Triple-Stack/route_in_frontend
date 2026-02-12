@@ -78,31 +78,25 @@ function ChatRoomPage() {
 
     return (
         <Box
-            position="relative"
             sx={{
                 height: "100%",
                 display: "flex",
                 flexDirection: "column",
                 backgroundColor: "#f2f2f2",
-                py: "64px",
-                overflowX: "hidden",
-                width: "100%",
+                overflow: "hidden",
             }}>
             <Box
-                position="fixed"
                 sx={{
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    width: "100%",
-                    maxWidth: "sm",
+                    position: "sticky",
                     top: 0,
-                    left: "50%",
-                    transform: "translateX(-50%)",
-                    flexShrink: 0,
+                    zIndex: 1200,
+                    display: "flex",
+                    justifyContent: "space-between",
                     alignItems: "center",
                     px: 2,
                     py: 1.5,
+                    bgcolor: "#f2f2f2",
+                    borderBottom: "1px solid rgba(0,0,0,0.06)",
                 }}>
                 <IconButton
                     edge="start"
@@ -141,28 +135,33 @@ function ChatRoomPage() {
                 roomId={roomId}
             />
 
-            <Box sx={{ flex: 1, minWidth: 0, overflowX: "hidden" }}>
+            <Box
+                sx={{
+                    flex: 1,
+                    minWidth: 0,
+                    overflowY: "auto",
+                    overflowX: "hidden",
+                }}>
                 <MessageBubble roomId={roomId} />
             </Box>
 
             <Box
-                position="fixed"
                 sx={{
+                    position: "sticky",
                     bottom: 0,
-                    width: "100%",
-                    maxWidth: "sm",
-                    left: "50%",
-                    transform: "translateX(-50%)",
-                    flexShrink: 0,
+                    zIndex: 1200,
+                    bgcolor: "#fff",
+                    borderTop: "1px solid #ddd",
+                    p: 1.5,
+                    display: "flex",
+                    alignItems: "center",
                 }}>
                 <Box
                     sx={{
                         width: "100%",
                         bgcolor: "#fff",
-                        p: 1.5,
                         display: "flex",
                         alignItems: "center",
-                        borderTop: "1px solid #ddd",
                     }}>
                     <Box
                         sx={{
