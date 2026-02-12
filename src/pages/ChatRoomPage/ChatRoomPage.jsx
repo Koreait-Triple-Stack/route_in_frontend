@@ -171,8 +171,11 @@ function ChatRoomPage() {
                             onKeyDown={handleKeyDown}
                             sx={{
                                 "& .MuiInputBase-root": {
-                                    fontSize: "0.95rem",
+                                    fontSize: "1rem",
                                     p: 0.5,
+                                },
+                                "& .MuiInputBase-input": {
+                                    fontSize: "1rem",
                                 },
                             }}
                         />

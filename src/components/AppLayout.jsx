@@ -23,7 +23,7 @@ export default function AppLayout({ children }) {
                         "--header-offset": `${HEADER_H}px`,
                         height: "100%",
                         minHeight: 0,
-                        overflowY: "auto",
+                        overflowY: isChatRoom ? "hidden" : "auto",
                         pb: !isChatRoom ? `${NAV_H + 20}px` : 0,
                         pt: !isChatRoom ? "var(--header-offset)" : 0,
                         transition: "padding-top 0s",
