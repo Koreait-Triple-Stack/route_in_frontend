@@ -71,7 +71,7 @@ function MenuDrawer({ participants, setIsMenu, isMenu, setIsInvite }) {
                 anchor="right"
                 open={isMenu}
                 onClose={() => setIsMenu(false)}
-                variant="persistent"
+                variant="temporary"
                 sx={{
                     "& .MuiDrawer-root": {
                         position: "absolute",
