@@ -170,10 +170,10 @@ function RunningRecord({ userId }) {
                     <Stack
                         direction="row"
                         sx={{
-                            width: "100%",
                             justifyContent: "space-between",
                             bgcolor: THEME.bgLight,
                             borderRadius: "12px",
+                            minWidth: 0,
                         }}>
                         {days.map((day, index) => (
                             <Box
@@ -181,21 +181,30 @@ function RunningRecord({ userId }) {
                                 sx={{
                                     flex: 1,
                                     textAlign: "center",
+                                    minWidth: 0,
+                                    px: 0.2,
                                 }}>
                                 <Typography
                                     variant="caption"
                                     color="text.secondary"
-                                    sx={{ mb: 1, fontSize: "0.8rem" }}>
+                                    sx={{
+                                        mb: 0.1,
+                                        fontSize: "0.8rem",
+                                        display: "block",
+                                        whiteSpace: "wrap",
+                                    }}>
                                     {day}
                                 </Typography>
 
                                 <Box
                                     sx={{
-                                        height: "30px",
+                                        minHeight: 30,
+                                        py: 0.2,
                                         display: "flex",
                                         alignItems: "center",
                                         justifyContent: "center",
-                                        width: "100%",
+                                        flexWrap: "wrap",
+                                        minWidth: 0,
                                     }}>
                                     {isEditing ? (
                                         <Box
@@ -203,7 +212,9 @@ function RunningRecord({ userId }) {
                                                 display: "flex",
                                                 alignItems: "center",
                                                 justifyContent: "center",
-                                                gap: "2px",
+                                                gap: "1px",
+                                                flexWrap: "wrap",
+                                                minWidth: 0,
                                             }}>
                                             <TextField
                                                 variant="standard"
@@ -240,9 +251,7 @@ function RunningRecord({ userId }) {
                                                 sx={{
                                                     color: "text.secondary",
                                                     fontSize: "0.8rem",
-                                                }}>
-                                                /
-                                            </Typography>
+                                                    }}></Typography>
                                             <TextField
                                                 variant="standard"
                                                 value={weeklyValues[index]}
@@ -276,31 +285,49 @@ function RunningRecord({ userId }) {
                                             />
                                         </Box>
                                     ) : (
-                                        <Typography
-                                            variant="body2"
-                                            fontWeight="bold"
-                                            color="text.primary"
+                                        <Box
                                             sx={{
-                                                fontSize: "0.9rem",
-                                                whiteSpace: "nowrap",
-                                                letterSpacing: "-0.5px",
-                                            }}>
-                                            <span
-                                                style={{
-                                                    color: "#3B82F6",
-                                                    padding: "4px",
-                                                }}>
+                                                display: "inline-flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                py: 0.1,
+                                                borderRadius: 999,
+                                                bgcolor: "white",
+                                                border: "1px solid",
+                                                borderColor: "divider",
+                                                fontWeight: 900,
+                                                fontSize: {
+                                                    xs: "0.8rem",
+                                                    sm: "0.9rem",
+                                                },
+                                                lineHeight: 1,
+                                                minWidth: 0.7,
+                                            }}
+                                        >
+                                            <Box
+                                                component="span"
+                                                sx={{ color: "#3B82F6" }}
+                                            >
                                                 {currentValues[index]}
-                                            </span>{" "}
-                                            /{" "}
-                                            <span
-                                                style={{
-                                                    color: "#3F51B5",
-                                                    padding: "4px",
-                                                }}>
+                                            </Box>
+
+                                            <Box
+                                                component="span"
+                                                sx={{
+                                                    mx: 0.4,
+                                                    color: "text.secondary",
+                                                }}
+                                            >
+                                                /
+                                            </Box>
+
+                                            <Box
+                                                component="span"
+                                                sx={{ color: "#3F51B5" }}
+                                            >
                                                 {weeklyValues[index]}
-                                            </span>
-                                        </Typography>
+                                            </Box>
+                                        </Box>
                                     )}
                                 </Box>
                             </Box>

@@ -60,14 +60,13 @@ export default function FollowUserList({
                 direction="row"
                 alignItems="center"
                 spacing={1}
-                sx={{ mb: 2 }}
-            >
-                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                sx={{ pl: 2 }}>
+                <Typography variant="h6" sx={{ fontWeight: "bold", py: 2 }}>
                     {title}
                 </Typography>
             </Stack>
 
-            <Divider />
+            <Divider sx={{mx:2}}/>
 
             <List>
                 {list.length > 0 ? (
@@ -81,6 +80,8 @@ export default function FollowUserList({
                         return (
                             <Box key={u?.userId ?? `${mode}-${idx}`}>
                                 <ListItem
+                                    disablePadding
+                                    disableGutters
                                     onClick={() => {
                                         if (!u?.userId) return;
                                         navigate(`/user/${u.userId}`);
@@ -113,8 +114,12 @@ export default function FollowUserList({
                                                     display: "flex",
                                                     flexDirection: "column",
                                                 }}
-                                            >
-                                                <Typography sx={{fontSize: 18, fontWeight: "550"}}>
+                                                >
+                                                <Typography
+                                                    sx={{
+                                                        fontSize: 18,
+                                                        fontWeight: "550",
+                                                    }}>
                                                     {u?.username}
                                                 </Typography>
                                                 <Typography variant="body2">

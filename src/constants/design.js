@@ -1,5 +1,3 @@
-import { flexShrink, flexWrap } from "@mui/system";
-
 export const THEME = {
     bg: "#F0F4F8",
     paper: "#FFFFFF",

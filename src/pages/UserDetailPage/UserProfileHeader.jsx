@@ -1,6 +1,5 @@
 import { Avatar, Box, Button, Typography } from "@mui/material";
 import FollowButton from "../../components/FollowButton";
-import FollowStats from "../Mypage/FollowStats";
 import { usePrincipalState } from "../../store/usePrincipalState";
 import { Stack } from "@mui/system";
 import { useMutation } from "@tanstack/react-query";
@@ -11,8 +10,6 @@ import { useNavigate } from "react-router-dom";
 export default function UserProfileHeader({
     user,
     enabledFollow,
-    onFollower,
-    onFollowing,
 }) {
     const { principal } = usePrincipalState();
     const { show } = useToastStore();
@@ -42,12 +39,13 @@ export default function UserProfileHeader({
         <>
             <Box
                 sx={{
-                    px: 2,
+                    px: 1,
                     py: 2,
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
-                    gap: 1.5,
+                    flexWrap:"wrap",
+                    gap: 1,
                 }}>
                 <Box
                     sx={{
@@ -126,12 +124,6 @@ export default function UserProfileHeader({
                 </Stack>
             </Box>
 
-            <FollowStats
-                followingCnt={user?.followingCnt}
-                followerCnt={user?.followerCnt}
-                onFollower={onFollower}
-                onFollowing={onFollowing}
-            />
         </>
     );
 }

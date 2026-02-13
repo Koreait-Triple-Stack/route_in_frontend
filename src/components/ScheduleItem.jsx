@@ -9,6 +9,7 @@ import {
     Stack,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import DialogComponent from "./DialogComponent";
 import { usePrincipalState } from "../store/usePrincipalState";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { changeChecked } from "../apis/routine/routineService";
@@ -21,7 +22,7 @@ const ScheduleItem = ({ dayEng, day, routines, active, onReset, onSave }) => {
 
     const [localRoutines, setLocalRoutines] = useState([]);
     const [inputText, setInputText] = useState("");
-
+    const [openReset, setOpenReset] = useState(false);
     const checkedMutation = useMutation({
         mutationFn: (routineId) => changeChecked(routineId),
         onSuccess: () =>
@@ -71,13 +72,13 @@ const ScheduleItem = ({ dayEng, day, routines, active, onReset, onSave }) => {
         <Paper
             elevation={0}
             sx={{
-                p: 2,
+                p: 1,
                 mb: 1.2,
                 borderRadius: "16px",
                 bgcolor: active ? THEME.activeBg : "#FFFFFF",
                 border: `1px solid ${active ? THEME.accent : "#bbbdbe"}`,
                 transition: "all 0.2s ease-in-out",
-                overflow: "auto"
+                overflow: "hidden",
             }}>
             <Box sx={{ display: "flex", alignItems: "center", gap: 2.5 }}>
                 <Box
@@ -97,7 +98,7 @@ const ScheduleItem = ({ dayEng, day, routines, active, onReset, onSave }) => {
                     </Typography>
                 </Box>
 
-                <Box sx={{ flex: 1 }}>
+                <Box sx={{ flex: 1, minWidth: 0 }}>
                     {isEditing ? (
                         <Stack spacing={1.5}>
                             <Box
@@ -123,9 +124,11 @@ const ScheduleItem = ({ dayEng, day, routines, active, onReset, onSave }) => {
                                     />
                                 ))}
                             </Box>
-                            <Stack direction="row" spacing={1}>
+                            <Stack
+                                direction="row"
+                                spacing={1}
+                                sx={{ flexWrap: "wrap" }}>
                                 <TextField
-                                    fullWidth
                                     size="small"
                                     placeholder="운동 입력"
                                     value={inputText}
@@ -133,9 +136,12 @@ const ScheduleItem = ({ dayEng, day, routines, active, onReset, onSave }) => {
                                         setInputText(e.target.value)
                                     }
                                     sx={{
+                                        flex: 1,
+                                        minWidth: 0,
                                         "& .MuiOutlinedInput-root": {
                                             borderRadius: "10px",
                                             bgcolor: "#fff",
+                                            minWidth: 0,
                                         },
                                     }}
                                 />
@@ -147,14 +153,15 @@ const ScheduleItem = ({ dayEng, day, routines, active, onReset, onSave }) => {
                                         minWidth: 50,
                                         borderRadius: "10px",
                                         boxShadow: "none",
+                                        flexShrink: 0,
                                     }}>
                                     <AddIcon />
                                 </Button>
                             </Stack>
                             <Stack
                                 direction="row"
-                                spacing={1}
-                                justifyContent="flex-end">
+                                justifyContent="flex-end"
+                                sx={{ flexWrap: "wrap", gap: 1 }}>
                                 <Button
                                     size="small"
                                     variant="outlined"
@@ -165,6 +172,8 @@ const ScheduleItem = ({ dayEng, day, routines, active, onReset, onSave }) => {
                                     sx={{
                                         boxShadow: "none",
                                         borderRadius: "8px",
+                                        whiteSpace: "nowrap",
+                                        flexShrink: 0,
                                     }}>
                                     취소
                                 </Button>
@@ -176,6 +185,8 @@ const ScheduleItem = ({ dayEng, day, routines, active, onReset, onSave }) => {
                                         bgcolor: THEME.accent,
                                         boxShadow: "none",
                                         borderRadius: "8px",
+                                        whiteSpace: "nowrap",
+                                        flexShrink: 0,
                                     }}>
                                     저장
                                 </Button>
@@ -206,7 +217,11 @@ const ScheduleItem = ({ dayEng, day, routines, active, onReset, onSave }) => {
                                                 fontSize: "0.8rem",
                                                 fontWeight: 600,
 
-                                                maxWidth: 200, 
+                                                minWidth: 0,
+                                                maxWidth: {
+                                                    xs: "100%",
+                                                    sm: 200,
+                                                },
 
                                                 textDecoration: act.checked
                                                     ? "line-through"
@@ -220,6 +235,7 @@ const ScheduleItem = ({ dayEng, day, routines, active, onReset, onSave }) => {
                                                 border: "none",
 
                                                 "& .MuiChip-label": {
+                                                    minWidth: 0,
                                                     overflow: "hidden",
                                                     textOverflow: "ellipsis",
                                                     whiteSpace: "nowrap",
@@ -245,7 +261,7 @@ const ScheduleItem = ({ dayEng, day, routines, active, onReset, onSave }) => {
                                 <Button
                                     size="small"
                                     onClick={() => setIsEditing(true)}
-                                        sx={{
+                                    sx={{
                                         color: "#0284C7",
                                         fontSize: "0.7rem",
                                     }}>
@@ -253,10 +269,7 @@ const ScheduleItem = ({ dayEng, day, routines, active, onReset, onSave }) => {
                                 </Button>
                                 <Button
                                     size="small"
-                                    onClick={() =>
-                                        confirm("초기화 하시겠습니까?") &&
-                                        onReset()
-                                    }
+                                    onClick={() => setOpenReset(true)}
                                     sx={{
                                         color: "#fc6b7c",
                                         fontSize: "0.7rem",
@@ -268,6 +281,14 @@ const ScheduleItem = ({ dayEng, day, routines, active, onReset, onSave }) => {
                     )}
                 </Box>
             </Box>
+            <DialogComponent
+                open={openReset}
+                setOpen={setOpenReset}
+                title="초기화"
+                content="초기화 하시겠습니까?"
+                onClick={onReset}
+                color="error"
+            />
         </Paper>
     );
 };

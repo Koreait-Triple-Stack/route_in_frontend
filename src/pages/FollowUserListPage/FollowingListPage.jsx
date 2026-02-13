@@ -20,14 +20,6 @@ function FollowingListPage() {
                     followerUserId={myUserId}
                     followingUserId={Number(user?.userId ?? 0)}
                     enabled={myUserId > 0}
-                    sx={{
-                        borderRadius: 2,
-                        fontWeight: 900,
-                        whiteSpace: "nowrap",
-                        px: 1.5,
-                        minWidth: 84,
-                        height: 34,
-                    }}
                 />
             )}
         />
