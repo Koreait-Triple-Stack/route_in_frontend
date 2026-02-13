@@ -85,12 +85,13 @@ function FollowUserList({
 
                     return (
                         <Box key={u?.userId}>
-                            <ListItem key={u?.userId ?? `${mode}-${idx}`}>
+                            <ListItem key={u?.userId ?? `${mode}-${idx}`} sx={{ py: 0}}>
                                 <ListItemButton
                                     onClick={() => {
                                         if (u?.userId) handleToggle(u);
                                     }}
                                     sx={{
+                                        px: 0,
                                         borderRadius: 3,
                                         display: "flex",
                                         alignItems: "center",

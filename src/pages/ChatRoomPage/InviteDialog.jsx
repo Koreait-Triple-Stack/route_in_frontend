@@ -87,18 +87,21 @@ function InviteDialog({
                     height: "100%",
                     width: "100%",
                 },
-            }}>
+            }}
+        >
             <DialogTitle>대화상대 선택</DialogTitle>
             <DialogContent>
                 <Stack
                     direction="row"
                     alignItems="center"
                     sx={{
-                        pl: 2,
+                        pl: 1,
+                        py: 2,
                         width: "100%",
                         height: "8%",
                         mb: 2,
-                    }}>
+                    }}
+                >
                     <SearchIcon />
                     <TextField
                         multiline
@@ -106,7 +109,7 @@ function InviteDialog({
                         value={searchInputValue}
                         placeholder="이름 검색"
                         onChange={(e) => setSearchInputValue(e.target.value)}
-                        sx={{ mb: 0.5, ml: 1, width: "90%" }}
+                        sx={{ mb: 0.5, width: "90%" }}
                     />
                 </Stack>
 
@@ -114,17 +117,20 @@ function InviteDialog({
                     <ToggleButtonGroup
                         value={isFollow}
                         onChange={followOnChangeHandler}
-                        sx={{ width: "94%" }}>
+                        sx={{ width: "94%" }}
+                    >
                         <ToggleButton
                             fullWidth
                             value="follower"
-                            sx={{ color: "ButtonText" }}>
+                            sx={{ color: "ButtonText" }}
+                        >
                             팔로워 목록
                         </ToggleButton>
                         <ToggleButton
                             fullWidth
                             value="following"
-                            sx={{ color: "ButtonText" }}>
+                            sx={{ color: "ButtonText" }}
+                        >
                             팔로잉 목록
                         </ToggleButton>
                     </ToggleButtonGroup>
@@ -151,11 +157,7 @@ function InviteDialog({
                     setUserIds={setUserIds}
                     setUsernames={setUsernames}
                     participantIds={
-                        new Set(
-                            participants.map((part) =>
-                                Number(part.userId),
-                            ),
-                        )
+                        new Set(participants.map((part) => Number(part.userId)))
                     }
                 />
 
@@ -169,7 +171,8 @@ function InviteDialog({
                     <Button
                         variant="contained"
                         size="large"
-                        onClick={onClickHandler}>
+                        onClick={onClickHandler}
+                    >
                         확인
                     </Button>
                 </Stack>
