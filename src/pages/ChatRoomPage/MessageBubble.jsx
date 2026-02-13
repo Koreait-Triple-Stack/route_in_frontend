@@ -1,4 +1,3 @@
-// MessageBubble.jsx
 import { Box } from "@mui/system";
 import { getMessageListInfiniteRequest } from "../../apis/chat/chatApi";
 import { useInfiniteQuery } from "@tanstack/react-query";
@@ -135,8 +134,7 @@ const MessageBubble = forwardRef(function MessageBubble({ roomId }, ref) {
                 msOverflowStyle: "none",
                 scrollbarWidth: "none",
                 "&::-webkit-scrollbar": { display: "none" },
-                pt: 2,
-                pb: 2,
+                py: 1,
             }}>
             <Box
                 sx={{
