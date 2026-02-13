@@ -1,5 +1,12 @@
-import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
-import { Box, Typography, TextField, IconButton, Stack } from "@mui/material";
+import React, { useState, useEffect, useRef } from "react";
+import {
+    Box,
+    Typography,
+    TextField,
+    IconButton,
+    Stack,
+    Portal,
+} from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import MenuIcon from "@mui/icons-material/Menu";
 import SendIcon from "@mui/icons-material/Send";
@@ -17,6 +24,7 @@ import { useToastStore } from "../../store/useToastStore";
 import { useChatUiState } from "../../store/useChatUiState";
 import MenuDrawer from "./MenuDrawer";
 import InviteDialog from "./InviteDialog";
+import useVisualTop from "./useVisualTop";
 
 function ChatRoomPage() {
     const queryClient = useQueryClient();
@@ -28,32 +36,17 @@ function ChatRoomPage() {
     const { roomId: roomIdParam } = useParams();
     const [isInvite, setIsInvite] = useState();
     const roomId = Number(roomIdParam);
+    const visualTop = useVisualTop();
 
     const inputRef = useRef(null);
-    const composerRef = useRef(null);
-
     const [isCoarsePointer, setIsCoarsePointer] = useState(false);
+
     useEffect(() => {
         const mq = window.matchMedia("(pointer: coarse)");
         const update = () => setIsCoarsePointer(mq.matches);
         update();
         mq.addEventListener?.("change", update);
         return () => mq.removeEventListener?.("change", update);
-    }, []);
-
-    // 입력창 높이만큼 메시지 영역 padding-bottom 자동 계산용 (가장 깔끔)
-    const [composerH, setComposerH] = useState(72);
-    useLayoutEffect(() => {
-        const el = composerRef.current;
-        if (!el) return;
-
-        const ro = new ResizeObserver(() => {
-            setComposerH(el.getBoundingClientRect().height || 72);
-        });
-        ro.observe(el);
-        setComposerH(el.getBoundingClientRect().height || 72);
-
-        return () => ro.disconnect();
     }, []);
 
     const {
@@ -72,6 +65,7 @@ function ChatRoomPage() {
     });
 
     const setActiveRoomId = useChatUiState((s) => s.setActiveRoomId);
+
     useEffect(() => {
         if (!roomId) return;
         setActiveRoomId(Number(roomId));
@@ -81,7 +75,9 @@ function ChatRoomPage() {
     const focusInput = () => {
         const el = inputRef.current;
         if (!el) return;
+
         if (document.activeElement === el) return;
+
         try {
             el.focus({ preventScroll: true });
         } catch {
@@ -102,12 +98,15 @@ function ChatRoomPage() {
         setInputValue("");
 
         if (!isCoarsePointer) {
-            requestAnimationFrame(() => focusInput());
+            requestAnimationFrame(() => {
+                focusInput();
+            });
         }
     };
 
     const handleKeyDown = (e) => {
         if (e.nativeEvent.isComposing) return;
+
         if (isCoarsePointer) return;
 
         if (e.key === "Enter" && !e.shiftKey) {
@@ -127,57 +126,61 @@ function ChatRoomPage() {
     if (roomLoading) return <Loading />;
     if (roomError) return <ErrorComponent error={roomError} />;
 
-    console.log(window.innerWidth);
-    console.log(document.documentElement.clientWidth);
-    console.log(document.documentElement.scrollWidth);
-    console.log(document.documentElement.scrollWidth);
-
     return (
         <Box
             sx={{
-                flex: 1,
-                minHeight: 0,
+                height: "100%",
                 display: "flex",
                 flexDirection: "column",
-                bgcolor: "#F5F7FA",
+                backgroundColor: "#F5F7FA",
+                pt: "57px",
+                pb: "65px",
+                overflowX: "hidden",
                 width: "100%",
-                overflow: "hidden",
             }}>
-            <Box
-                sx={{
-                    position: "sticky",
-                    top: 0,
-                    zIndex: 10,
-                    transform: "translateZ(0)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    px: 1.5,
-                    py: 0.5,
-                    bgcolor: "#F5F7FA",
-                    borderBottom: "1px solid #dbdbdb",
-                    pt: "env(safe-area-inset-top, 0px)",
-                }}>
-                <IconButton edge="start" color="inherit" onClick={handleBack}>
-                    <ArrowBackIcon />
-                </IconButton>
+            <Portal>
+                <Box
+                    sx={{
+                        position: "fixed",
+                        top: `${visualTop}px`,
+                        left: 0,
+                        right: 0,
 
-                <Typography
-                    variant="h6"
-                    sx={{ fontWeight: "bold", fontSize: "1.1rem" }}>
-                    {
-                        room?.participants.find(
-                            (p) => p.userId === principal?.userId,
-                        )?.title
-                    }
-                </Typography>
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        px: 1.5,
+                        py: 0.5,
+                        bgcolor: "#F5F7FA",
+                        borderBottom: "1px solid #dbdbdb",
 
-                <Stack direction="row">
-                    <IconButton color="inherit" onClick={() => setIsMenu(true)}>
-                        <MenuIcon />
+                        paddingTop:
+                            "calc(env(safe-area-inset-top, 0px) + 12px)",
+                    }}>
+                    <IconButton
+                        edge="start"
+                        color="inherit"
+                        onClick={handleBack}>
+                        <ArrowBackIcon />
                     </IconButton>
-                </Stack>
-            </Box>
+                    <Typography
+                        variant="h6"
+                        sx={{ fontWeight: "bold", fontSize: "1.1rem" }}>
+                        {
+                            room?.participants.find(
+                                (p) => p.userId === principal?.userId,
+                            )?.title
+                        }
+                    </Typography>
+                    <Stack direction="row">
+                        <IconButton
+                            color="inherit"
+                            onClick={() => setIsMenu(true)}>
+                            <MenuIcon />
+                        </IconButton>
+                    </Stack>
+                </Box>
+            </Portal>
 
             <MenuDrawer
                 setIsMenu={setIsMenu}
@@ -194,34 +197,27 @@ function ChatRoomPage() {
                 roomId={roomId}
             />
 
-            <Box
-                sx={{
-                    flex: 1,
-                    minHeight: 0,
-                    overflowY: "auto",
-                    overflowX: "hidden",
-                    pb: `${composerH}`,
-                }}>
+            <Box sx={{ flex: 1, minWidth: 0, overflowX: "hidden" }}>
                 <MessageBubble roomId={roomId} />
             </Box>
 
             <Box
-                ref={composerRef}
                 sx={{
-                    position: "sticky",
+                    position: "fixed",
                     bottom: 0,
-                    zIndex: 10,
-                    transform: "translateZ(0)",
-                    bgcolor: "#fff",
-                    borderTop: "1px solid #ddd",
-                    paddingBottom: "env(safe-area-inset-bottom, 0px)",
+                    left: 0,
+                    right: 0,
+                    width: "100%",
+                    flexShrink: 0,
                 }}>
                 <Box
                     sx={{
                         width: "100%",
+                        bgcolor: "#fff",
                         p: 1.5,
                         display: "flex",
                         alignItems: "center",
+                        borderTop: "1px solid #ddd",
                     }}>
                     <Box
                         sx={{
@@ -233,7 +229,6 @@ function ChatRoomPage() {
                             mx: 1,
                             display: "flex",
                             alignItems: "center",
-                            minWidth: 0,
                         }}>
                         <TextField
                             fullWidth
@@ -264,6 +259,7 @@ function ChatRoomPage() {
                         tabIndex={-1}
                         onPointerDown={(e) => e.preventDefault()}
                         onMouseDown={(e) => e.preventDefault()}
+                        onTouchStart={(e) => e.preventDefault()}
                         onClick={handleSend}
                         sx={{
                             bgcolor: inputValue.trim()
