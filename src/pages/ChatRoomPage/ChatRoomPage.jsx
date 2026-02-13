@@ -56,19 +56,15 @@ function ChatRoomPage() {
         if (!vv) return;
 
         const update = () => {
-            const hiddenBottom = Math.max(
-                0,
-                window.innerHeight - vv.height - vv.offsetTop,
-            );
+            const hiddenBottom = Math.max(0, window.innerHeight - vv.height);
             setFooterBottom(hiddenBottom);
         };
 
         update();
         vv.addEventListener("resize", update);
-        vv.addEventListener("scroll", update);
+
         return () => {
             vv.removeEventListener("resize", update);
-            vv.removeEventListener("scroll", update);
         };
     }, []);
 
