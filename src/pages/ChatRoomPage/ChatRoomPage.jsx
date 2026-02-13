@@ -41,6 +41,7 @@ function ChatRoomPage() {
     const inputRef = useRef(null);
     const headerRef = useRef(null);
     const footerRef = useRef(null);
+    const msgAreaRef = useRef(null);
 
     const [isCoarsePointer, setIsCoarsePointer] = useState(false);
     const [footerBottom, setFooterBottom] = useState(0);
@@ -141,6 +142,25 @@ function ChatRoomPage() {
             el.focus();
         }
     };
+
+    useEffect(() => {
+        const onTouchMove = (e) => {
+            const el = msgAreaRef.current;
+            if (!el) {
+                e.preventDefault();
+                return;
+            }
+            if (!el.contains(e.target)) {
+                e.preventDefault();
+            }
+        };
+
+        document.addEventListener("touchmove", onTouchMove, { passive: false });
+        return () => {
+            document.removeEventListener("touchmove", onTouchMove);
+        };
+    }, []);
+
 
     const handleSend = () => {
         if (!inputValue.trim()) return;
@@ -246,7 +266,9 @@ function ChatRoomPage() {
             />
 
             <Box
+                ref={msgAreaRef}
                 sx={{
+                    py: 8,
                     position: "fixed",
                     left: 0,
                     right: 0,
