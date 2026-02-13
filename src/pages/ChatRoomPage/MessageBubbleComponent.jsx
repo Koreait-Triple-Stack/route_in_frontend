@@ -149,7 +149,7 @@ function MessageBubbleComponent({ message }) {
                                 justifyContent: "flex-end",
                                 alignItems: isMe ? "flex-end" : "flex-start",
                                 mx: 0.5,
-                                height: "100%",
+                                minWidth: 0,
                             }}>
                             {unreadCnt > 0 && (
                                 <Box
@@ -172,7 +172,8 @@ function MessageBubbleComponent({ message }) {
                                 sx={{
                                     color: "#555",
                                     fontSize: "0.7rem",
-                                    minWidth: "max-content",
+                                    whiteSpace: "nowrap",
+                                    minWidth: 0,
                                 }}>
                                 {time}
                             </Typography>

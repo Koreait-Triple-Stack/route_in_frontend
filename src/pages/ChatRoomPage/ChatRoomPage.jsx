@@ -127,6 +127,10 @@ function ChatRoomPage() {
     if (roomLoading) return <Loading />;
     if (roomError) return <ErrorComponent error={roomError} />;
 
+    console.log(window.innerWidth);
+    console.log(document.documentElement.clientWidth);
+    console.log(document.documentElement.scrollWidth);
+
     return (
         <Box
             sx={{
