@@ -120,6 +120,7 @@ function MessageBubble({ roomId }) {
                 height: "100%",
                 overflowY: "auto",
                 minHeight: 0,
+                overscrollBehavior: "contain",
                 msOverflowStyle: "none",
                 scrollbarWidth: "none",
                 "&::-webkit-scrollbar": { display: "none" },
