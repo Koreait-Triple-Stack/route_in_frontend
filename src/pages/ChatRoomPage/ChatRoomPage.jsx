@@ -42,6 +42,17 @@ function ChatRoomPage() {
         return () => mq.removeEventListener?.("change", update);
     }, []);
 
+    useEffect(() => {
+        const onTouchMove = (e) => {
+            const scroller = document.querySelector("[data-chat-scroller='1']");
+            if (!scroller) return;
+            if (!scroller.contains(e.target)) e.preventDefault();
+        };
+
+        document.addEventListener("touchmove", onTouchMove, { passive: false });
+        return () => document.removeEventListener("touchmove", onTouchMove);
+    }, []);
+
     const {
         data: roomResp,
         isLoading: roomLoading,
@@ -91,9 +102,7 @@ function ChatRoomPage() {
 
         setInputValue("");
 
-        if (!isCoarsePointer) {
-            requestAnimationFrame(() => focusInput());
-        }
+        if (!isCoarsePointer) requestAnimationFrame(() => focusInput());
     };
 
     const handleKeyDown = (e) => {
@@ -125,11 +134,11 @@ function ChatRoomPage() {
         <Box
             sx={{
                 height: "100%",
+                width: "100%",
                 display: "flex",
                 flexDirection: "column",
-                bgcolor: "#F5F7FA",
                 overflow: "hidden",
-                width: "100%",
+                bgcolor: "#F5F7FA",
             }}>
             <Box
                 sx={{
@@ -188,7 +197,8 @@ function ChatRoomPage() {
                     display: "flex",
                     alignItems: "center",
                     borderTop: "1px solid #ddd",
-                    paddingBottom: "12px",
+                    paddingBottom:
+                        "calc(env(safe-area-inset-bottom, 0px) + 12px)",
                 }}>
                 <Box
                     sx={{
