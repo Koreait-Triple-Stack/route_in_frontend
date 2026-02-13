@@ -107,6 +107,24 @@ function ChatRoomPage() {
         return () => ro.disconnect();
     }, []);
 
+    useEffect(() => {
+        const onTouchMove = (e) => {
+            const el = msgAreaRef.current;
+            if (!el) {
+                e.preventDefault();
+                return;
+            }
+            if (!el.contains(e.target)) {
+                e.preventDefault();
+            }
+        };
+
+        document.addEventListener("touchmove", onTouchMove, { passive: false });
+        return () => {
+            document.removeEventListener("touchmove", onTouchMove);
+        };
+    }, []);
+
     const {
         data: roomResp,
         isLoading: roomLoading,
@@ -116,6 +134,7 @@ function ChatRoomPage() {
         queryFn: () => getRoomByRoomIdRequest(roomId),
         enabled: Number.isFinite(roomId) && roomId > 0,
     });
+
     const room = roomResp?.data ?? {};
 
     const mutation = useMutation({
@@ -142,25 +161,6 @@ function ChatRoomPage() {
             el.focus();
         }
     };
-
-    useEffect(() => {
-        const onTouchMove = (e) => {
-            const el = msgAreaRef.current;
-            if (!el) {
-                e.preventDefault();
-                return;
-            }
-            if (!el.contains(e.target)) {
-                e.preventDefault();
-            }
-        };
-
-        document.addEventListener("touchmove", onTouchMove, { passive: false });
-        return () => {
-            document.removeEventListener("touchmove", onTouchMove);
-        };
-    }, []);
-
 
     const handleSend = () => {
         if (!inputValue.trim()) return;
