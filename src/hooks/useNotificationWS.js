@@ -96,7 +96,7 @@ export function useNotificationWS({
 
         const isLocal = window.location.hostname === "localhost";
         const wsUrl = isLocal
-            ? `${import.meta.env.VITE_BASE_URL}/ws`
+            ? `${import.meta.env.VITE_API_BASE_URL}/ws`
             : `${window.location.protocol}//${window.location.host}/ws`;
 
         const client = new Client({
