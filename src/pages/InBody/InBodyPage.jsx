@@ -289,7 +289,7 @@ export default function InbodyChartWithActions() {
             <Dialog open={addOpen} onClose={handleAddClose}>
                 <DialogTitle>새로운 기록 추가</DialogTitle>
                 <DialogContent>
-                    <Stack spacing={2} sx={{ mt: 1, minWidth: 300 }}>
+                    <Stack spacing={2} sx={{ mt: 1, width: "100%" }}>
                         <TextField
                             label="날짜"
                             name="monthDt"

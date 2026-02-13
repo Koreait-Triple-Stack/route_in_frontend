@@ -82,25 +82,29 @@ function FollowUserList({
                     const isSelected = userIds.includes(u?.userId);
 
                     return (
-                        <Box key={u?.userId ?? `${mode}-${idx}`}>
+                        <Box key={u?.userId ?? `${mode}-${idx}`} sx={{ py: 0, px: 0 }}>
                             <ListItem
                                 onClick={() => {
                                     if (u?.userId) handleToggle(u);
-                                }}>
+                                }}
+                            >
                                 <ListItemButton
                                     sx={{
+                                        p: 0,
                                         borderRadius: 3,
                                         display: "flex",
                                         alignItems: "center",
                                         justifyContent: "space-between",
                                         gap: 2,
-                                    }}>
+                                    }}
+                                >
                                     <Box
                                         sx={{
                                             display: "flex",
                                             alignItems: "center",
                                             gap: 2,
-                                        }}>
+                                        }}
+                                    >
                                         <Avatar
                                             src={profileSrc}
                                             alt={u?.username ?? "profile"}
@@ -110,7 +114,8 @@ function FollowUserList({
                                             sx={{
                                                 display: "flex",
                                                 flexDirection: "column",
-                                            }}>
+                                            }}
+                                        >
                                             <Typography variant="h6">
                                                 {u?.username}
                                             </Typography>

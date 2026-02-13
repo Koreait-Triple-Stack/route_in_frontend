@@ -112,7 +112,7 @@ function NewChatDialog({ isNewChat, setIsNewChat }) {
                         direction="row"
                         alignItems="center"
                         sx={{
-                            p: 2,
+                            py: 2,
                             width: "100%",
                             height: "8%",
                             mb: 2,
@@ -126,7 +126,7 @@ function NewChatDialog({ isNewChat, setIsNewChat }) {
                             onChange={(e) =>
                                 setSearchInputValue(e.target.value)
                             }
-                            sx={{ mb: 0.5, ml: 1, width: "100%" }}
+                            sx={{ mb: 0.5, width: "100%" }}
                         />
                     </Stack>
                     <Box
