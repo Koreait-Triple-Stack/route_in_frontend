@@ -24,11 +24,9 @@ function WriteDial() {
             open={open}
             direction="up"
             icon={open ? <CloseIcon /> : <CreateOutlinedIcon />}
-            onOpen={canHover ? handleOpen : undefined} // ✅ 데스크탑 hover
-            onClose={canHover ? handleClose : undefined} // ✅ 데스크탑 hover out
-            FabProps={{
-                onClick: !canHover ? handleToggle : undefined, // ✅ 모바일 탭으로 토글
-            }}
+            onOpen={canHover ? handleOpen : undefined}
+            onClose={canHover ? handleClose : undefined}
+            FabProps={{ onClick: !canHover ? handleToggle : undefined }}
             sx={{
                 position: "fixed",
                 right: 16,

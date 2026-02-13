@@ -24,7 +24,7 @@ function FilterBox({ form, setForm, setTags }) {
         if (form.type === "ALL") {
             setTags([]);
         } else if (form.type === "COURSE") {
-            setTags([form.region, form.distance * 1000 ?? 0]);
+            setTags([form.region, (form.distance ?? 0) * 1000]);
         } else if (form.type === "ROUTINE") {
             setTags(form.parts);
         }

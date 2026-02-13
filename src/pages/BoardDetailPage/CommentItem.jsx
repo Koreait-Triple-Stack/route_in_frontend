@@ -14,6 +14,7 @@ import { usePrincipalState } from "../../store/usePrincipalState";
 import CommentInput from "./CommentInput";
 import { useComment } from "../../hooks/useComment";
 import UserAvatarLink from "../../components/UserAvatarLink";
+import DialogComponent from "../../components/DialogComponent";
 
 const formatDate = (dateString) => {
     if (!dateString) return "";
@@ -24,14 +25,8 @@ const formatDate = (dateString) => {
 function CommentItem({ comment, boardId, isReply = false }) {
     const { principal } = usePrincipalState();
     const [showReplyInput, setShowReplyInput] = useState(false);
-
+    const [deleteOpen, setDeleteOpen] = useState(false);
     const { addComment, deleteComment } = useComment(boardId);
-
-    const handleDelete = () => {
-        if (window.confirm("정말 삭제하시겠습니까?")) {
-            deleteComment(comment.commentId);
-        }
-    };
 
     const handleReplySubmit = (content) => {
         addComment({
@@ -94,7 +89,9 @@ function CommentItem({ comment, boardId, isReply = false }) {
                     <Box flexGrow={1} />
 
                     {principal?.userId === comment.userId && (
-                        <IconButton size="small" onClick={handleDelete}>
+                        <IconButton
+                            size="small"
+                            onClick={() => setDeleteOpen(true)}>
                             <DeleteIcon
                                 fontSize="small"
                                 sx={{
@@ -157,6 +154,15 @@ function CommentItem({ comment, boardId, isReply = false }) {
                     />
                 </Box>
             )}
+            <DialogComponent
+                open={deleteOpen}
+                setOpen={setDeleteOpen}
+                title="댓글 삭제"
+                content="정말 삭제하시겠습니까?"
+                onClick={() => deleteComment(comment.commentId)}
+                color="error"
+                ment="삭제"
+            />
         </>
     );
 }
