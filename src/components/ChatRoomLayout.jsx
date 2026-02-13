@@ -49,7 +49,6 @@ export default function ChatRoomLayout({ children }) {
                 overflow: "hidden",
                 overscrollBehavior: "none",
                 width: "100%",
-                pb: "env(safe-area-inset-bottom, 0px)",
             }}>
             {children}
         </Box>
