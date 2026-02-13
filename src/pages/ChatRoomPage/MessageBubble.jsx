@@ -13,7 +13,6 @@ function MessageBubble({ roomId }) {
     const prevScrollHeightRef = useRef(0);
     const needAdjustRef = useRef(false);
     const didInitScrollRef = useRef(false);
-
     const shouldStickToBottomRef = useRef(true);
 
     const { principal } = usePrincipalState();
@@ -46,11 +45,11 @@ function MessageBubble({ roomId }) {
                 cursorMessageId: d.nextCursorMessageId,
             };
         },
+        enabled: Number.isFinite(roomId) && roomId > 0 && !!principal?.userId,
     });
 
     const messageList =
         messageResp?.pages?.flatMap((p) => p?.data?.messageList ?? []) ?? [];
-
     const newestId = messageList.length
         ? messageList[messageList.length - 1].messageId
         : null;
@@ -82,14 +81,6 @@ function MessageBubble({ roomId }) {
         needAdjustRef.current = false;
         prevScrollHeightRef.current = 0;
     }, [messageList.length]);
-
-    useEffect(() => {
-        const el = scrollerRef.current;
-        if (!el) return;
-        const nearBottom =
-            el.scrollHeight - (el.scrollTop + el.clientHeight) < 120;
-        shouldStickToBottomRef.current = nearBottom;
-    }, []);
 
     useLayoutEffect(() => {
         const el = scrollerRef.current;
@@ -127,7 +118,6 @@ function MessageBubble({ roomId }) {
             }}>
             <Box
                 sx={{
-                    flex: 1,
                     px: 1,
                     display: "flex",
                     flexDirection: "column",
