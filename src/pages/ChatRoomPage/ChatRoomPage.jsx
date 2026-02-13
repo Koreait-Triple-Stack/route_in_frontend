@@ -1,12 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
-import {
-    Box,
-    Typography,
-    TextField,
-    IconButton,
-    Stack,
-    Portal,
-} from "@mui/material";
+import React, { useEffect, useRef, useState } from "react";
+import { Box, Typography, TextField, IconButton, Stack } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import MenuIcon from "@mui/icons-material/Menu";
 import SendIcon from "@mui/icons-material/Send";
@@ -24,7 +17,6 @@ import { useToastStore } from "../../store/useToastStore";
 import { useChatUiState } from "../../store/useChatUiState";
 import MenuDrawer from "./MenuDrawer";
 import InviteDialog from "./InviteDialog";
-import useVisualTop from "./useVisualTop";
 
 function ChatRoomPage() {
     const queryClient = useQueryClient();
@@ -36,39 +28,14 @@ function ChatRoomPage() {
     const { roomId: roomIdParam } = useParams();
     const [isInvite, setIsInvite] = useState();
     const roomId = Number(roomIdParam);
-    const visualTop = useVisualTop();
 
     const inputRef = useRef(null);
-    const headerRef = useRef(null);
-    const footerRef = useRef(null);
-    const msgAreaRef = useRef(null);
+    const bubbleRef = useRef(null);
 
     const [isCoarsePointer, setIsCoarsePointer] = useState(false);
-    const [footerBottom, setFooterBottom] = useState(0);
-    const [headerH, setHeaderH] = useState(0);
-    const [footerH, setFooterH] = useState(0);
-
-    useEffect(() => {
-        const html = document.documentElement;
-        const body = document.body;
-
-        const prevHtmlOverflow = html.style.overflow;
-        const prevBodyOverflow = body.style.overflow;
-        const prevBodyPosition = body.style.position;
-        const prevBodyWidth = body.style.width;
-
-        html.style.overflow = "hidden";
-        body.style.overflow = "hidden";
-        body.style.position = "fixed";
-        body.style.width = "100%";
-
-        return () => {
-            html.style.overflow = prevHtmlOverflow;
-            body.style.overflow = prevBodyOverflow;
-            body.style.position = prevBodyPosition;
-            body.style.width = prevBodyWidth;
-        };
-    }, []);
+    const [vh, setVh] = useState(
+        () => window.visualViewport?.height ?? window.innerHeight,
+    );
 
     useEffect(() => {
         const mq = window.matchMedia("(pointer: coarse)");
@@ -83,46 +50,12 @@ function ChatRoomPage() {
         if (!vv) return;
 
         const update = () => {
-            const hiddenBottom = Math.max(0, window.innerHeight - vv.height);
-            setFooterBottom(hiddenBottom);
+            setVh(vv.height);
         };
 
         update();
         vv.addEventListener("resize", update);
         return () => vv.removeEventListener("resize", update);
-    }, []);
-
-    useEffect(() => {
-        const ro = new ResizeObserver(() => {
-            setHeaderH(headerRef.current?.offsetHeight ?? 0);
-            setFooterH(footerRef.current?.offsetHeight ?? 0);
-        });
-
-        if (headerRef.current) ro.observe(headerRef.current);
-        if (footerRef.current) ro.observe(footerRef.current);
-
-        setHeaderH(headerRef.current?.offsetHeight ?? 0);
-        setFooterH(footerRef.current?.offsetHeight ?? 0);
-
-        return () => ro.disconnect();
-    }, []);
-
-    useEffect(() => {
-        const onTouchMove = (e) => {
-            const el = msgAreaRef.current;
-            if (!el) {
-                e.preventDefault();
-                return;
-            }
-            if (!el.contains(e.target)) {
-                e.preventDefault();
-            }
-        };
-
-        document.addEventListener("touchmove", onTouchMove, { passive: false });
-        return () => {
-            document.removeEventListener("touchmove", onTouchMove);
-        };
     }, []);
 
     const {
@@ -175,9 +108,7 @@ function ChatRoomPage() {
         setInputValue("");
 
         if (!isCoarsePointer) {
-            requestAnimationFrame(() => {
-                focusInput();
-            });
+            requestAnimationFrame(() => focusInput());
         }
     };
 
@@ -199,56 +130,65 @@ function ChatRoomPage() {
         ]);
     };
 
+    const handleInputFocus = () => {
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                const api = bubbleRef.current;
+                if (!api) return;
+                if (api.isNearBottom?.()) api.scrollToBottom?.();
+            });
+        });
+    };
+
     if (roomLoading) return <Loading />;
     if (roomError) return <ErrorComponent error={roomError} />;
 
+    const title =
+        room?.participants?.find((p) => p.userId === principal?.userId)
+            ?.title ?? "";
+
     return (
-        <Box sx={{ height: "100%", width: "100%", backgroundColor: "#F5F7FA" }}>
-            <Portal>
-                <Box
-                    ref={headerRef}
-                    sx={{
-                        position: "fixed",
-                        top: `${visualTop}px`,
-                        left: 0,
-                        right: 0,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        px: 1.5,
-                        py: 0.5,
-                        bgcolor: "#F5F7FA",
-                        borderBottom: "1px solid #dbdbdb",
-                        paddingTop:
-                            "calc(env(safe-area-inset-top, 0px) + 12px)",
-                        zIndex: 1300,
-                    }}>
-                    <IconButton
-                        edge="start"
-                        color="inherit"
-                        onClick={handleBack}>
-                        <ArrowBackIcon />
+        <Box
+            sx={{
+                position: "fixed",
+                top: 0,
+                left: 0,
+                right: 0,
+                height: `${vh}px`,
+                display: "flex",
+                flexDirection: "column",
+                overflow: "hidden",
+                bgcolor: "#F5F7FA",
+                overscrollBehavior: "none",
+            }}>
+            <Box
+                sx={{
+                    flexShrink: 0,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    px: 1.5,
+                    py: 0.5,
+                    bgcolor: "#F5F7FA",
+                    borderBottom: "1px solid #dbdbdb",
+                    paddingTop: "calc(env(safe-area-inset-top, 0px) + 12px)",
+                }}>
+                <IconButton edge="start" color="inherit" onClick={handleBack}>
+                    <ArrowBackIcon />
+                </IconButton>
+
+                <Typography
+                    variant="h6"
+                    sx={{ fontWeight: "bold", fontSize: "1.1rem" }}>
+                    {title}
+                </Typography>
+
+                <Stack direction="row">
+                    <IconButton color="inherit" onClick={() => setIsMenu(true)}>
+                        <MenuIcon />
                     </IconButton>
-
-                    <Typography
-                        variant="h6"
-                        sx={{ fontWeight: "bold", fontSize: "1.1rem" }}>
-                        {
-                            room?.participants.find(
-                                (p) => p.userId === principal?.userId,
-                            )?.title
-                        }
-                    </Typography>
-
-                    <Stack direction="row">
-                        <IconButton
-                            color="inherit"
-                            onClick={() => setIsMenu(true)}>
-                            <MenuIcon />
-                        </IconButton>
-                    </Stack>
-                </Box>
-            </Portal>
+                </Stack>
+            </Box>
 
             <MenuDrawer
                 setIsMenu={setIsMenu}
@@ -266,104 +206,79 @@ function ChatRoomPage() {
             />
 
             <Box
-                ref={msgAreaRef}
                 sx={{
-                    py: 8,
-                    position: "fixed",
-                    left: 0,
-                    right: 0,
-                    top: `calc(${visualTop}px + ${headerH}px)`,
-                    bottom: `${footerBottom + footerH}px`,
-                    overflowY: "auto",
-                    overflowX: "hidden",
-                    WebkitOverflowScrolling: "touch",
-                    overscrollBehavior: "contain",
+                    flex: 1,
+                    minHeight: 0,
+                    overflow: "hidden",
                 }}>
-                <MessageBubble roomId={roomId} />
+                <MessageBubble ref={bubbleRef} roomId={roomId} />
             </Box>
 
-            <Portal>
+            <Box
+                sx={{
+                    flexShrink: 0,
+                    width: "100%",
+                    bgcolor: "#fff",
+                    p: 1.5,
+                    display: "flex",
+                    alignItems: "center",
+                    borderTop: "1px solid #ddd",
+                    paddingBottom:
+                        "calc(env(safe-area-inset-bottom, 0px) + 12px)",
+                }}>
                 <Box
-                    ref={footerRef}
                     sx={{
-                        position: "fixed",
-                        left: 0,
-                        right: 0,
-                        bottom: `${footerBottom}px`,
-                        width: "100%",
-                        flexShrink: 0,
-                        transition: "bottom 120ms ease-out",
-                        zIndex: 1300,
+                        flex: 1,
+                        bgcolor: "#f5f5f5",
+                        borderRadius: 5,
+                        px: 2,
+                        py: 0.5,
+                        mx: 1,
+                        display: "flex",
+                        alignItems: "center",
                     }}>
-                    <Box
+                    <TextField
+                        fullWidth
+                        multiline
+                        maxRows={3}
+                        placeholder="메시지 입력"
+                        variant="standard"
+                        InputProps={{ disableUnderline: true }}
+                        value={inputValue}
+                        inputRef={inputRef}
+                        onFocus={handleInputFocus}
+                        onChange={(e) => setInputValue(e.target.value)}
+                        onKeyDown={isCoarsePointer ? undefined : handleKeyDown}
                         sx={{
-                            width: "100%",
-                            bgcolor: "#fff",
-                            p: 1.5,
-                            display: "flex",
-                            alignItems: "center",
-                            borderTop: "1px solid #ddd",
-                            paddingBottom:
-                                "calc(env(safe-area-inset-bottom, 0px) + 12px)",
-                        }}>
-                        <Box
-                            sx={{
-                                flex: 1,
-                                bgcolor: "#f5f5f5",
-                                borderRadius: 5,
-                                px: 2,
-                                py: 0.5,
-                                mx: 1,
-                                display: "flex",
-                                alignItems: "center",
-                            }}>
-                            <TextField
-                                fullWidth
-                                multiline
-                                maxRows={3}
-                                placeholder="메시지 입력"
-                                variant="standard"
-                                InputProps={{ disableUnderline: true }}
-                                value={inputValue}
-                                inputRef={inputRef}
-                                onChange={(e) => setInputValue(e.target.value)}
-                                onKeyDown={
-                                    isCoarsePointer ? undefined : handleKeyDown
-                                }
-                                sx={{
-                                    "& .MuiInputBase-root": {
-                                        fontSize: "1rem",
-                                        p: 0.5,
-                                    },
-                                    "& .MuiInputBase-input": {
-                                        fontSize: "1rem",
-                                    },
-                                }}
-                            />
-                        </Box>
-
-                        <IconButton
-                            tabIndex={-1}
-                            onPointerDown={(e) => e.preventDefault()}
-                            onMouseDown={(e) => e.preventDefault()}
-                            onTouchStart={(e) => e.preventDefault()}
-                            onClick={handleSend}
-                            sx={{
-                                bgcolor: inputValue.trim()
-                                    ? "primary.main"
-                                    : "transparent",
-                                color: inputValue.trim() ? "#FFF" : "#ddd",
-                                "&:hover": {
-                                    bgcolor: inputValue.trim()
-                                        ? "primary.dark"
-                                        : "transparent",
-                                },
-                            }}>
-                            <SendIcon />
-                        </IconButton>
-                    </Box>
+                            "& .MuiInputBase-root": {
+                                fontSize: "1rem",
+                                p: 0.5,
+                            },
+                            "& .MuiInputBase-input": { fontSize: "1rem" },
+                        }}
+                    />
                 </Box>
-            </Portal>
+
+                <IconButton
+                    tabIndex={-1}
+                    onPointerDown={(e) => e.preventDefault()}
+                    onMouseDown={(e) => e.preventDefault()}
+                    onTouchStart={(e) => e.preventDefault()}
+                    onClick={handleSend}
+                    sx={{
+                        bgcolor: inputValue.trim()
+                            ? "primary.main"
+                            : "transparent",
+                        color: inputValue.trim() ? "#FFF" : "#ddd",
+                        "&:hover": {
+                            bgcolor: inputValue.trim()
+                                ? "primary.dark"
+                                : "transparent",
+                        },
+                    }}>
+                    <SendIcon />
+                </IconButton>
+            </Box>
         </Box>
     );
 }

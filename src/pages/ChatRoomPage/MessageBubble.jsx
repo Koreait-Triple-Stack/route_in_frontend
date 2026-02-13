@@ -1,3 +1,4 @@
+// MessageBubble.jsx
 import { Box } from "@mui/system";
 import { getMessageListInfiniteRequest } from "../../apis/chat/chatApi";
 import { useInfiniteQuery } from "@tanstack/react-query";
@@ -5,10 +6,18 @@ import Loading from "../../components/Loading";
 import ErrorComponent from "../../components/ErrorComponent";
 import MessageBubbleComponent from "./MessageBubbleComponent";
 import { ClipLoader } from "react-spinners";
-import { useEffect, useLayoutEffect, useRef } from "react";
+import React, {
+    useEffect,
+    useLayoutEffect,
+    useRef,
+    forwardRef,
+    useImperativeHandle,
+} from "react";
 import { usePrincipalState } from "../../store/usePrincipalState";
 
-function MessageBubble({ roomId }) {
+const STICK_THRESHOLD = 120;
+
+const MessageBubble = forwardRef(function MessageBubble({ roomId }, ref) {
     const scrollerRef = useRef(null);
     const prevScrollHeightRef = useRef(0);
     const needAdjustRef = useRef(false);
@@ -17,11 +26,24 @@ function MessageBubble({ roomId }) {
 
     const { principal } = usePrincipalState();
 
+    const isNearBottom = () => {
+        const el = scrollerRef.current;
+        if (!el) return true;
+        return (
+            el.scrollHeight - (el.scrollTop + el.clientHeight) < STICK_THRESHOLD
+        );
+    };
+
     const scrollToBottom = () => {
         const el = scrollerRef.current;
         if (!el) return;
         el.scrollTop = el.scrollHeight;
     };
+
+    useImperativeHandle(ref, () => ({
+        isNearBottom,
+        scrollToBottom,
+    }));
 
     const {
         data: messageResp,
@@ -58,9 +80,7 @@ function MessageBubble({ roomId }) {
         const el = scrollerRef.current;
         if (!el) return;
 
-        const nearBottom =
-            el.scrollHeight - (el.scrollTop + el.clientHeight) < 120;
-        shouldStickToBottomRef.current = nearBottom;
+        shouldStickToBottomRef.current = isNearBottom();
 
         if (el.scrollTop <= 20 && hasNextPage && !isFetchingNextPage) {
             prevScrollHeightRef.current = el.scrollHeight;
@@ -107,14 +127,16 @@ function MessageBubble({ roomId }) {
             ref={scrollerRef}
             onScroll={handleScroll}
             sx={{
-                py: 1,
                 height: "100%",
                 overflowY: "auto",
                 minHeight: 0,
                 overscrollBehavior: "contain",
+                WebkitOverflowScrolling: "touch",
                 msOverflowStyle: "none",
                 scrollbarWidth: "none",
                 "&::-webkit-scrollbar": { display: "none" },
+                pt: 2,
+                pb: 2,
             }}>
             <Box
                 sx={{
@@ -136,6 +158,6 @@ function MessageBubble({ roomId }) {
             </Box>
         </Box>
     );
-}
+});
 
 export default MessageBubble;
