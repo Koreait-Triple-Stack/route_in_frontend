@@ -5,10 +5,18 @@ import Loading from "../../components/Loading";
 import ErrorComponent from "../../components/ErrorComponent";
 import MessageBubbleComponent from "./MessageBubbleComponent";
 import { ClipLoader } from "react-spinners";
-import { useEffect, useLayoutEffect, useRef } from "react";
+import React, {
+    useEffect,
+    useLayoutEffect,
+    useRef,
+    forwardRef,
+    useImperativeHandle,
+} from "react";
 import { usePrincipalState } from "../../store/usePrincipalState";
 
-function MessageBubble({ roomId }) {
+const STICK_THRESHOLD_PX = 120;
+
+const MessageBubble = forwardRef(function MessageBubble({ roomId }, ref) {
     const scrollerRef = useRef(null);
     const prevScrollHeightRef = useRef(0);
     const needAdjustRef = useRef(false);
@@ -18,11 +26,25 @@ function MessageBubble({ roomId }) {
 
     const { principal } = usePrincipalState();
 
+    const isNearBottom = () => {
+        const el = scrollerRef.current;
+        if (!el) return true;
+        return (
+            el.scrollHeight - (el.scrollTop + el.clientHeight) <
+            STICK_THRESHOLD_PX
+        );
+    };
+
     const scrollToBottom = () => {
         const el = scrollerRef.current;
         if (!el) return;
         el.scrollTop = el.scrollHeight;
     };
+
+    useImperativeHandle(ref, () => ({
+        scrollToBottom,
+        isNearBottom,
+    }));
 
     const {
         data: messageResp,
@@ -46,6 +68,7 @@ function MessageBubble({ roomId }) {
                 cursorMessageId: d.nextCursorMessageId,
             };
         },
+        enabled: Number.isFinite(roomId) && roomId > 0 && !!principal?.userId,
     });
 
     const messageList =
@@ -59,9 +82,7 @@ function MessageBubble({ roomId }) {
         const el = scrollerRef.current;
         if (!el) return;
 
-        const nearBottom =
-            el.scrollHeight - (el.scrollTop + el.clientHeight) < 120;
-        shouldStickToBottomRef.current = nearBottom;
+        shouldStickToBottomRef.current = isNearBottom();
 
         if (el.scrollTop <= 20 && hasNextPage && !isFetchingNextPage) {
             prevScrollHeightRef.current = el.scrollHeight;
@@ -83,25 +104,21 @@ function MessageBubble({ roomId }) {
         prevScrollHeightRef.current = 0;
     }, [messageList.length]);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         const el = scrollerRef.current;
         if (!el) return;
-        const nearBottom =
-            el.scrollHeight - (el.scrollTop + el.clientHeight) < 120;
-        shouldStickToBottomRef.current = nearBottom;
-    }, []);
+
+        if (!didInitScrollRef.current && messageList.length > 0) {
+            didInitScrollRef.current = true;
+            scrollToBottom();
+        }
+    }, [messageList.length]);
 
     useLayoutEffect(() => {
         const el = scrollerRef.current;
         if (!el) return;
 
         if (needAdjustRef.current) return;
-
-        if (!didInitScrollRef.current && messageList.length > 0) {
-            didInitScrollRef.current = true;
-            scrollToBottom();
-            return;
-        }
 
         if (shouldStickToBottomRef.current) {
             requestAnimationFrame(scrollToBottom);
@@ -116,22 +133,17 @@ function MessageBubble({ roomId }) {
             ref={scrollerRef}
             onScroll={handleScroll}
             sx={{
-                py: 1,
+                pt: 2,
+                pb: 2,
                 height: "100%",
                 overflowY: "auto",
                 minHeight: 0,
                 msOverflowStyle: "none",
                 scrollbarWidth: "none",
                 "&::-webkit-scrollbar": { display: "none" },
+                overscrollBehavior: "contain",
             }}>
-            <Box
-                sx={{
-                    flex: 1,
-                    px: 1,
-                    display: "flex",
-                    flexDirection: "column",
-                    minHeight: 0,
-                }}>
+            <Box sx={{ px: 1 }}>
                 {isFetchingNextPage && (
                     <Box sx={{ display: "flex", justifyContent: "center" }}>
                         <ClipLoader />
@@ -144,6 +156,6 @@ function MessageBubble({ roomId }) {
             </Box>
         </Box>
     );
-}
+});
 
 export default MessageBubble;

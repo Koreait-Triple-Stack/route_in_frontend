@@ -26,7 +26,35 @@ import MenuDrawer from "./MenuDrawer";
 import InviteDialog from "./InviteDialog";
 import useVisualTop from "./useVisualTop";
 
+function useLockBodyScroll(enabled = true) {
+    useEffect(() => {
+        if (!enabled) return;
+
+        const html = document.documentElement;
+        const body = document.body;
+
+        const prevHtmlOverflow = html.style.overflow;
+        const prevBodyOverflow = body.style.overflow;
+        const prevBodyPosition = body.style.position;
+        const prevBodyWidth = body.style.width;
+
+        html.style.overflow = "hidden";
+        body.style.overflow = "hidden";
+        body.style.position = "fixed";
+        body.style.width = "100%";
+
+        return () => {
+            html.style.overflow = prevHtmlOverflow;
+            body.style.overflow = prevBodyOverflow;
+            body.style.position = prevBodyPosition;
+            body.style.width = prevBodyWidth;
+        };
+    }, [enabled]);
+}
+
 function ChatRoomPage() {
+    useLockBodyScroll(true);
+
     const queryClient = useQueryClient();
     const { show } = useToastStore();
     const [inputValue, setInputValue] = useState("");
@@ -41,14 +69,15 @@ function ChatRoomPage() {
     const inputRef = useRef(null);
     const headerRef = useRef(null);
     const footerRef = useRef(null);
+    const bubbleRef = useRef(null);
 
     const [isCoarsePointer, setIsCoarsePointer] = useState(false);
+
     const [footerBottom, setFooterBottom] = useState(0);
 
     const [headerH, setHeaderH] = useState(0);
     const [footerH, setFooterH] = useState(0);
 
-    // 포인터 coarse 여부(모바일에서 Enter 전송 방지 등)
     useEffect(() => {
         const mq = window.matchMedia("(pointer: coarse)");
         const update = () => setIsCoarsePointer(mq.matches);
@@ -57,29 +86,20 @@ function ChatRoomPage() {
         return () => mq.removeEventListener?.("change", update);
     }, []);
 
-    // 키보드 올라올 때(visualViewport) footer를 키보드 위로 올리기 위한 bottom 오프셋
     useEffect(() => {
         const vv = window.visualViewport;
         if (!vv) return;
 
         const update = () => {
-            const hiddenBottom = Math.max(
-                0,
-                window.innerHeight - vv.height - vv.offsetTop,
-            );
+            const hiddenBottom = Math.max(0, window.innerHeight - vv.height);
             setFooterBottom(hiddenBottom);
         };
 
         update();
         vv.addEventListener("resize", update);
-        vv.addEventListener("scroll", update);
-        return () => {
-            vv.removeEventListener("resize", update);
-            vv.removeEventListener("scroll", update);
-        };
+        return () => vv.removeEventListener("resize", update);
     }, []);
 
-    // 헤더/푸터 높이 실시간 측정(텍스트 줄바꿈, safe-area padding 등 변해도 안전)
     useEffect(() => {
         const ro = new ResizeObserver(() => {
             setHeaderH(headerRef.current?.offsetHeight ?? 0);
@@ -89,7 +109,6 @@ function ChatRoomPage() {
         if (headerRef.current) ro.observe(headerRef.current);
         if (footerRef.current) ro.observe(footerRef.current);
 
-        // 초기 1회
         setHeaderH(headerRef.current?.offsetHeight ?? 0);
         setFooterH(footerRef.current?.offsetHeight ?? 0);
 
@@ -174,6 +193,18 @@ function ChatRoomPage() {
         room?.participants?.find((p) => p.userId === principal?.userId)
             ?.title ?? "";
 
+    const handleInputFocus = () => {
+        requestAnimationFrame(() => {
+            const api = bubbleRef.current;
+            if (!api) return;
+
+            const nearBottom = api.isNearBottom?.() ?? true;
+            if (nearBottom) {
+                api.scrollToBottom?.();
+            }
+        });
+    };
+
     return (
         <Box sx={{ height: "100%", width: "100%", bgcolor: "#F5F7FA" }}>
             <Portal>
@@ -184,16 +215,13 @@ function ChatRoomPage() {
                         top: `${visualTop}px`,
                         left: 0,
                         right: 0,
-
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "space-between",
-
                         px: 1.5,
                         py: 0.5,
                         bgcolor: "#F5F7FA",
                         borderBottom: "1px solid #dbdbdb",
-
                         paddingTop:
                             "calc(env(safe-area-inset-top, 0px) + 12px)",
                         zIndex: 1300,
@@ -241,17 +269,17 @@ function ChatRoomPage() {
                     position: "fixed",
                     left: 0,
                     right: 0,
-                    py: 8,
                     top: `calc(${visualTop}px + ${headerH}px)`,
                     bottom: `${footerBottom + footerH}px`,
-
                     overflowY: "auto",
                     overflowX: "hidden",
                     WebkitOverflowScrolling: "touch",
+                    overscrollBehavior: "contain",
                 }}>
-                <MessageBubble roomId={roomId} />
+                <MessageBubble ref={bubbleRef} roomId={roomId} />
             </Box>
 
+            {/* Footer */}
             <Box
                 ref={footerRef}
                 sx={{
@@ -298,6 +326,7 @@ function ChatRoomPage() {
                             onKeyDown={
                                 isCoarsePointer ? undefined : handleKeyDown
                             }
+                            onFocus={handleInputFocus}
                             sx={{
                                 "& .MuiInputBase-root": {
                                     fontSize: "1rem",
