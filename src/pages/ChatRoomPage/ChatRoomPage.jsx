@@ -26,35 +26,7 @@ import MenuDrawer from "./MenuDrawer";
 import InviteDialog from "./InviteDialog";
 import useVisualTop from "./useVisualTop";
 
-function useLockBodyScroll(enabled = true) {
-    useEffect(() => {
-        if (!enabled) return;
-
-        const html = document.documentElement;
-        const body = document.body;
-
-        const prevHtmlOverflow = html.style.overflow;
-        const prevBodyOverflow = body.style.overflow;
-        const prevBodyPosition = body.style.position;
-        const prevBodyWidth = body.style.width;
-
-        html.style.overflow = "hidden";
-        body.style.overflow = "hidden";
-        body.style.position = "fixed";
-        body.style.width = "100%";
-
-        return () => {
-            html.style.overflow = prevHtmlOverflow;
-            body.style.overflow = prevBodyOverflow;
-            body.style.position = prevBodyPosition;
-            body.style.width = prevBodyWidth;
-        };
-    }, [enabled]);
-}
-
 function ChatRoomPage() {
-    useLockBodyScroll(true);
-
     const queryClient = useQueryClient();
     const { show } = useToastStore();
     const [inputValue, setInputValue] = useState("");
@@ -67,16 +39,9 @@ function ChatRoomPage() {
     const visualTop = useVisualTop();
 
     const inputRef = useRef(null);
-    const headerRef = useRef(null);
-    const footerRef = useRef(null);
-    const bubbleRef = useRef(null);
-
     const [isCoarsePointer, setIsCoarsePointer] = useState(false);
 
     const [footerBottom, setFooterBottom] = useState(0);
-
-    const [headerH, setHeaderH] = useState(0);
-    const [footerH, setFooterH] = useState(0);
 
     useEffect(() => {
         const mq = window.matchMedia("(pointer: coarse)");
@@ -91,28 +56,20 @@ function ChatRoomPage() {
         if (!vv) return;
 
         const update = () => {
-            const hiddenBottom = Math.max(0, window.innerHeight - vv.height);
+            const hiddenBottom = Math.max(
+                0,
+                window.innerHeight - vv.height - vv.offsetTop,
+            );
             setFooterBottom(hiddenBottom);
         };
 
         update();
         vv.addEventListener("resize", update);
-        return () => vv.removeEventListener("resize", update);
-    }, []);
-
-    useEffect(() => {
-        const ro = new ResizeObserver(() => {
-            setHeaderH(headerRef.current?.offsetHeight ?? 0);
-            setFooterH(footerRef.current?.offsetHeight ?? 0);
-        });
-
-        if (headerRef.current) ro.observe(headerRef.current);
-        if (footerRef.current) ro.observe(footerRef.current);
-
-        setHeaderH(headerRef.current?.offsetHeight ?? 0);
-        setFooterH(footerRef.current?.offsetHeight ?? 0);
-
-        return () => ro.disconnect();
+        vv.addEventListener("scroll", update);
+        return () => {
+            vv.removeEventListener("resize", update);
+            vv.removeEventListener("scroll", update);
+        };
     }, []);
 
     const {
@@ -122,7 +79,6 @@ function ChatRoomPage() {
     } = useQuery({
         queryKey: ["getRoomByRoomIdRequest", roomId],
         queryFn: () => getRoomByRoomIdRequest(roomId),
-        enabled: Number.isFinite(roomId) && roomId > 0,
     });
     const room = roomResp?.data ?? {};
 
@@ -164,7 +120,9 @@ function ChatRoomPage() {
         setInputValue("");
 
         if (!isCoarsePointer) {
-            requestAnimationFrame(() => focusInput());
+            requestAnimationFrame(() => {
+                focusInput();
+            });
         }
     };
 
@@ -189,27 +147,20 @@ function ChatRoomPage() {
     if (roomLoading) return <Loading />;
     if (roomError) return <ErrorComponent error={roomError} />;
 
-    const title =
-        room?.participants?.find((p) => p.userId === principal?.userId)
-            ?.title ?? "";
-
-    const handleInputFocus = () => {
-        requestAnimationFrame(() => {
-            const api = bubbleRef.current;
-            if (!api) return;
-
-            const nearBottom = api.isNearBottom?.() ?? true;
-            if (nearBottom) {
-                api.scrollToBottom?.();
-            }
-        });
-    };
-
     return (
-        <Box sx={{ height: "100%", width: "100%", bgcolor: "#F5F7FA" }}>
+        <Box
+            sx={{
+                height: "100%",
+                display: "flex",
+                flexDirection: "column",
+                backgroundColor: "#F5F7FA",
+                pt: "57px",
+                pb: "65px",
+                overflowX: "hidden",
+                width: "100%",
+            }}>
             <Portal>
                 <Box
-                    ref={headerRef}
                     sx={{
                         position: "fixed",
                         top: `${visualTop}px`,
@@ -224,7 +175,6 @@ function ChatRoomPage() {
                         borderBottom: "1px solid #dbdbdb",
                         paddingTop:
                             "calc(env(safe-area-inset-top, 0px) + 12px)",
-                        zIndex: 1300,
                     }}>
                     <IconButton
                         edge="start"
@@ -236,7 +186,11 @@ function ChatRoomPage() {
                     <Typography
                         variant="h6"
                         sx={{ fontWeight: "bold", fontSize: "1.1rem" }}>
-                        {title}
+                        {
+                            room?.participants.find(
+                                (p) => p.userId === principal?.userId,
+                            )?.title
+                        }
                     </Typography>
 
                     <Stack direction="row">
@@ -260,35 +214,22 @@ function ChatRoomPage() {
                 isInvite={isInvite}
                 setIsInvite={setIsInvite}
                 setIsMenu={setIsMenu}
-                participants={room?.participants}
+                participants={room.participants}
                 roomId={roomId}
             />
 
-            <Box
-                sx={{
-                    position: "fixed",
-                    left: 0,
-                    right: 0,
-                    top: `calc(${visualTop}px + ${headerH}px)`,
-                    bottom: `${footerBottom + footerH}px`,
-                    overflowY: "auto",
-                    overflowX: "hidden",
-                    WebkitOverflowScrolling: "touch",
-                    overscrollBehavior: "contain",
-                }}>
-                <MessageBubble ref={bubbleRef} roomId={roomId} />
+            <Box sx={{ flex: 1, minWidth: 0, overflowX: "hidden" }}>
+                <MessageBubble roomId={roomId} />
             </Box>
 
-            {/* Footer */}
             <Box
-                ref={footerRef}
                 sx={{
                     position: "fixed",
                     left: 0,
                     right: 0,
                     bottom: `${footerBottom}px`,
                     width: "100%",
-                    zIndex: 1300,
+                    flexShrink: 0,
                     transition: "bottom 120ms ease-out",
                 }}>
                 <Box
@@ -326,7 +267,6 @@ function ChatRoomPage() {
                             onKeyDown={
                                 isCoarsePointer ? undefined : handleKeyDown
                             }
-                            onFocus={handleInputFocus}
                             sx={{
                                 "& .MuiInputBase-root": {
                                     fontSize: "1rem",
