@@ -238,7 +238,7 @@ function RunningRecord({ userId }) {
                                                 sx={{
                                                     width: "20px",
                                                     "& .MuiInput-root": {
-                                                        fontSize: "0.9rem",
+                                                        fontSize: "1rem",
                                                     },
                                                     "& .MuiInput-underline:before":
                                                         {
@@ -274,7 +274,7 @@ function RunningRecord({ userId }) {
                                                 sx={{
                                                     width: "20px",
                                                     "& .MuiInput-root": {
-                                                        fontSize: "0.9rem",
+                                                        fontSize: "1rem",
                                                     },
                                                     "& .MuiInput-underline:before":
                                                         {
