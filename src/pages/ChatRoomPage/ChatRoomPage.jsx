@@ -21,21 +21,18 @@ import InviteDialog from "./InviteDialog";
 function ChatRoomPage() {
     const queryClient = useQueryClient();
     const { show } = useToastStore();
+
     const [inputValue, setInputValue] = useState("");
     const [isMenu, setIsMenu] = useState(false);
+    const [isInvite, setIsInvite] = useState(false);
+
     const navigate = useNavigate();
     const { principal } = usePrincipalState();
     const { roomId: roomIdParam } = useParams();
-    const [isInvite, setIsInvite] = useState();
     const roomId = Number(roomIdParam);
 
     const inputRef = useRef(null);
-    const bubbleRef = useRef(null);
-
     const [isCoarsePointer, setIsCoarsePointer] = useState(false);
-    const [vh, setVh] = useState(
-        () => window.visualViewport?.height ?? window.innerHeight,
-    );
 
     useEffect(() => {
         const mq = window.matchMedia("(pointer: coarse)");
@@ -43,19 +40,6 @@ function ChatRoomPage() {
         update();
         mq.addEventListener?.("change", update);
         return () => mq.removeEventListener?.("change", update);
-    }, []);
-
-    useEffect(() => {
-        const vv = window.visualViewport;
-        if (!vv) return;
-
-        const update = () => {
-            setVh(vv.height);
-        };
-
-        update();
-        vv.addEventListener("resize", update);
-        return () => vv.removeEventListener("resize", update);
     }, []);
 
     const {
@@ -130,16 +114,6 @@ function ChatRoomPage() {
         ]);
     };
 
-    const handleInputFocus = () => {
-        requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-                const api = bubbleRef.current;
-                if (!api) return;
-                if (api.isNearBottom?.()) api.scrollToBottom?.();
-            });
-        });
-    };
-
     if (roomLoading) return <Loading />;
     if (roomError) return <ErrorComponent error={roomError} />;
 
@@ -150,16 +124,12 @@ function ChatRoomPage() {
     return (
         <Box
             sx={{
-                position: "fixed",
-                top: 0,
-                left: 0,
-                right: 0,
-                height: `${vh}px`,
+                height: "100%",
                 display: "flex",
                 flexDirection: "column",
-                overflow: "hidden",
                 bgcolor: "#F5F7FA",
-                overscrollBehavior: "none",
+                overflow: "hidden",
+                width: "100%",
             }}>
             <Box
                 sx={{
@@ -205,13 +175,8 @@ function ChatRoomPage() {
                 roomId={roomId}
             />
 
-            <Box
-                sx={{
-                    flex: 1,
-                    minHeight: 0,
-                    overflow: "hidden",
-                }}>
-                <MessageBubble ref={bubbleRef} roomId={roomId} />
+            <Box sx={{ flex: 1, minHeight: 0, overflow: "hidden" }}>
+                <MessageBubble roomId={roomId} />
             </Box>
 
             <Box
@@ -223,8 +188,7 @@ function ChatRoomPage() {
                     display: "flex",
                     alignItems: "center",
                     borderTop: "1px solid #ddd",
-                    paddingBottom:
-                        "calc(env(safe-area-inset-bottom, 0px) + 12px)",
+                    paddingBottom: "12px",
                 }}>
                 <Box
                     sx={{
@@ -246,7 +210,6 @@ function ChatRoomPage() {
                         InputProps={{ disableUnderline: true }}
                         value={inputValue}
                         inputRef={inputRef}
-                        onFocus={handleInputFocus}
                         onChange={(e) => setInputValue(e.target.value)}
                         onKeyDown={isCoarsePointer ? undefined : handleKeyDown}
                         sx={{
