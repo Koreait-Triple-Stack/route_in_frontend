@@ -39,14 +39,61 @@ function ChatRoomPage() {
     const visualTop = useVisualTop();
 
     const inputRef = useRef(null);
-    const [isCoarsePointer, setIsCoarsePointer] = useState(false);
+    const headerRef = useRef(null);
+    const footerRef = useRef(null);
 
+    const [isCoarsePointer, setIsCoarsePointer] = useState(false);
+    const [footerBottom, setFooterBottom] = useState(0);
+
+    const [headerH, setHeaderH] = useState(0);
+    const [footerH, setFooterH] = useState(0);
+
+    // 포인터 coarse 여부(모바일에서 Enter 전송 방지 등)
     useEffect(() => {
         const mq = window.matchMedia("(pointer: coarse)");
         const update = () => setIsCoarsePointer(mq.matches);
         update();
         mq.addEventListener?.("change", update);
         return () => mq.removeEventListener?.("change", update);
+    }, []);
+
+    // 키보드 올라올 때(visualViewport) footer를 키보드 위로 올리기 위한 bottom 오프셋
+    useEffect(() => {
+        const vv = window.visualViewport;
+        if (!vv) return;
+
+        const update = () => {
+            const hiddenBottom = Math.max(
+                0,
+                window.innerHeight - vv.height - vv.offsetTop,
+            );
+            setFooterBottom(hiddenBottom);
+        };
+
+        update();
+        vv.addEventListener("resize", update);
+        vv.addEventListener("scroll", update);
+        return () => {
+            vv.removeEventListener("resize", update);
+            vv.removeEventListener("scroll", update);
+        };
+    }, []);
+
+    // 헤더/푸터 높이 실시간 측정(텍스트 줄바꿈, safe-area padding 등 변해도 안전)
+    useEffect(() => {
+        const ro = new ResizeObserver(() => {
+            setHeaderH(headerRef.current?.offsetHeight ?? 0);
+            setFooterH(footerRef.current?.offsetHeight ?? 0);
+        });
+
+        if (headerRef.current) ro.observe(headerRef.current);
+        if (footerRef.current) ro.observe(footerRef.current);
+
+        // 초기 1회
+        setHeaderH(headerRef.current?.offsetHeight ?? 0);
+        setFooterH(footerRef.current?.offsetHeight ?? 0);
+
+        return () => ro.disconnect();
     }, []);
 
     const {
@@ -56,6 +103,7 @@ function ChatRoomPage() {
     } = useQuery({
         queryKey: ["getRoomByRoomIdRequest", roomId],
         queryFn: () => getRoomByRoomIdRequest(roomId),
+        enabled: Number.isFinite(roomId) && roomId > 0,
     });
     const room = roomResp?.data ?? {};
 
@@ -75,7 +123,6 @@ function ChatRoomPage() {
     const focusInput = () => {
         const el = inputRef.current;
         if (!el) return;
-
         if (document.activeElement === el) return;
 
         try {
@@ -98,15 +145,12 @@ function ChatRoomPage() {
         setInputValue("");
 
         if (!isCoarsePointer) {
-            requestAnimationFrame(() => {
-                focusInput();
-            });
+            requestAnimationFrame(() => focusInput());
         }
     };
 
     const handleKeyDown = (e) => {
         if (e.nativeEvent.isComposing) return;
-
         if (isCoarsePointer) return;
 
         if (e.key === "Enter" && !e.shiftKey) {
@@ -126,20 +170,15 @@ function ChatRoomPage() {
     if (roomLoading) return <Loading />;
     if (roomError) return <ErrorComponent error={roomError} />;
 
+    const title =
+        room?.participants?.find((p) => p.userId === principal?.userId)
+            ?.title ?? "";
+
     return (
-        <Box
-            sx={{
-                height: "100%",
-                display: "flex",
-                flexDirection: "column",
-                backgroundColor: "#F5F7FA",
-                pt: "57px",
-                pb: "65px",
-                overflowX: "hidden",
-                width: "100%",
-            }}>
+        <Box sx={{ height: "100%", width: "100%", bgcolor: "#F5F7FA" }}>
             <Portal>
                 <Box
+                    ref={headerRef}
                     sx={{
                         position: "fixed",
                         top: `${visualTop}px`,
@@ -149,6 +188,7 @@ function ChatRoomPage() {
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "space-between",
+
                         px: 1.5,
                         py: 0.5,
                         bgcolor: "#F5F7FA",
@@ -156,6 +196,7 @@ function ChatRoomPage() {
 
                         paddingTop:
                             "calc(env(safe-area-inset-top, 0px) + 12px)",
+                        zIndex: 1300,
                     }}>
                     <IconButton
                         edge="start"
@@ -163,15 +204,13 @@ function ChatRoomPage() {
                         onClick={handleBack}>
                         <ArrowBackIcon />
                     </IconButton>
+
                     <Typography
                         variant="h6"
                         sx={{ fontWeight: "bold", fontSize: "1.1rem" }}>
-                        {
-                            room?.participants.find(
-                                (p) => p.userId === principal?.userId,
-                            )?.title
-                        }
+                        {title}
                     </Typography>
+
                     <Stack direction="row">
                         <IconButton
                             color="inherit"
@@ -193,22 +232,36 @@ function ChatRoomPage() {
                 isInvite={isInvite}
                 setIsInvite={setIsInvite}
                 setIsMenu={setIsMenu}
-                participants={room.participants}
+                participants={room?.participants}
                 roomId={roomId}
             />
-
-            <Box sx={{ flex: 1, minWidth: 0, overflowX: "hidden" }}>
-                <MessageBubble roomId={roomId} />
-            </Box>
 
             <Box
                 sx={{
                     position: "fixed",
-                    bottom: 0,
                     left: 0,
                     right: 0,
+                    py: 8,
+                    top: `calc(${visualTop}px + ${headerH}px)`,
+                    bottom: `${footerBottom + footerH}px`,
+
+                    overflowY: "auto",
+                    overflowX: "hidden",
+                    WebkitOverflowScrolling: "touch",
+                }}>
+                <MessageBubble roomId={roomId} />
+            </Box>
+
+            <Box
+                ref={footerRef}
+                sx={{
+                    position: "fixed",
+                    left: 0,
+                    right: 0,
+                    bottom: `${footerBottom}px`,
                     width: "100%",
-                    flexShrink: 0,
+                    zIndex: 1300,
+                    transition: "bottom 120ms ease-out",
                 }}>
                 <Box
                     sx={{
@@ -218,6 +271,8 @@ function ChatRoomPage() {
                         display: "flex",
                         alignItems: "center",
                         borderTop: "1px solid #ddd",
+                        paddingBottom:
+                            "calc(env(safe-area-inset-bottom, 0px) + 12px)",
                     }}>
                     <Box
                         sx={{
@@ -248,9 +303,7 @@ function ChatRoomPage() {
                                     fontSize: "1rem",
                                     p: 0.5,
                                 },
-                                "& .MuiInputBase-input": {
-                                    fontSize: "1rem",
-                                },
+                                "& .MuiInputBase-input": { fontSize: "1rem" },
                             }}
                         />
                     </Box>
