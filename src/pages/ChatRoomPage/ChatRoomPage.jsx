@@ -130,6 +130,7 @@ function ChatRoomPage() {
     console.log(window.innerWidth);
     console.log(document.documentElement.clientWidth);
     console.log(document.documentElement.scrollWidth);
+    console.log(document.documentElement.scrollWidth);
 
     return (
         <Box
