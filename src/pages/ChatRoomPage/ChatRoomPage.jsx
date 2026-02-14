@@ -42,55 +42,55 @@ function ChatRoomPage() {
         return () => mq.removeEventListener?.("change", update);
     }, []);
 
-    // useEffect(() => {
-    //     const scrollerSelector = "[data-chat-scroller='1']";
-    //     let lastY = 0;
+    useEffect(() => {
+        const scrollerSelector = "[data-chat-scroller='1']";
+        let lastY = 0;
 
-    //     const getScroller = () => document.querySelector(scrollerSelector);
+        const getScroller = () => document.querySelector(scrollerSelector);
 
-    //     const onTouchStart = (e) => {
-    //         const t = e.touches?.[0];
-    //         if (t) lastY = t.clientY;
-    //     };
+        const onTouchStart = (e) => {
+            const t = e.touches?.[0];
+            if (t) lastY = t.clientY;
+        };
 
-    //     const onTouchMove = (e) => {
-    //         const scroller = getScroller();
-    //         if (!scroller) return;
+        const onTouchMove = (e) => {
+            const scroller = getScroller();
+            if (!scroller) return;
 
-    //         const target = e.target;
-    //         if (!(target instanceof Node)) return;
+            const target = e.target;
+            if (!(target instanceof Node)) return;
 
-    //         if (!scroller.contains(target)) {
-    //             e.preventDefault();
-    //             return;
-    //         }
+            if (!scroller.contains(target)) {
+                e.preventDefault();
+                return;
+            }
 
-    //         const t = e.touches?.[0];
-    //         if (!t) return;
+            const t = e.touches?.[0];
+            if (!t) return;
 
-    //         const currentY = t.clientY;
-    //         const deltaY = currentY - lastY;
-    //         lastY = currentY;
+            const currentY = t.clientY;
+            const deltaY = currentY - lastY;
+            lastY = currentY;
 
-    //         const { scrollTop, scrollHeight, clientHeight } = scroller;
-    //         const atTop = scrollTop <= 0;
-    //         const atBottom = scrollTop + clientHeight >= scrollHeight - 1;
+            const { scrollTop, scrollHeight, clientHeight } = scroller;
+            const atTop = scrollTop <= 0;
+            const atBottom = scrollTop + clientHeight >= scrollHeight - 1;
 
-    //         if ((atTop && deltaY > 0) || (atBottom && deltaY < 0)) {
-    //             e.preventDefault();
-    //         }
-    //     };
+            if ((atTop && deltaY > 0) || (atBottom && deltaY < 0)) {
+                e.preventDefault();
+            }
+        };
 
-    //     document.addEventListener("touchstart", onTouchStart, {
-    //         passive: true,
-    //     });
-    //     document.addEventListener("touchmove", onTouchMove, { passive: false });
+        document.addEventListener("touchstart", onTouchStart, {
+            passive: true,
+        });
+        document.addEventListener("touchmove", onTouchMove, { passive: false });
 
-    //     return () => {
-    //         document.removeEventListener("touchstart", onTouchStart);
-    //         document.removeEventListener("touchmove", onTouchMove);
-    //     };
-    // }, []);
+        return () => {
+            document.removeEventListener("touchstart", onTouchStart);
+            document.removeEventListener("touchmove", onTouchMove);
+        };
+    }, []);
 
     const {
         data: roomResp,
