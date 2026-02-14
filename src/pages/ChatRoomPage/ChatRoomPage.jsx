@@ -267,7 +267,13 @@ function ChatRoomPage() {
                         onKeyDown={isCoarsePointer ? undefined : handleKeyDown}
                         onFocus={() => {
                             requestAnimationFrame(() => {
-                                messageRef.current?.scrollToBottom();
+                                messageRef.current?.scrollToBottom?.();
+                                requestAnimationFrame(() => {
+                                    messageRef.current?.scrollToBottom?.();
+                                    setTimeout(() => {
+                                        messageRef.current?.scrollToBottom?.();
+                                    }, 50);
+                                });
                             });
                         }}
                         sx={{

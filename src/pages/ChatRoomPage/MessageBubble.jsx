@@ -26,6 +26,10 @@ const MessageBubble = forwardRef(function MessageBubble({ roomId }, ref) {
         const el = scrollerRef.current;
         if (!el) return;
         el.scrollTop = el.scrollHeight;
+
+        requestAnimationFrame(() => {
+            el.scrollTop = el.scrollHeight;
+        });
     };
 
     useImperativeHandle(ref, () => ({
