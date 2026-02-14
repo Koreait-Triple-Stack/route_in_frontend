@@ -43,54 +43,54 @@ function ChatRoomPage() {
     }, []);
 
     useEffect(() => {
-        const scrollerSelector = "[data-chat-scroller='1']";
-        let lastY = 0;
+        let lastTouchY = 0;
 
-        const getScroller = () => document.querySelector(scrollerSelector);
-
-        const onTouchStart = (e) => {
-            const t = e.touches?.[0];
-            if (t) lastY = t.clientY;
-        };
-
-        const onTouchMove = (e) => {
-            const scroller = getScroller();
-            if (!scroller) return;
-
-            const target = e.target;
-            if (!(target instanceof Node)) return;
-
-            // 스크롤 영역 밖 터치는 전부 차단
-            if (!scroller.contains(target)) {
-                e.preventDefault();
-                return;
-            }
-
-            const t = e.touches?.[0];
-            if (!t) return;
-
-            const currentY = t.clientY;
-            const deltaY = currentY - lastY;
-            lastY = currentY;
-
+        const isAtVerticalBoundary = (scroller, deltaY) => {
             const { scrollTop, scrollHeight, clientHeight } = scroller;
             const atTop = scrollTop <= 0;
             const atBottom = scrollTop + clientHeight >= scrollHeight - 1;
 
-            if ((atTop && deltaY > 0) || (atBottom && deltaY < 0)) {
+            return (atTop && deltaY > 0) || (atBottom && deltaY < 0);
+        }
+
+        const onTouchMove = (e) => {
+            const scroller = document.querySelector("[data-chat-scroller='1']");
+            if (!scroller) {
+                e.preventDefault();
+                return;
+            }
+
+            if (!scroller.contains(e.target)) {
+                e.preventDefault();
+                return;
+            }
+
+            const touch = e.touches?.[0];
+            if (!touch) return;
+
+            const currentY = touch.clientY;
+            const deltaY = currentY - lastTouchY;
+            lastTouchY = currentY;
+
+            if (isAtVerticalBoundary(scroller, deltaY)) {
                 e.preventDefault();
             }
         };
 
+        const onTouchStart = (e) => {
+            const touch = e.touches?.[0];
+            if (touch) lastTouchY = touch.clientY;
+        }
+
         document.addEventListener("touchstart", onTouchStart, {
             passive: true,
-        });
+        })
         document.addEventListener("touchmove", onTouchMove, { passive: false });
 
         return () => {
-            document.removeEventListener("touchstart", onTouchStart);
-            document.removeEventListener("touchmove", onTouchMove);
-        };
+            document.removeEventListener("touchstart", onTouchStart)
+            document.removeEventListener("touchmove", onTouchMove)
+        }
     }, []);
 
     const {
