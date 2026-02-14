@@ -23,10 +23,8 @@ const MessageBubble = forwardRef(function MessageBubble({ roomId }, ref) {
     const didInitScrollRef = useRef(false);
     const shouldStickToBottomRef = useRef(true);
 
-    const bottomGapRef = useRef(0);
-    const vvHeightRef = useRef(
-        window.visualViewport?.height ?? window.innerHeight,
-    );
+    const anchorBottomGapRef = useRef(null);
+    const keyboardAnchorActiveRef = useRef(false);
 
     const { principal } = usePrincipalState();
 
@@ -129,43 +127,75 @@ const MessageBubble = forwardRef(function MessageBubble({ roomId }, ref) {
         if (!vv) return;
 
         let raf = 0;
-        let prevHeight = vv.height;
 
-        const onVV = () => {
+        const getBottomGap = () => {
+            const el = scrollerRef.current;
+            if (!el) return 0;
+            return el.scrollHeight - (el.scrollTop + el.clientHeight);
+        };
+
+        const restoreByBottomGap = () => {
             const el = scrollerRef.current;
             if (!el) return;
 
-            const newHeight = vv.height;
-            const delta = prevHeight - newHeight;
+            shouldStickToBottomRef.current = isNearBottom();
 
-            prevHeight = newHeight;
-
-            if (isNearBottom()) {
-                cancelAnimationFrame(raf);
-                raf = requestAnimationFrame(() => {
-                    scrollToBottom();
-                });
+            if (shouldStickToBottomRef.current) {
+                scrollToBottom();
                 return;
             }
 
-            if (delta !== 0) {
-                cancelAnimationFrame(raf);
-                raf = requestAnimationFrame(() => {
-                    el.scrollTop += delta;
-                });
-            }
+            const gap = anchorBottomGapRef.current;
+            if (gap == null) return;
+
+            const nextTop = el.scrollHeight - el.clientHeight - gap;
+            el.scrollTop = Math.max(0, nextTop);
         };
 
+        const onFocusIn = (e) => {
+            const t = e.target;
+            if (!(t instanceof HTMLElement)) return;
+
+            const isInput =
+                t.tagName === "INPUT" ||
+                t.tagName === "TEXTAREA" ||
+                t.isContentEditable;
+
+            if (!isInput) return;
+
+            keyboardAnchorActiveRef.current = true;
+            anchorBottomGapRef.current = getBottomGap();
+        };
+
+        const onFocusOut = () => {
+            window.setTimeout(() => {
+                keyboardAnchorActiveRef.current = false;
+                anchorBottomGapRef.current = null;
+            }, 250);
+        };
+
+        const onVV = () => {
+            if (!keyboardAnchorActiveRef.current) return;
+
+            cancelAnimationFrame(raf);
+            raf = requestAnimationFrame(() => {
+                restoreByBottomGap();
+            });
+        };
+
+        document.addEventListener("focusin", onFocusIn);
+        document.addEventListener("focusout", onFocusOut);
         vv.addEventListener("resize", onVV);
         vv.addEventListener("scroll", onVV);
 
         return () => {
             cancelAnimationFrame(raf);
+            document.removeEventListener("focusin", onFocusIn);
+            document.removeEventListener("focusout", onFocusOut);
             vv.removeEventListener("resize", onVV);
             vv.removeEventListener("scroll", onVV);
         };
     }, []);
-
 
     if (messageLoading) return <Loading />;
     if (messageError) return <ErrorComponent error={messageError} />;
