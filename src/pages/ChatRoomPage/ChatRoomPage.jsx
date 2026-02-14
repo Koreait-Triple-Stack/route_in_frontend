@@ -17,7 +17,6 @@ import { useToastStore } from "../../store/useToastStore";
 import { useChatUiState } from "../../store/useChatUiState";
 import MenuDrawer from "./MenuDrawer";
 import InviteDialog from "./InviteDialog";
-import useKeyboardScrollShift from "./useKeyboardScrollShift";
 
 function ChatRoomPage() {
     const queryClient = useQueryClient();
@@ -34,9 +33,6 @@ function ChatRoomPage() {
 
     const inputRef = useRef(null);
     const messageRef = useRef(null);
-
-    const { handleFocus, handleBlur } = useKeyboardScrollShift(messageRef);
-
     const [isCoarsePointer, setIsCoarsePointer] = useState(false);
 
     useEffect(() => {
@@ -269,8 +265,17 @@ function ChatRoomPage() {
                         inputRef={inputRef}
                         onChange={(e) => setInputValue(e.target.value)}
                         onKeyDown={isCoarsePointer ? undefined : handleKeyDown}
-                        onFocus={handleFocus}
-                        onBlur={handleBlur}
+                        onFocus={() => {
+                            requestAnimationFrame(() => {
+                                messageRef.current?.scrollToBottom?.();
+                                requestAnimationFrame(() => {
+                                    messageRef.current?.scrollToBottom?.();
+                                    setTimeout(() => {
+                                        messageRef.current?.scrollToBottom?.();
+                                    }, 50);
+                                });
+                            });
+                        }}
                         sx={{
                             "& .MuiInputBase-root": {
                                 fontSize: "1rem",
