@@ -14,24 +14,13 @@ import React, {
 } from "react";
 import { usePrincipalState } from "../../store/usePrincipalState";
 
-const STICK_THRESHOLD = 120;
-
 const MessageBubble = forwardRef(function MessageBubble({ roomId }, ref) {
     const scrollerRef = useRef(null);
     const prevScrollHeightRef = useRef(0);
     const needAdjustRef = useRef(false);
     const didInitScrollRef = useRef(false);
-    const shouldStickToBottomRef = useRef(true);
 
     const { principal } = usePrincipalState();
-
-    const isNearBottom = () => {
-        const el = scrollerRef.current;
-        if (!el) return true;
-        return (
-            el.scrollHeight - (el.scrollTop + el.clientHeight) < STICK_THRESHOLD
-        );
-    };
 
     const scrollToBottom = () => {
         const el = scrollerRef.current;
@@ -40,7 +29,6 @@ const MessageBubble = forwardRef(function MessageBubble({ roomId }, ref) {
     };
 
     useImperativeHandle(ref, () => ({
-        isNearBottom,
         scrollToBottom,
     }));
 
@@ -72,15 +60,9 @@ const MessageBubble = forwardRef(function MessageBubble({ roomId }, ref) {
     const messageList =
         messageResp?.pages?.flatMap((p) => p?.data?.messageList ?? []) ?? [];
 
-    const newestId = messageList.length
-        ? messageList[messageList.length - 1].messageId
-        : null;
-
     const handleScroll = () => {
         const el = scrollerRef.current;
         if (!el) return;
-
-        shouldStickToBottomRef.current = isNearBottom();
 
         if (el.scrollTop <= 20 && hasNextPage && !isFetchingNextPage) {
             prevScrollHeightRef.current = el.scrollHeight;
@@ -103,21 +85,11 @@ const MessageBubble = forwardRef(function MessageBubble({ roomId }, ref) {
     }, [messageList.length]);
 
     useLayoutEffect(() => {
-        const el = scrollerRef.current;
-        if (!el) return;
-
-        if (needAdjustRef.current) return;
-
         if (!didInitScrollRef.current && messageList.length > 0) {
             didInitScrollRef.current = true;
             scrollToBottom();
-            return;
         }
-
-        if (shouldStickToBottomRef.current && isNearBottom()) {
-            requestAnimationFrame(scrollToBottom);
-        }
-    }, [newestId]);
+    }, [messageList.length]);
 
     if (messageLoading) return <Loading />;
     if (messageError) return <ErrorComponent error={messageError} />;

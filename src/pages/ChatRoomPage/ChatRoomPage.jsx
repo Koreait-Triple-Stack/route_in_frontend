@@ -55,11 +55,14 @@ function ChatRoomPage() {
         };
 
         const onTouchMove = (e) => {
+            const target = e.target;
+            if (!(target instanceof Element)) return;
+
+            if (target.closest("input, textarea, [contenteditable='true']")) {
+                return;
+            }
             const scroller = getScroller();
             if (!scroller) return;
-
-            const target = e.target;
-            if (!(target instanceof Node)) return;
 
             if (!scroller.contains(target)) {
                 e.preventDefault();
