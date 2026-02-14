@@ -32,6 +32,7 @@ function ChatRoomPage() {
     const roomId = Number(roomIdParam);
 
     const inputRef = useRef(null);
+    const messageRef = useRef(null);
     const [isCoarsePointer, setIsCoarsePointer] = useState(false);
 
     useEffect(() => {
@@ -224,7 +225,7 @@ function ChatRoomPage() {
             />
 
             <Box sx={{ flex: 1, minHeight: 0, overflow: "hidden" }}>
-                <MessageBubble roomId={roomId} />
+                <MessageBubble ref={messageRef} roomId={roomId} />
             </Box>
 
             <Box
@@ -261,6 +262,9 @@ function ChatRoomPage() {
                         inputRef={inputRef}
                         onChange={(e) => setInputValue(e.target.value)}
                         onKeyDown={isCoarsePointer ? undefined : handleKeyDown}
+                        onFocus={() => {
+                            messageRef.current?.scrollToBottom();
+                        }}
                         sx={{
                             "& .MuiInputBase-root": {
                                 fontSize: "1rem",
