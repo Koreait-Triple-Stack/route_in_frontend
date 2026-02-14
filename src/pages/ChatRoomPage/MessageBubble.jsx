@@ -34,6 +34,7 @@ const MessageBubble = forwardRef(function MessageBubble({ roomId }, ref) {
 
     useImperativeHandle(ref, () => ({
         scrollToBottom,
+        _getScroller: () => scrollerRef.current,
     }));
 
     const {

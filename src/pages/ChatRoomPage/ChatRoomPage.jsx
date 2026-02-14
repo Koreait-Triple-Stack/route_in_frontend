@@ -33,6 +33,9 @@ function ChatRoomPage() {
 
     const inputRef = useRef(null);
     const messageRef = useRef(null);
+    const restoreRef = useRef(null);
+    const armedRestoreRef = useRef(false);
+
     const [isCoarsePointer, setIsCoarsePointer] = useState(false);
 
     useEffect(() => {
@@ -266,6 +269,33 @@ function ChatRoomPage() {
                         onChange={(e) => setInputValue(e.target.value)}
                         onKeyDown={isCoarsePointer ? undefined : handleKeyDown}
                         onFocus={() => {
+                            const el = messageRef.current?._getScroller?.();
+                            if (el) {
+                                const gap =
+                                    el.scrollHeight -
+                                    (el.scrollTop + el.clientHeight);
+                                restoreRef.current = () => {
+                                    const apply = () => {
+                                        const e =
+                                            messageRef.current?._getScroller?.();
+                                        if (!e) return;
+                                        const top =
+                                            e.scrollHeight -
+                                            e.clientHeight -
+                                            gap;
+                                        e.scrollTop = Math.max(0, top);
+                                    };
+                                    requestAnimationFrame(() => {
+                                        apply();
+                                        requestAnimationFrame(() => {
+                                            apply();
+                                            setTimeout(apply, 50);
+                                        });
+                                    });
+                                };
+                                armedRestoreRef.current = true;
+                            }
+
                             requestAnimationFrame(() => {
                                 messageRef.current?.scrollToBottom?.();
                                 requestAnimationFrame(() => {
@@ -275,6 +305,11 @@ function ChatRoomPage() {
                                     }, 50);
                                 });
                             });
+                        }}
+                        onBlur={() => {
+                            if (!armedRestoreRef.current) return;
+                            armedRestoreRef.current = false;
+                            restoreRef.current?.();
                         }}
                         sx={{
                             "& .MuiInputBase-root": {
