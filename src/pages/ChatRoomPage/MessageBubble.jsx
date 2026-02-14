@@ -91,6 +91,37 @@ const MessageBubble = forwardRef(function MessageBubble({ roomId }, ref) {
         }
     }, [messageList.length]);
 
+    useEffect(() => {
+        const vv = window.visualViewport;
+        if (!vv) return;
+
+        let prevVh = vv.height;
+        let raf = 0;
+
+        const onResize = () => {
+            const el = scrollerRef.current;
+            if (!el) return;
+
+            const nextVh = vv.height;
+            const delta = prevVh - nextVh;
+            prevVh = nextVh;
+
+            if (delta > 0) {
+                cancelAnimationFrame(raf);
+                raf = requestAnimationFrame(() => {
+                    el.scrollTop += delta;
+                });
+            }
+        };
+
+        vv.addEventListener("resize", onResize);
+
+        return () => {
+            cancelAnimationFrame(raf);
+            vv.removeEventListener("resize", onResize);
+        };
+    }, []);
+
     if (messageLoading) return <Loading />;
     if (messageError) return <ErrorComponent error={messageError} />;
 
@@ -105,6 +136,7 @@ const MessageBubble = forwardRef(function MessageBubble({ roomId }, ref) {
             }}>
             <Box
                 ref={scrollerRef}
+                data-chat-scroller="1"
                 onScroll={handleScroll}
                 sx={{
                     flex: 1,
