@@ -23,6 +23,11 @@ const MessageBubble = forwardRef(function MessageBubble({ roomId }, ref) {
     const didInitScrollRef = useRef(false);
     const shouldStickToBottomRef = useRef(true);
 
+    const bottomGapRef = useRef(0);
+    const vvHeightRef = useRef(
+        window.visualViewport?.height ?? window.innerHeight,
+    );
+
     const { principal } = usePrincipalState();
 
     const isNearBottom = () => {
@@ -71,6 +76,7 @@ const MessageBubble = forwardRef(function MessageBubble({ roomId }, ref) {
 
     const messageList =
         messageResp?.pages?.flatMap((p) => p?.data?.messageList ?? []) ?? [];
+
     const newestId = messageList.length
         ? messageList[messageList.length - 1].messageId
         : null;
@@ -123,14 +129,42 @@ const MessageBubble = forwardRef(function MessageBubble({ roomId }, ref) {
         if (!vv) return;
 
         let raf = 0;
+
+        const captureBottomGap = () => {
+            const el = scrollerRef.current;
+            if (!el) return;
+            bottomGapRef.current =
+                el.scrollHeight - (el.scrollTop + el.clientHeight);
+        };
+
+        const restoreByBottomGap = () => {
+            const el = scrollerRef.current;
+            if (!el) return;
+
+            shouldStickToBottomRef.current = isNearBottom();
+
+            if (shouldStickToBottomRef.current) {
+                scrollToBottom();
+                return;
+            }
+
+            const gap = bottomGapRef.current ?? 0;
+            const nextTop = el.scrollHeight - el.clientHeight - gap;
+            el.scrollTop = Math.max(0, nextTop);
+        };
+
         const onVV = () => {
-            if (!shouldStickToBottomRef.current) return;
+            vvHeightRef.current = vv.height;
+
+            captureBottomGap();
 
             cancelAnimationFrame(raf);
             raf = requestAnimationFrame(() => {
-                scrollToBottom();
+                restoreByBottomGap();
             });
         };
+
+        captureBottomGap();
 
         vv.addEventListener("resize", onVV);
         vv.addEventListener("scroll", onVV);
@@ -141,7 +175,6 @@ const MessageBubble = forwardRef(function MessageBubble({ roomId }, ref) {
             vv.removeEventListener("scroll", onVV);
         };
     }, []);
-
 
     if (messageLoading) return <Loading />;
     if (messageError) return <ErrorComponent error={messageError} />;
