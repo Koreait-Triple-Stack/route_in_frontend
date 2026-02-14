@@ -266,7 +266,9 @@ function ChatRoomPage() {
                         onChange={(e) => setInputValue(e.target.value)}
                         onKeyDown={isCoarsePointer ? undefined : handleKeyDown}
                         onFocus={() => {
-                            messageRef.current?.scrollToBottom();
+                            requestAnimationFrame(() => {
+                                messageRef.current?.scrollToBottom();
+                            });
                         }}
                         sx={{
                             "& .MuiInputBase-root": {
