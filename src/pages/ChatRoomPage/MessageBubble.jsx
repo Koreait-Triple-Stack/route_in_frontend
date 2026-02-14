@@ -129,42 +129,32 @@ const MessageBubble = forwardRef(function MessageBubble({ roomId }, ref) {
         if (!vv) return;
 
         let raf = 0;
+        let prevHeight = vv.height;
 
-        const captureBottomGap = () => {
-            const el = scrollerRef.current;
-            if (!el) return;
-            bottomGapRef.current =
-                el.scrollHeight - (el.scrollTop + el.clientHeight);
-        };
-
-        const restoreByBottomGap = () => {
+        const onVV = () => {
             const el = scrollerRef.current;
             if (!el) return;
 
-            shouldStickToBottomRef.current = isNearBottom();
+            const newHeight = vv.height;
+            const delta = prevHeight - newHeight;
 
-            if (shouldStickToBottomRef.current) {
-                scrollToBottom();
+            prevHeight = newHeight;
+
+            if (isNearBottom()) {
+                cancelAnimationFrame(raf);
+                raf = requestAnimationFrame(() => {
+                    scrollToBottom();
+                });
                 return;
             }
 
-            const gap = bottomGapRef.current ?? 0;
-            const nextTop = el.scrollHeight - el.clientHeight - gap;
-            el.scrollTop = Math.max(0, nextTop);
+            if (delta !== 0) {
+                cancelAnimationFrame(raf);
+                raf = requestAnimationFrame(() => {
+                    el.scrollTop += delta;
+                });
+            }
         };
-
-        const onVV = () => {
-            vvHeightRef.current = vv.height;
-
-            captureBottomGap();
-
-            cancelAnimationFrame(raf);
-            raf = requestAnimationFrame(() => {
-                restoreByBottomGap();
-            });
-        };
-
-        captureBottomGap();
 
         vv.addEventListener("resize", onVV);
         vv.addEventListener("scroll", onVV);
@@ -175,6 +165,7 @@ const MessageBubble = forwardRef(function MessageBubble({ roomId }, ref) {
             vv.removeEventListener("scroll", onVV);
         };
     }, []);
+
 
     if (messageLoading) return <Loading />;
     if (messageError) return <ErrorComponent error={messageError} />;
