@@ -144,7 +144,6 @@ const MessageBubble = forwardRef(function MessageBubble({ roomId }, ref) {
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "flex-end",
-                    minHeight: "100%",
                 }}>
                 {isFetchingNextPage && (
                     <Box sx={{ display: "flex", justifyContent: "center" }}>
