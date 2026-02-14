@@ -131,6 +131,7 @@ const MessageBubble = forwardRef(function MessageBubble({ roomId }, ref) {
                 minHeight: 0,
                 overscrollBehavior: "contain",
                 WebkitOverflowScrolling: "touch",
+                touchAction: "pan-y",
                 msOverflowStyle: "none",
                 scrollbarWidth: "none",
                 "&::-webkit-scrollbar": { display: "none" },

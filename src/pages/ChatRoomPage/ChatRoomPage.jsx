@@ -43,14 +43,54 @@ function ChatRoomPage() {
     }, []);
 
     useEffect(() => {
+        let lastTouchY = 0;
+
+        const isAtVerticalBoundary = (scroller, deltaY) => {
+            const { scrollTop, scrollHeight, clientHeight } = scroller;
+            const atTop = scrollTop <= 0;
+            const atBottom = scrollTop + clientHeight >= scrollHeight - 1;
+
+            return (atTop && deltaY > 0) || (atBottom && deltaY < 0);
+        }
+
         const onTouchMove = (e) => {
             const scroller = document.querySelector("[data-chat-scroller='1']");
-            if (!scroller) return;
-            if (!scroller.contains(e.target)) e.preventDefault();
+            if (!scroller) {
+                e.preventDefault();
+                return;
+            }
+
+            if (!scroller.contains(e.target)) {
+                e.preventDefault();
+                return;
+            }
+
+            const touch = e.touchs?.[0];
+            if (!touch) return;
+
+            const currentY = touch.clientY;
+            const deltaY = currentY - lastTouchY;
+            lastTouchY = currentY;
+
+            if (isAtVerticalBoundary(scroller, deltaY)) {
+                e.preventDefault();
+            }
         };
 
+        const onTouchStart = (e) => {
+            const touch = e.touches?.[0];
+            if (touch) lastTouchY = touch.clientY;
+        }
+
+        document.addEventListener("touchStart", onTouchStart, {
+            passive: true,
+        })
         document.addEventListener("touchmove", onTouchMove, { passive: false });
-        return () => document.removeEventListener("touchmove", onTouchMove);
+
+        return () => {
+            document.removeEventListener("touchstart", onTouchStart)
+            document.removeEventListener("touchmove", onTouchMove)
+        }
     }, []);
 
     const {
