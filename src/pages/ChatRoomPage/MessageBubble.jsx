@@ -124,36 +124,47 @@ const MessageBubble = forwardRef(function MessageBubble({ roomId }, ref) {
 
     return (
         <Box
-            ref={scrollerRef}
-            onScroll={handleScroll}
             sx={{
                 height: "100%",
-                overflowY: "auto",
+                display: "flex",
+                flexDirection: "column",
                 minHeight: 0,
-                overscrollBehavior: "contain",
-                WebkitOverflowScrolling: "touch",
-                touchAction: "pan-y",
-                msOverflowStyle: "none",
-                scrollbarWidth: "none",
-                "&::-webkit-scrollbar": { display: "none" },
-                py: 1,
+                overflow: "hidden",
             }}>
             <Box
+                ref={scrollerRef}
+                onScroll={handleScroll}
                 sx={{
-                    px: 1,
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "flex-end",
+                    flex: 1,
+                    minHeight: 0,
+                    overflowY: "auto",
+                    overscrollBehavior: "contain",
+                    WebkitOverflowScrolling: "touch",
+                    touchAction: "pan-y",
+                    msOverflowStyle: "none",
+                    scrollbarWidth: "none",
+                    "&::-webkit-scrollbar": { display: "none" },
+                    py: 1,
                 }}>
-                {isFetchingNextPage && (
-                    <Box sx={{ display: "flex", justifyContent: "center" }}>
-                        <ClipLoader />
-                    </Box>
-                )}
+                <Box
+                    sx={{
+                        px: 1,
+                        display: "flex",
+                        flexDirection: "column",
+                    }}>
+                    {isFetchingNextPage && (
+                        <Box sx={{ display: "flex", justifyContent: "center" }}>
+                            <ClipLoader />
+                        </Box>
+                    )}
 
-                {[...messageList].reverse().map((msg) => (
-                    <MessageBubbleComponent key={msg.messageId} message={msg} />
-                ))}
+                    {[...messageList].reverse().map((msg) => (
+                        <MessageBubbleComponent
+                            key={msg.messageId}
+                            message={msg}
+                        />
+                    ))}
+                </Box>
             </Box>
         </Box>
     );
