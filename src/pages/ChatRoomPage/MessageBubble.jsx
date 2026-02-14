@@ -118,6 +118,31 @@ const MessageBubble = forwardRef(function MessageBubble({ roomId }, ref) {
         }
     }, [newestId]);
 
+    useEffect(() => {
+        const vv = window.visualViewport;
+        if (!vv) return;
+
+        let raf = 0;
+        const onVV = () => {
+            if (!shouldStickToBottomRef.current) return;
+
+            cancelAnimationFrame(raf);
+            raf = requestAnimationFrame(() => {
+                scrollToBottom();
+            });
+        };
+
+        vv.addEventListener("resize", onVV);
+        vv.addEventListener("scroll", onVV);
+
+        return () => {
+            cancelAnimationFrame(raf);
+            vv.removeEventListener("resize", onVV);
+            vv.removeEventListener("scroll", onVV);
+        };
+    }, []);
+
+
     if (messageLoading) return <Loading />;
     if (messageError) return <ErrorComponent error={messageError} />;
 

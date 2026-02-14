@@ -43,54 +43,53 @@ function ChatRoomPage() {
     }, []);
 
     useEffect(() => {
-        let lastTouchY = 0;
+        const scrollerSelector = "[data-chat-scroller='1']";
+        let lastY = 0;
 
-        const isAtVerticalBoundary = (scroller, deltaY) => {
+        const getScroller = () => document.querySelector(scrollerSelector);
+
+        const onTouchStart = (e) => {
+            const t = e.touches?.[0];
+            if (t) lastY = t.clientY;
+        };
+
+        const onTouchMove = (e) => {
+            const scroller = getScroller();
+            if (!scroller) return;
+
+            const target = e.target;
+            if (!(target instanceof Node)) return;
+
+            if (!scroller.contains(target)) {
+                e.preventDefault();
+                return;
+            }
+
+            const t = e.touches?.[0];
+            if (!t) return;
+
+            const currentY = t.clientY;
+            const deltaY = currentY - lastY;
+            lastY = currentY;
+
             const { scrollTop, scrollHeight, clientHeight } = scroller;
             const atTop = scrollTop <= 0;
             const atBottom = scrollTop + clientHeight >= scrollHeight - 1;
 
-            return (atTop && deltaY > 0) || (atBottom && deltaY < 0);
-        }
-
-        const onTouchMove = (e) => {
-            const scroller = document.querySelector("[data-chat-scroller='1']");
-            if (!scroller) {
-                e.preventDefault();
-                return;
-            }
-
-            if (!scroller.contains(e.target)) {
-                e.preventDefault();
-                return;
-            }
-
-            const touch = e.touches?.[0];
-            if (!touch) return;
-
-            const currentY = touch.clientY;
-            const deltaY = currentY - lastTouchY;
-            lastTouchY = currentY;
-
-            if (isAtVerticalBoundary(scroller, deltaY)) {
+            if ((atTop && deltaY > 0) || (atBottom && deltaY < 0)) {
                 e.preventDefault();
             }
         };
 
-        const onTouchStart = (e) => {
-            const touch = e.touches?.[0];
-            if (touch) lastTouchY = touch.clientY;
-        }
-
         document.addEventListener("touchstart", onTouchStart, {
             passive: true,
-        })
+        });
         document.addEventListener("touchmove", onTouchMove, { passive: false });
 
         return () => {
-            document.removeEventListener("touchstart", onTouchStart)
-            document.removeEventListener("touchmove", onTouchMove)
-        }
+            document.removeEventListener("touchstart", onTouchStart);
+            document.removeEventListener("touchmove", onTouchMove);
+        };
     }, []);
 
     const {

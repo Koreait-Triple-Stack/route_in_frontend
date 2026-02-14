@@ -2,22 +2,39 @@ import { Box } from "@mui/system";
 import { useEffect, useState } from "react";
 
 export default function ChatRoomLayout({ children }) {
-    const [vh, setVh] = useState(
-        () => window.visualViewport?.height ?? window.innerHeight,
-    );
+    const getVV = () => window.visualViewport;
+
+    const [vvState, setVvState] = useState(() => {
+        const vv = getVV();
+        return {
+            height: vv?.height ?? window.innerHeight,
+            offsetTop: vv?.offsetTop ?? 0,
+        };
+    });
 
     useEffect(() => {
-        const vv = window.visualViewport;
+        const vv = getVV();
         if (!vv) return;
 
+        let raf = 0;
         const update = () => {
-            const h = vv.height;
-            requestAnimationFrame(() => setVh(h));
+            cancelAnimationFrame(raf);
+            raf = requestAnimationFrame(() => {
+                setVvState({
+                    height: vv.height,
+                    offsetTop: vv.offsetTop,
+                });
+            });
         };
 
         update();
         vv.addEventListener("resize", update);
-        return () => vv.removeEventListener("resize", update);
+        vv.addEventListener("scroll", update);
+        return () => {
+            cancelAnimationFrame(raf);
+            vv.removeEventListener("resize", update);
+            vv.removeEventListener("scroll", update);
+        };
     }, []);
 
     useEffect(() => {
@@ -40,16 +57,16 @@ export default function ChatRoomLayout({ children }) {
         <Box
             sx={{
                 position: "fixed",
-                top: 0,
                 left: 0,
                 right: 0,
-                height: `${vh}px`,
+                top: 0,
+                height: `${vvState.height}px`,
+                transform: `translateY(${vvState.offsetTop}px)`,
                 display: "flex",
                 flexDirection: "column",
                 overflow: "hidden",
-                overscrollBehavior: "none",
-                overscrollBehaviorY: "none",
                 width: "100%",
+                overscrollBehavior: "none",
             }}>
             {children}
         </Box>
