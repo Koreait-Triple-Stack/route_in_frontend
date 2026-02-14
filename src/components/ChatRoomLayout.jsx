@@ -48,6 +48,7 @@ export default function ChatRoomLayout({ children }) {
                 flexDirection: "column",
                 overflow: "hidden",
                 overscrollBehavior: "none",
+                overscrollBehaviorY: "none",
                 width: "100%",
             }}>
             {children}

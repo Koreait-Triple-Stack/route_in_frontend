@@ -53,7 +53,6 @@ function MessageBubbleComponent({ message }) {
                 alignItems: "flex-start",
                 my: 0.5,
                 width: "100%",
-                height: "100%",
             }}>
             {!isMe && !isMiddle && (
                 <UserAvatarLink userId={senderId} src={profileImg} size={40} />
